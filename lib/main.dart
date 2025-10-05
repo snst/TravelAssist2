@@ -1,28 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:travelassist2/currency/currency_rates_page.dart';
+import 'package:provider/provider.dart';
+import 'currency/currency_rates_page.dart';
+import 'currency/currency_provider.dart';
+import 'calculator/calculator_page.dart';
+import 'calculator/calculator.dart';
+import 'locations/locations_page.dart';
+import 'locations/location_provider.dart';
 
 
-class CalculatorPage extends StatelessWidget {
-  const CalculatorPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Calculator')),
-      body: const Center(child: Text('Calculator Page')),
-    );
-  }
-}
-
-class PosPage extends StatelessWidget {
-  const PosPage({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('POS')),
-      body: const Center(child: Text('POS Page')),
-    );
-  }
-}
 
 class InfoPage extends StatelessWidget {
   const InfoPage({super.key});
@@ -56,7 +41,20 @@ class ActionButton {
 }
 
 void main() {
-  runApp(const MyApp());
+  //runApp(const MyApp());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        //ChangeNotifierProvider(create: (context) => TodoProvider()),
+        ChangeNotifierProvider(create: (context) => CurrencyProvider()),
+        //ChangeNotifierProvider(create: (context) => TransactionProvider()),
+        ChangeNotifierProvider(create: (context) => LocationProvider()),
+        ChangeNotifierProvider(create: (context) => Calculator()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -66,12 +64,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'TravelAssist',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'TravelAssist'),
     );
   }
 }
@@ -90,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<ActionButton> _buttons = [
     ActionButton(label: 'currencies', page: const CurrencyRatesPage()),
     ActionButton(label: 'calculator', page: const CalculatorPage()),
-    ActionButton(label: 'pos', page: const PosPage()),
+    ActionButton(label: 'pos', page: const LocationsPage()),
     ActionButton(label: 'info', page: const InfoPage()),
     ActionButton(label: 'expenses', page: const ExpensesPage()),
   ];

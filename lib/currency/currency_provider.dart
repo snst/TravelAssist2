@@ -109,12 +109,12 @@ class CurrencyProvider extends ChangeNotifier with Storage {
   Currency? getCurrencyByName(String name) {
     return _currencyMap.containsKey(name) ? _currencyMap[name] : null;
   }
-
+/*
   Currency getCurrencyById(int id) {
     return allItems
         .firstWhere((element) => element.id == id); //, orElse: () => Null);
   }
-/*
+
   TransactionValue getTransactionValue(Transaction transaction) {
     var currency = getCurrencyByName(transaction.currency);
     return TransactionValue(transaction.value, currency);

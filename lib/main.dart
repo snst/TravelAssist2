@@ -6,7 +6,7 @@ import 'calculator/calculator_page.dart';
 import 'calculator/calculator.dart';
 import 'locations/locations_page.dart';
 import 'locations/location_provider.dart';
-
+import 'locations/add_location_page.dart';
 
 
 class InfoPage extends StatelessWidget {
@@ -86,9 +86,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // Define the list of buttons and their corresponding pages
   final List<ActionButton> _buttons = [
-    ActionButton(label: 'currencies', page: const CurrencyRatesPage()),
-    ActionButton(label: 'calculator', page: const CalculatorPage()),
-    ActionButton(label: 'pos', page: const LocationsPage()),
+    ActionButton(label: 'Currencies', page: const CurrencyRatesPage()),
+    ActionButton(label: 'Calculator', page: const CalculatorPage()),
+    ActionButton(label: 'Add Location', page: const AddLocationPage()),
+    ActionButton(label: 'Locations', page: const LocationsPage()),
     ActionButton(label: 'info', page: const InfoPage()),
     ActionButton(label: 'expenses', page: const ExpensesPage()),
   ];

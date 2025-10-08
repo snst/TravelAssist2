@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'location.dart';
 import 'location_provider.dart';
+import 'add_location_page.dart';
 import '../utils/map.dart';
 import '../widgets/export_widget.dart';
 import '../widgets/widget_text_input.dart';
@@ -184,17 +185,10 @@ class _LocationsPageState extends State<LocationsPage> {
           }),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showEditDialog(
-              context,
-              locationProvider,
-              Location(
-                  title: "",
-                  timestamp: DateTime(2000),
-                  longitude: 0,
-                  latitude: 0,
-                  altitude: 0,
-                  accuracy: 0),
-              true);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddLocationPage()),
+          );
         },
         tooltip: 'Add Location',
         child: const Icon(Icons.add),

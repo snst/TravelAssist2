@@ -61,8 +61,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
         hintText: 'Enter title',
         lines: 4,
         onChanged: (value) => title = value,
-        //onChanged: (value) => title = value,
-        //autofocus: newItem,
+        autofocus: newItem,
       ),
           SizedBox(height: 5),
           WidgetTextInput(

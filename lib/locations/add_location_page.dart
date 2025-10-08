@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'location.dart';
 import 'location_provider.dart';
 import '../utils/map.dart';
-import '../widgets/export_widget.dart';
 import '../widgets/widget_text_input.dart';
 
 class AddLocationPage extends StatefulWidget {
@@ -120,7 +119,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
                 TextButton(
                   onPressed: () {
                     locationProvider.delete(location);
-                    Navigator.of(context).pop(); // Close the AlertDialog
+                    Navigator.of(context).pop();
                   },
                   child: const Text('Delete'),
                 ),
@@ -129,8 +128,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
                   location.title = title;
                   location.tags = tags;
                   locationProvider.add(location);
-                  Navigator.of(context).pop(); // Close the AlertDialog
-                  //}
+                  Navigator.of(context).pop();
                 },
                 child: const Text('OK'),
               ),

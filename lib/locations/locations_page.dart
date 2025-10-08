@@ -165,8 +165,14 @@ class _LocationsPageState extends State<LocationsPage> {
             return Card(
               child: ListTile(
                 onTap: () {
-                  _showEditDialog(context, locationProvider,
-                      locationProvider.items[reverseIndex], false);
+
+                  // _showEditDialog(context, locationProvider,
+                  //     locationProvider.items[reverseIndex], false);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AddLocationPage(
+                        location: locationProvider.items[reverseIndex])),
+                  );
                 },
                 title: FormattedText(
                     title:
@@ -187,7 +193,7 @@ class _LocationsPageState extends State<LocationsPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddLocationPage()),
+            MaterialPageRoute(builder: (context) => AddLocationPage()),
           );
         },
         tooltip: 'Add Location',

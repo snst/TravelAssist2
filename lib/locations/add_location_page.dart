@@ -7,61 +7,67 @@ import '../utils/map.dart';
 import '../widgets/widget_text_input.dart';
 
 class AddLocationPage extends StatefulWidget {
-  const AddLocationPage({super.key});
+  AddLocationPage({super.key, this.location});
 
   @override
   State<AddLocationPage> createState() => _AddLocationPageState();
+  Location? location;
+  bool newItem = false;
 }
 
 class _AddLocationPageState extends State<AddLocationPage> {
-  late Location location;
+  //late Location location;
 
   void updatePosition(Location location) async {
     Position position = await getPosition();
-    setState(() {
-      location.accuracy = position.accuracy;
-      location.altitude = position.altitude;
-      location.latitude = position.latitude;
-      location.longitude = position.longitude;
-      location.timestamp = DateTime.now();
-    });
+    if (mounted) {
+      setState(() {
+        location.accuracy = position.accuracy;
+        location.altitude = position.altitude;
+        location.latitude = position.latitude;
+        location.longitude = position.longitude;
+        location.timestamp = DateTime.now();
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    location = Location(
-        title: "",
-        timestamp: DateTime(2000),
-        longitude: 0,
-        latitude: 0,
-        altitude: 0,
-        accuracy: 0);
-    updatePosition(location);
+    if (widget.location == null) {
+      widget.newItem = true;
+      widget.location = Location(
+          title: "",
+          timestamp: DateTime(2000),
+          longitude: 0,
+          latitude: 0,
+          altitude: 0,
+          accuracy: 0);
+      updatePosition(widget.location!);
+    }
   }
 
 
   @override
   Widget build(BuildContext context) {
     final locationProvider = context.watch<LocationProvider>();
-    String title = "";
-    String tags = "";
-    bool newItem = true;
+    String title = widget.location!.title;
+    String tags = widget.location!.tags;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Location"),
+        title: widget.newItem ? const Text("Add Location")  : const Text("Edit Location"),
 
       ),
       
       body: Column(
         children: [
         WidgetTextInput(
-        text: "title",
+        text: title,
         hintText: 'Enter title',
         lines: 4,
         onChanged: (value) => title = value,
-        autofocus: newItem,
+        autofocus: widget.newItem,
       ),
           SizedBox(height: 5),
           WidgetTextInput(
@@ -72,29 +78,29 @@ class _AddLocationPageState extends State<AddLocationPage> {
           TextButton(
             onPressed: () {
               //Navigator.of(context).pop(); // Close the AlertDialog
-              launchMapOnAndroid(location.latitude, location.longitude);
+              launchMapOnAndroid(widget.location!.latitude, widget.location!.longitude);
             },
             child: const Text('Open Map'),
           ),
           FormattedText(
-              title: "Time", content: location.getDateTimeStr()),
+              title: "Time", content: widget.location!.getDateTimeStr()),
           Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children:
             [
               FormattedText(
-                  title: "Latitude", content: location.latitude.toString()),
+                  title: "Latitude", content: widget.location!.latitude.toString()),
               FormattedText(
                   title: "Longitude",
-                  content: location.longitude.toString()),
+                  content: widget.location!.longitude.toString()),
 
             ],),
       Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children:
       [
 
           FormattedText(
-              title: "Altitude", content: location.altitude.toString()),
+              title: "Altitude", content: widget.location!.altitude.toString()),
           FormattedText(
               title: "Accuracy",
-              content: location.accuracy.round().toString()),
+              content: widget.location!.accuracy.round().toString()),
       ],),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -103,7 +109,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
                 onPressed: () {
                   //Navigator.of(context).pop(); // Close the AlertDialog
                   setState(() {
-                    updatePosition(location);
+                    updatePosition(widget.location!);
                   });
                 },
                 child: const Text('Update Position'),
@@ -114,19 +120,19 @@ class _AddLocationPageState extends State<AddLocationPage> {
                 },
                 child: const Text('Cancel'),
               ),
-              if (!newItem)
+              if (!widget.newItem)
                 TextButton(
                   onPressed: () {
-                    locationProvider.delete(location);
+                    locationProvider.delete(widget.location!);
                     Navigator.of(context).pop();
                   },
                   child: const Text('Delete'),
                 ),
               TextButton(
                 onPressed: () {
-                  location.title = title;
-                  location.tags = tags;
-                  locationProvider.add(location);
+                  widget.location!.title = title;
+                  widget.location!.tags = tags;
+                  locationProvider.add(widget.location!);
                   Navigator.of(context).pop();
                 },
                 child: const Text('OK'),

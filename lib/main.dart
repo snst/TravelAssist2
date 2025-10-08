@@ -88,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<ActionButton> _buttons = [
     ActionButton(label: 'Currencies', page: const CurrencyRatesPage()),
     ActionButton(label: 'Calculator', page: const CalculatorPage()),
-    ActionButton(label: 'Add Location', page: const AddLocationPage()),
+    ActionButton(label: 'Add Location', page: AddLocationPage()),
     ActionButton(label: 'Locations', page: const LocationsPage()),
     ActionButton(label: 'info', page: const InfoPage()),
     ActionButton(label: 'expenses', page: const ExpensesPage()),

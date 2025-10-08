@@ -4,9 +4,9 @@ import 'currency/currency_rates_page.dart';
 import 'currency/currency_provider.dart';
 import 'calculator/calculator_page.dart';
 import 'calculator/calculator.dart';
-import 'locations/locations_page.dart';
+import 'locations/location_list_page.dart';
 import 'locations/location_provider.dart';
-import 'locations/add_location_page.dart';
+import 'locations/location_page.dart';
 
 
 class InfoPage extends StatelessWidget {
@@ -88,8 +88,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final List<ActionButton> _buttons = [
     ActionButton(label: 'Currencies', page: const CurrencyRatesPage()),
     ActionButton(label: 'Calculator', page: const CalculatorPage()),
-    ActionButton(label: 'Add Location', page: AddLocationPage()),
-    ActionButton(label: 'Locations', page: const LocationsPage()),
+    ActionButton(label: 'Add Location', page: LocationPage()),
+    ActionButton(label: 'Locations', page: const LocationListPage()),
     ActionButton(label: 'info', page: const InfoPage()),
     ActionButton(label: 'expenses', page: const ExpensesPage()),
   ];

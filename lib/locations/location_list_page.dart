@@ -3,19 +3,19 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'location.dart';
 import 'location_provider.dart';
-import 'add_location_page.dart';
+import 'location_page.dart';
 import '../utils/map.dart';
 import '../widgets/export_widget.dart';
 import '../widgets/widget_text_input.dart';
 
-class LocationsPage extends StatefulWidget {
-  const LocationsPage({super.key});
+class LocationListPage extends StatefulWidget {
+  const LocationListPage({super.key});
 
   @override
-  State<LocationsPage> createState() => _LocationsPageState();
+  State<LocationListPage> createState() => _LocationListPageState();
 }
 
-class _LocationsPageState extends State<LocationsPage> {
+class _LocationListPageState extends State<LocationListPage> {
   void updatePosition(Location location) async {
     Position position = await getPosition();
     location.accuracy = position.accuracy;
@@ -40,100 +40,6 @@ class _LocationsPageState extends State<LocationsPage> {
     }));
   }
 
-  Future<void> _showEditDialog(BuildContext context, LocationProvider provider,
-      Location location, bool newItem) async {
-    String title = location.title;
-    String tags = location.tags;
-
-    if (newItem) {
-      updatePosition(location);
-    }
-
-    return showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (context, setState) {
-          return AlertDialog(
-            title: Text('Location'),
-            content: SingleChildScrollView(
-              reverse: false,
-              child: Column(
-                children: [
-                  WidgetTextInput(
-                    text: title,
-                    hintText: 'Enter title',
-                    lines: 4,
-                    onChanged: (value) => title = value,
-                    autofocus: newItem,
-                  ),
-                  SizedBox(height: 5),
-                  WidgetTextInput(
-                    text: tags,
-                    hintText: 'Enter tags',
-                    onChanged: (value) => tags = value,
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      //Navigator.of(context).pop(); // Close the AlertDialog
-                      launchMapOnAndroid(location.latitude, location.longitude);
-                    },
-                    child: const Text('Open Map'),
-                  ),
-                  FormattedText(
-                      title: "Time", content: location.getDateTimeStr()),
-                  FormattedText(
-                      title: "Latitude", content: location.latitude.toString()),
-                  FormattedText(
-                      title: "Longitude",
-                      content: location.longitude.toString()),
-                  FormattedText(
-                      title: "Altitude", content: location.altitude.toString()),
-                  FormattedText(
-                      title: "Accuracy",
-                      content: location.accuracy.round().toString()),
-                  TextButton(
-                    onPressed: () {
-                      //Navigator.of(context).pop(); // Close the AlertDialog
-                      setState(() {
-                        updatePosition(location);
-                      });
-                    },
-                    child: const Text('Update Position'),
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Close the AlertDialog
-                },
-                child: const Text('Cancel'),
-              ),
-              if (!newItem)
-                TextButton(
-                  onPressed: () {
-                    provider.delete(location);
-                    Navigator.of(context).pop(); // Close the AlertDialog
-                  },
-                  child: const Text('Delete'),
-                ),
-              TextButton(
-                onPressed: () {
-                  location.title = title;
-                  location.tags = tags;
-                  provider.add(location);
-                  Navigator.of(context).pop(); // Close the AlertDialog
-                  //}
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        });
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +76,7 @@ class _LocationsPageState extends State<LocationsPage> {
                   //     locationProvider.items[reverseIndex], false);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AddLocationPage(
+                    MaterialPageRoute(builder: (context) => LocationPage(
                         location: locationProvider.items[reverseIndex])),
                   );
                 },
@@ -193,7 +99,7 @@ class _LocationsPageState extends State<LocationsPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AddLocationPage()),
+            MaterialPageRoute(builder: (context) => LocationPage()),
           );
         },
         tooltip: 'Add Location',

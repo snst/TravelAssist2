@@ -7,6 +7,8 @@ import 'calculator/calculator.dart';
 import 'locations/location_list_page.dart';
 import 'locations/location_provider.dart';
 import 'locations/location_page.dart';
+import 'todo_list/todo_list_page.dart';
+import 'todo_list/todo_provider.dart';
 
 
 class InfoPage extends StatelessWidget {
@@ -46,7 +48,7 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        //ChangeNotifierProvider(create: (context) => TodoProvider()),
+        ChangeNotifierProvider(create: (context) => TodoProvider()),
         ChangeNotifierProvider(create: (context) => CurrencyProvider()),
         //ChangeNotifierProvider(create: (context) => TransactionProvider()),
         ChangeNotifierProvider(create: (context) => LocationProvider()),
@@ -90,6 +92,8 @@ class _MyHomePageState extends State<MyHomePage> {
     ActionButton(label: 'Calculator', page: const CalculatorPage()),
     ActionButton(label: 'Add Location', page: LocationPage()),
     ActionButton(label: 'Locations', page: const LocationListPage()),
+    ActionButton(label: 'To-Do', page: const TodoListPage()),
+    ActionButton(label: 'infos', page: const ExpensesPage()),
     ActionButton(label: 'info', page: const InfoPage()),
     ActionButton(label: 'expenses', page: const ExpensesPage()),
   ];

@@ -43,9 +43,11 @@ dependencies:
   geolocator: ^14.0.2
   file_picker: ^10.3.3
   url_launcher: ^6.3.0
+  grouped_list: ^6.0.0
+  flutter_spinbox: ^0.13.1
+  flutter_typeahead: ^5.1.0
 
 dev_dependencies:
-
   flutter_test:
     sdk: flutter
 

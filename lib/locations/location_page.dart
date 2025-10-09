@@ -78,9 +78,8 @@ class _LocationPageState extends State<LocationPage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           if (!widget.newItem)
-            IconButton(
-              iconSize: 48,
-              icon: const Icon(Icons.delete),
+            TextButton(
+              child: const Text('Delete'),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -106,26 +105,29 @@ class _LocationPageState extends State<LocationPage> {
                   },
                 );
               },
+              style: TextButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.headlineSmall),
               //const Text('Delete'),
             ),
-          IconButton(
-            iconSize: 48,
-            icon: const Icon(Icons.close),
+          TextButton(
+            child: const Text('Cancel'),
             onPressed: () {
               Navigator.of(context).pop(); // Close the AlertDialog
             },
+            style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.headlineSmall),
           ),
-          IconButton(
-            iconSize: 48,
-            icon: const Icon(Icons.save),
+          TextButton(
+            child: const Text('Save'),
             onPressed: () {
               widget.location!.title = title;
               widget.location!.tags = tags;
               locationProvider.add(widget.location!);
               Navigator.of(context).pop();
             },
-            //const Text('OK'),
-          ),
+            style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.headlineSmall),
+          )
         ]),
 
       Row(
@@ -139,15 +141,15 @@ class _LocationPageState extends State<LocationPage> {
             title: "Accuracy",
             content: widget.location!.accuracy.round().toString(),
           ),
-          IconButton(
-            iconSize: 48,
-            icon: const Icon(Icons.refresh),
+          TextButton(
+            child: const Text('Refresh'),
             onPressed: () {
               setState(() {
                 updatePosition(widget.location!);
               });
             },
-          ),
+            style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.headlineSmall),          ),
           ]),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -160,9 +162,8 @@ class _LocationPageState extends State<LocationPage> {
                 title: "Altitude",
                 content: widget.location!.altitude.toString(),
               ),
-              IconButton(
-                iconSize: 48,
-                icon: const Icon(Icons.map),
+              TextButton(
+                child: const Text('Map'),
                 onPressed: () {
                   //Navigator.of(context).pop(); // Close the AlertDialog
                   launchMapOnAndroid(
@@ -170,7 +171,8 @@ class _LocationPageState extends State<LocationPage> {
                     widget.location!.longitude,
                   );
                 },
-              ),
+                style: TextButton.styleFrom(
+                    textStyle: Theme.of(context).textTheme.headlineSmall),              ),
 
             ],
           ),

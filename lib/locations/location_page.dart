@@ -5,6 +5,7 @@ import 'location.dart';
 import 'location_provider.dart';
 import '../utils/map.dart';
 import '../widgets/widget_text_input.dart';
+import '../widgets/widget_confirm_dialog.dart';
 
 class LocationPage extends StatefulWidget {
   LocationPage({super.key, this.location});
@@ -81,27 +82,14 @@ class _LocationPageState extends State<LocationPage> {
             TextButton(
               child: const Text('Delete'),
               onPressed: () {
-                showDialog(
+                showConfirmationDialog(
                   context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Confirm Delete'),
-                      content: const Text(
-                          'Are you sure you want to delete this location?'),
-                      actions: <Widget>[
-                        TextButton(
-                          child: const Text('No'),
-                          onPressed: () => Navigator.of(context).pop(),
-                        ),
-                        TextButton(
-                          child: const Text('Yes'),
-                          onPressed: () {
-                            locationProvider.delete(widget.location!);
-                            Navigator.of(context).popUntil((route) => route.isFirst);
-                          },
-                        ),
-                      ],
-                    );
+                  title: 'Confirm Delete',
+                  text: 'Are you sure you want to delete this location?',
+                  onConfirm: () {
+                    locationProvider.delete(widget.location!);
+                    Navigator.of(context).pop();
+                    //Navigator.of(context).popUntil((route) => route.isFirst);
                   },
                 );
               },

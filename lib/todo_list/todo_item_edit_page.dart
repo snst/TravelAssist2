@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinbox/material.dart';
 import 'package:provider/provider.dart';
 import '../widgets/widget_combobox.dart';
+import '../widgets/widget_confirm_dialog.dart';
 import '../widgets/widget_text_input.dart';
 import 'todo_item.dart';
 import 'todo_provider.dart';
@@ -158,9 +159,17 @@ class _PackedItemPageState extends State<TodoItemEditPage> {
                             ),
                             //alignment: Alignment.centerRight,
                             onPressed: () {
-                              getPackingList(context).delete(widget.item);
-                              //widget.onItemDeleted(widget.item);
-                              Navigator.of(context).pop();
+                              showConfirmationDialog(
+                                context: context,
+                                title: 'Confirm Delete',
+                                text: 'Are you sure you want to delete this item?',
+                                onConfirm: () {
+                                  getPackingList(context).delete(widget.item);
+                                  Navigator.of(context).pop();
+                                  //Navigator.of(context).popUntil((route) => route.isFirst);
+                                },
+                              );
+
                             }),
                       ),
                     /*

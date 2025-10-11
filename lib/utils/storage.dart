@@ -3,7 +3,7 @@ import 'package:path_provider/path_provider.dart';
 import '../currency/currency.dart';
 import '../todo_list/todo_item.dart';
 //import '../transaction_list/transaction.dart';
-import '../locations/location.dart';
+import '../location_list/location.dart';
 
 mixin Storage {
   late Future<Isar?> db;

@@ -7,16 +7,16 @@ import '../utils/map.dart';
 import '../widgets/widget_text_input.dart';
 import '../widgets/widget_confirm_dialog.dart';
 
-class LocationPage extends StatefulWidget {
-  LocationPage({super.key, this.location});
+class LocationItemPage extends StatefulWidget {
+  LocationItemPage({super.key, this.location});
 
   @override
-  State<LocationPage> createState() => _LocationPageState();
+  State<LocationItemPage> createState() => _LocationItemPageState();
   Location? location;
   bool newItem = false;
 }
 
-class _LocationPageState extends State<LocationPage> {
+class _LocationItemPageState extends State<LocationItemPage> {
   void updatePosition(Location location) async {
     Position position = await getPosition();
     if (mounted) {
@@ -55,9 +55,7 @@ class _LocationPageState extends State<LocationPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: widget.newItem
-            ? const Text("Add Location")
-            : const Text("Edit Location"),
+        title: const Text("Location")
       ),
 
       body: Column(
@@ -114,7 +112,10 @@ class _LocationPageState extends State<LocationPage> {
               Navigator.of(context).pop();
             },
             style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.headlineSmall),
+                textStyle: Theme
+                    .of(context)
+                    .textTheme
+                    .headlineSmall),
           )
         ]),
 

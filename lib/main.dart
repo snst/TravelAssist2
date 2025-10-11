@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'currency/currency_rates_page.dart';
+import 'currency/currency_list_page.dart';
 import 'currency/currency_provider.dart';
 import 'calculator/calculator_page.dart';
 import 'calculator/calculator.dart';
-import 'locations/location_list_page.dart';
-import 'locations/location_provider.dart';
-import 'locations/location_page.dart';
+import 'location_list/location_list_page.dart';
+import 'location_list/location_provider.dart';
+import 'location_list/location_item_page.dart';
 import 'todo_list/todo_list_page.dart';
 import 'todo_list/todo_provider.dart';
 
@@ -88,9 +88,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // Define the list of buttons and their corresponding pages
   final List<ActionButton> _buttons = [
-    ActionButton(label: 'Currencies', page: const CurrencyRatesPage()),
+    ActionButton(label: 'Currencies', page: const CurrencyListPage()),
     ActionButton(label: 'Calculator', page: const CalculatorPage()),
-    ActionButton(label: 'Add Location', page: LocationPage()),
+    ActionButton(label: 'Add Location', page: LocationItemPage()),
     ActionButton(label: 'Locations', page: const LocationListPage()),
     ActionButton(label: 'To-Do', page: const TodoListPage()),
     ActionButton(label: 'infos', page: const ExpensesPage()),

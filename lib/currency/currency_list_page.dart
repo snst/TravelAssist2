@@ -5,8 +5,8 @@ import 'currency.dart';
 import 'currency_provider.dart';
 import '../utils/travel_assist_utils.dart';
 
-class CurrencyRatesPage extends StatelessWidget {
-  const CurrencyRatesPage({super.key});
+class CurrencyListPage extends StatelessWidget {
+  const CurrencyListPage({super.key});
 
   Future<void> _showEditDialog(
       BuildContext context,

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../widgets/export_widget.dart';
 import 'todo_list_widget.dart';
-import 'todo_item_edit_page.dart';
+import 'todo_item_page.dart';
 import 'todo_item.dart';
 import 'todo_provider.dart';
 
@@ -38,7 +38,7 @@ class _PackingListPageState extends State<TodoListPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => TodoItemEditPage(
+          builder: (context) => TodoItemPage(
                 newItem: newItem,
                 item: item,
               )),
@@ -66,7 +66,7 @@ class _PackingListPageState extends State<TodoListPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("To-do"),
+        title: const Text("To-Do List"),
         actions: [
           PopupMenuButton<int>(
             itemBuilder: (context) => [

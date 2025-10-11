@@ -3,7 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'location.dart';
 import 'location_provider.dart';
-import 'location_page.dart';
+import 'location_item_page.dart';
 import '../utils/map.dart';
 import '../widgets/export_widget.dart';
 import '../widgets/widget_text_input.dart';
@@ -32,7 +32,7 @@ class _LocationListPageState extends State<LocationListPage> {
             title: const Text("Settings"),
           ),
           body: ExportWidget(
-            name: 'locations',
+            name: 'location_list',
             toJson: provider.toJson,
             fromJson: provider.fromJson,
             clearJson: provider.clear,
@@ -46,7 +46,7 @@ class _LocationListPageState extends State<LocationListPage> {
     final locationProvider = context.watch<LocationProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Locations"),
+        title: const Text("Location List"),
         actions: [
           PopupMenuButton<int>(
             itemBuilder: (context) => [
@@ -76,7 +76,7 @@ class _LocationListPageState extends State<LocationListPage> {
                   //     locationProvider.items[reverseIndex], false);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => LocationPage(
+                    MaterialPageRoute(builder: (context) => LocationItemPage(
                         location: locationProvider.items[reverseIndex])),
                   );
                 },
@@ -99,7 +99,7 @@ class _LocationListPageState extends State<LocationListPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => LocationPage()),
+            MaterialPageRoute(builder: (context) => LocationItemPage()),
           );
         },
         tooltip: 'Add Location',

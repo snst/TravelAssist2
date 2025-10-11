@@ -29,7 +29,7 @@ const TodoItemSchema = CollectionSchema(
       id: 4,
       name: r'state',
       type: IsarType.byte,
-      enumMap: _TodoItemStateEnumValueMap,
+      enumMap: _TodoItemstateEnumValueMap,
     ),
     r'used': PropertySchema(id: 5, name: r'used', type: IsarType.long),
   },
@@ -87,7 +87,7 @@ TodoItem _todoItemDeserialize(
     name: reader.readStringOrNull(offsets[2]) ?? "",
     quantity: reader.readLongOrNull(offsets[3]) ?? 0,
     state:
-        _TodoItemStateValueEnumMap[reader.readByteOrNull(offsets[4])] ??
+        _TodoItemstateValueEnumMap[reader.readByteOrNull(offsets[4])] ??
         TodoItemStateEnum.open,
     used: reader.readLongOrNull(offsets[5]) ?? 0,
   );
@@ -111,7 +111,7 @@ P _todoItemDeserializeProp<P>(
     case 3:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     case 4:
-      return (_TodoItemStateValueEnumMap[reader.readByteOrNull(offset)] ??
+      return (_TodoItemstateValueEnumMap[reader.readByteOrNull(offset)] ??
               TodoItemStateEnum.open)
           as P;
     case 5:
@@ -121,8 +121,8 @@ P _todoItemDeserializeProp<P>(
   }
 }
 
-const _TodoItemStateEnumValueMap = {'open': 0, 'skipped': 1, 'done': 2};
-const _TodoItemStateValueEnumMap = {
+const _TodoItemstateEnumValueMap = {'open': 0, 'skipped': 1, 'done': 2};
+const _TodoItemstateValueEnumMap = {
   0: TodoItemStateEnum.open,
   1: TodoItemStateEnum.skipped,
   2: TodoItemStateEnum.done,

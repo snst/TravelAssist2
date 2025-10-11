@@ -144,7 +144,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                  child: OutlinedButton(
+                  child: ElevatedButton(
                       onLongPress: () {
                         calculator?.clear();
                         clearAllInputs();
@@ -160,7 +160,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                  child: OutlinedButton(
+                  child: ElevatedButton(
                       onPressed: () {
                         pushValue();
                         calculator?.add();
@@ -172,7 +172,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                  child: OutlinedButton(
+                  child: ElevatedButton(
                       onPressed: () {
                         pushValue();
                         calculator?.subtract();
@@ -184,7 +184,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
-                  child: OutlinedButton(
+                  child: ElevatedButton(
                       onPressed: () {
                         pushValue();
                         calculator?.calculate();

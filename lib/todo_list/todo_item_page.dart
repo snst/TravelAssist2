@@ -46,7 +46,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
           //backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           //title: Text(widget.title)),
           AppBar(title: Text("To-Do")),
-//      AppBar(automaticallyImplyLeading: false, title: Text("To-Do")),
+      //      AppBar(automaticallyImplyLeading: false, title: Text("To-Do")),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
         child: Column(
@@ -136,22 +136,18 @@ class _PackedItemPageState extends State<TodoItemPage> {
             Row(
               children: [
                 const Spacer(),
-                TextButton(
+                ElevatedButton(
                   child: const Text('Cancel'),
                   onPressed: () {
                     Navigator.of(context).pop();
-
                   },
-                  style: TextButton.styleFrom(
-                      textStyle: Theme.of(context).textTheme.headlineSmall),
                 ),
-
 
                 // const Spacer(),
                 if (!widget.newItem)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                    child: TextButton(
+                    child: ElevatedButton(
                       child: const Text('Delete'),
                       onPressed: () {
                         showConfirmationDialog(
@@ -165,9 +161,6 @@ class _PackedItemPageState extends State<TodoItemPage> {
                           },
                         );
                       },
-                      style: TextButton.styleFrom(
-                        textStyle: Theme.of(context).textTheme.headlineSmall,
-                      ),
                     ),
                   ),
                 /*
@@ -186,14 +179,11 @@ class _PackedItemPageState extends State<TodoItemPage> {
                     ),*/
                 Padding(
                   padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                  child: TextButton(
+                  child: ElevatedButton(
                     child: const Text('Save'),
                     onPressed: () {
                       saveAndClose(context);
                     },
-                    style: TextButton.styleFrom(
-                      textStyle: Theme.of(context).textTheme.headlineSmall,
-                    ),
                   ),
                 ),
               ],

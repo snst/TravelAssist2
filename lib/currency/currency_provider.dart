@@ -3,8 +3,8 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
 import 'package:provider/provider.dart';
-//import '../transaction_list/transaction.dart';
-//import '../transaction_list/transaction_value.dart';
+import '../transaction_list/transaction.dart';
+import '../transaction_list/transaction_value.dart';
 import 'currency.dart';
 import '../utils/storage.dart';
 
@@ -109,7 +109,7 @@ class CurrencyProvider extends ChangeNotifier with Storage {
   Currency? getCurrencyByName(String name) {
     return _currencyMap.containsKey(name) ? _currencyMap[name] : null;
   }
-/*
+
   Currency getCurrencyById(int id) {
     return allItems
         .firstWhere((element) => element.id == id); //, orElse: () => Null);
@@ -126,5 +126,5 @@ class CurrencyProvider extends ChangeNotifier with Storage {
 
   Currency? getCurrencyFromTransaction(Transaction transaction) {
     return getCurrencyByName(transaction.currency);
-  }*/
+  }
 }

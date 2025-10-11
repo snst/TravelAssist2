@@ -9,10 +9,12 @@ import 'location_list/location_provider.dart';
 import 'location_list/location_item_page.dart';
 import 'todo_list/todo_list_page.dart';
 import 'todo_list/todo_provider.dart';
-
+import 'transaction_list/transaction_main_page.dart';
+import 'transaction_list/transaction_provider.dart';
 
 class InfoPage extends StatelessWidget {
   const InfoPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,6 +26,7 @@ class InfoPage extends StatelessWidget {
 
 class ExpensesPage extends StatelessWidget {
   const ExpensesPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +35,6 @@ class ExpensesPage extends StatelessWidget {
     );
   }
 }
-
 
 // A class to hold the button data
 class ActionButton {
@@ -50,7 +52,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => TodoProvider()),
         ChangeNotifierProvider(create: (context) => CurrencyProvider()),
-        //ChangeNotifierProvider(create: (context) => TransactionProvider()),
+        ChangeNotifierProvider(create: (context) => TransactionProvider()),
         ChangeNotifierProvider(create: (context) => LocationProvider()),
         ChangeNotifierProvider(create: (context) => Calculator()),
       ],
@@ -71,6 +73,15 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
+        useMaterial3: true,
+      ),
+      themeMode: ThemeMode.dark,
       home: const MyHomePage(title: 'TravelAssist'),
     );
   }
@@ -88,14 +99,13 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // Define the list of buttons and their corresponding pages
   final List<ActionButton> _buttons = [
-    ActionButton(label: 'Currencies', page: const CurrencyListPage()),
     ActionButton(label: 'Calculator', page: const CalculatorPage()),
     ActionButton(label: 'Add Location', page: LocationItemPage()),
     ActionButton(label: 'Locations', page: const LocationListPage()),
     ActionButton(label: 'To-Do', page: const TodoListPage()),
+    ActionButton(label: 'Transactions', page: const TransactionMainPage()),
     ActionButton(label: 'infos', page: const ExpensesPage()),
     ActionButton(label: 'info', page: const InfoPage()),
-    ActionButton(label: 'expenses', page: const ExpensesPage()),
   ];
 
   @override
@@ -104,6 +114,25 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        actions: [
+          PopupMenuButton<int>(
+            itemBuilder: (context) => [
+              //const PopupMenuItem(value: 0, child: Text("Currency rates")),
+              const PopupMenuItem(value: 1, child: Text("Currency rates")),
+            ],
+            elevation: 1,
+            onSelected: (value) {
+              switch (value) {
+                case 1:
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CurrencyListPage()),
+                  );
+                  break;
+              }
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -124,10 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   MaterialPageRoute(builder: (context) => button.page),
                 );
               },
-              child: Text(
-                button.label,
-                textAlign: TextAlign.center,
-              ),
+              child: Text(button.label, textAlign: TextAlign.center),
             );
           },
         ),

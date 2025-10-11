@@ -54,9 +54,7 @@ class _LocationItemPageState extends State<LocationItemPage> {
     String tags = widget.location!.tags;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Location")
-      ),
+      appBar: AppBar(title: const Text("Location")),
 
       body: Column(
         children: [
@@ -73,85 +71,79 @@ class _LocationItemPageState extends State<LocationItemPage> {
             hintText: 'Enter tags',
             onChanged: (value) => tags = value,
           ),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          if (!widget.newItem)
-            TextButton(
-              child: const Text('Delete'),
-              onPressed: () {
-                showConfirmationDialog(
-                  context: context,
-                  title: 'Confirm Delete',
-                  text: 'Are you sure you want to delete this location?',
-                  onConfirm: () {
-                    locationProvider.delete(widget.location!);
-                    Navigator.of(context).pop();
-                    //Navigator.of(context).popUntil((route) => route.isFirst);
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              if (!widget.newItem)
+                ElevatedButton(
+                  child: const Text('Delete'),
+                  onPressed: () {
+                    showConfirmationDialog(
+                      context: context,
+                      title: 'Confirm Delete',
+                      text: 'Are you sure you want to delete this location?',
+                      onConfirm: () {
+                        locationProvider.delete(widget.location!);
+                        Navigator.of(context).pop();
+                        //Navigator.of(context).popUntil((route) => route.isFirst);
+                      },
+                    );
                   },
-                );
-              },
-              style: TextButton.styleFrom(
-                  textStyle: Theme.of(context).textTheme.headlineSmall),
-              //const Text('Delete'),
-            ),
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the AlertDialog
-            },
-            style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.headlineSmall),
-          ),
-          TextButton(
-            child: const Text('Save'),
-            onPressed: () {
-              widget.location!.title = title;
-              widget.location!.tags = tags;
-              locationProvider.add(widget.location!);
-              Navigator.of(context).pop();
-            },
-            style: TextButton.styleFrom(
-                textStyle: Theme
-                    .of(context)
-                    .textTheme
-                    .headlineSmall),
-          )
-        ]),
 
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          FormattedText(
-            title: "Time",
-            content: widget.location!.getDateTimeStr(),
+                  //const Text('Delete'),
+                ),
+              ElevatedButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              ElevatedButton(
+                child: const Text('Save'),
+                onPressed: () {
+                  widget.location!.title = title;
+                  widget.location!.tags = tags;
+                  locationProvider.add(widget.location!);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
           ),
-          FormattedText(
-            title: "Accuracy",
-            content: widget.location!.accuracy.round().toString(),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              FormattedText(
+                title: "Time",
+                content: widget.location!.getDateTimeStr(),
+              ),
+              FormattedText(
+                title: "Accuracy",
+                content: widget.location!.accuracy.round().toString(),
+              ),
+              ElevatedButton(
+                child: const Text('Refresh'),
+                onPressed: () {
+                  setState(() {
+                    updatePosition(widget.location!);
+                  });
+                },
+              ),
+            ],
           ),
-          TextButton(
-            child: const Text('Refresh'),
-            onPressed: () {
-              setState(() {
-                updatePosition(widget.location!);
-              });
-            },
-            style: TextButton.styleFrom(
-                textStyle: Theme.of(context).textTheme.headlineSmall),          ),
-          ]),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               FormattedText(
                 title: "Latitude, Longitude",
-                content: "${widget.location!.latitude.toString()}, ${widget.location!.longitude.toString()}",
+                content:
+                    "${widget.location!.latitude.toString()}, ${widget.location!.longitude.toString()}",
               ),
               FormattedText(
                 title: "Altitude",
                 content: widget.location!.altitude.toString(),
               ),
-              TextButton(
+              ElevatedButton(
                 child: const Text('Map'),
                 onPressed: () {
                   //Navigator.of(context).pop(); // Close the AlertDialog
@@ -160,18 +152,10 @@ class _LocationItemPageState extends State<LocationItemPage> {
                     widget.location!.longitude,
                   );
                 },
-                style: TextButton.styleFrom(
-                    textStyle: Theme.of(context).textTheme.headlineSmall),              ),
-
+              ),
             ],
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-
-
-            ],
-          ),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: []),
         ],
       ),
     );

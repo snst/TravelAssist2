@@ -48,6 +48,12 @@ class TodoItem {
     comment = other.comment;
   }
 
+  TodoItem clone() {
+    var item = TodoItem();
+    item.update(this);
+    return item;
+  }
+
   factory TodoItem.fromJson(Map<String, dynamic> json) =>
       _$TodoItemFromJson(json);
 

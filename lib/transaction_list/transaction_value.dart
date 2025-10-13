@@ -3,17 +3,23 @@ import '../utils/travel_assist_utils.dart';
 
 class TransactionValue {
   TransactionValue(this.value, this.currency);
+
   double value;
   Currency? currency;
 
   String get valueString => Currency.formatValue(value);
+
   String get currencyString => currency != null ? currency.toString() : "?";
+
   @override
   String toString() => "$valueString $currencyString";
-  String toShortString() => "${removeTrailingZeros(valueString)}$currencyString";
-  bool isZero() => value == 0;
-  String roundToString() => "${Currency.roundToString(value)} $currencyString";
 
+  String toShortString() =>
+      "${removeTrailingZeros(valueString)}$currencyString";
+
+  bool isZero() => value == 0;
+
+  String roundToString() => "${Currency.roundToString(value)} $currencyString";
 
   void reset() {
     value = 0;
@@ -25,7 +31,9 @@ class TransactionValue {
       return this;
     } else {
       return TransactionValue(
-          currency!.convertTo(value, toCurrency), toCurrency);
+        currency!.convertTo(value, toCurrency),
+        toCurrency,
+      );
     }
   }
 

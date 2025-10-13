@@ -17,15 +17,17 @@ class WidgetDateChooser extends StatefulWidget {
 
 class _WidgetDateChooserState extends State<WidgetDateChooser> {
   DateTime? date;
+
   @override
   Widget build(BuildContext context) {
     date ??= widget.date;
 
-    return         ElevatedButton(
-        child: const Text('Date'),
-            onPressed: () {
-              selectDate(context);
-            });
+    return ElevatedButton(
+      child: const Text('Date'),
+      onPressed: () {
+        selectDate(context);
+      },
+    );
 
     /*
     return Padding(

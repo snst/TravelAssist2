@@ -1,33 +1,31 @@
-import 'package:isar_community/isar.dart';
-import '../currency/currency.dart';
 import 'package:intl/intl.dart';
+import 'package:isar_community/isar.dart';
 // ignore: depend_on_referenced_packages
 import 'package:json_annotation/json_annotation.dart';
+
+import '../currency/currency.dart';
+
 part 'transaction.g.dart';
 
 // flutter packages pub run build_runner build
 
-enum TransactionTypeEnum {
-  expense,
-  withdrawal,
-  cashCorrection,
-  deposit;
-}
+enum TransactionTypeEnum { expense, withdrawal, cashCorrection, deposit }
 
 @collection
 @JsonSerializable()
 class Transaction {
-  Transaction(
-      {this.name = "",
-      this.value = 0.0,
-      this.currency = "",
-      this.type = TransactionTypeEnum.expense,
-      required this.date,
-      this.category = "",
-      this.averageDays = 1,
-      this.method = "",
-      this.latitude=0,
-      this.longitude=0});
+  Transaction({
+    this.name = "",
+    this.value = 0.0,
+    this.currency = "",
+    this.type = TransactionTypeEnum.expense,
+    required this.date,
+    this.category = "",
+    this.averageDays = 1,
+    this.method = "",
+    this.latitude = 0,
+    this.longitude = 0,
+  });
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   Id id = Isar.autoIncrement;
@@ -79,7 +77,12 @@ class Transaction {
   @ignore
   DateTime get groupDate {
     return date.copyWith(
-        hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
+      hour: 0,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+      microsecond: 0,
+    );
   }
 
   String getCategoryNameStr() {

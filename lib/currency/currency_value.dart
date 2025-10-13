@@ -1,19 +1,25 @@
-import 'currency.dart';
 import '../utils/travel_assist_utils.dart';
+import 'currency.dart';
 
 class CurrencyValue {
   CurrencyValue(this.value, this.currency);
+
   double value;
   Currency? currency;
 
   String get valueString => Currency.formatValue(value);
+
   String get currencyString => currency != null ? currency.toString() : "?";
+
   @override
   String toString() => "$valueString $currencyString";
-  String toShortString() => "${removeTrailingZeros(valueString)}$currencyString";
-  bool isZero() => value == 0;
-  String roundToString() => "${Currency.roundToString(value)} $currencyString";
 
+  String toShortString() =>
+      "${removeTrailingZeros(valueString)}$currencyString";
+
+  bool isZero() => value == 0;
+
+  String roundToString() => "${Currency.roundToString(value)} $currencyString";
 
   void reset() {
     value = 0;
@@ -24,8 +30,7 @@ class CurrencyValue {
     if (currency == toCurrency || null == currency) {
       return this;
     } else {
-      return CurrencyValue(
-          currency!.convertTo(value, toCurrency), toCurrency);
+      return CurrencyValue(currency!.convertTo(value, toCurrency), toCurrency);
     }
   }
 

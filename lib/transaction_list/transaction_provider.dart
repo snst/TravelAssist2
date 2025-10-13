@@ -1,13 +1,15 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
 import 'package:provider/provider.dart';
+
 import '../balance/balance.dart';
 import '../currency/currency.dart';
 import '../currency/currency_provider.dart';
-import 'transaction_value.dart';
 import '../utils/storage.dart';
 import 'transaction.dart';
+import 'transaction_value.dart';
 
 class TransactionProvider extends ChangeNotifier with Storage {
   bool useDb;
@@ -20,6 +22,7 @@ class TransactionProvider extends ChangeNotifier with Storage {
   }
 
   List<Transaction> _items = [];
+
   List<Transaction> get items => _items;
 
   void init() async {
@@ -140,7 +143,9 @@ class TransactionProvider extends ChangeNotifier with Storage {
   }
 
   TransactionValue calcCurrentCash(
-      CurrencyProvider currencyProvider, Currency? currency) {
+    CurrencyProvider currencyProvider,
+    Currency? currency,
+  ) {
     TransactionValue sum = TransactionValue(0, currency);
     if (currency != null) {
       for (final transaction in items) {
@@ -207,16 +212,18 @@ class TransactionProvider extends ChangeNotifier with Storage {
   }
 
   String toJson() {
-    List<Map<String, dynamic>> jsonList =
-        _items.map((item) => item.toJson()).toList();
+    List<Map<String, dynamic>> jsonList = _items
+        .map((item) => item.toJson())
+        .toList();
     return jsonEncode(jsonList);
   }
 
   void fromJson(String? jsonString) {
     if (jsonString != null) {
       List<dynamic> jsonList = jsonDecode(jsonString);
-      List<Transaction> newItems =
-          jsonList.map((json) => Transaction.fromJson(json)).toList();
+      List<Transaction> newItems = jsonList
+          .map((json) => Transaction.fromJson(json))
+          .toList();
       clear();
       addList(newItems);
     }

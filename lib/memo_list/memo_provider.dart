@@ -1,12 +1,14 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
 import 'package:provider/provider.dart';
-import 'location.dart';
-import '../utils/storage.dart';
 
-class LocationProvider extends ChangeNotifier with Storage {
-  LocationProvider({this.useDb = true}) {
+import '../utils/storage.dart';
+import 'memo.dart';
+
+class MemoProvider extends ChangeNotifier with Storage {
+  MemoProvider({this.useDb = true}) {
     if (useDb) {
       db = openDB();
       init();
@@ -14,32 +16,32 @@ class LocationProvider extends ChangeNotifier with Storage {
   }
 
   bool useDb;
-  List<Location> _items = [];
+  List<Memo> _items = [];
 
-  List<Location> get items => _items;
+  List<Memo> get items => _items;
 
   void init() async {
     final isar = await db;
     isar!.txn(() async {
-      _items = await isar.locations.where().findAll();
+      _items = await isar.memos.where().findAll();
       notifyListeners();
     });
   }
 
-  static LocationProvider getInstance(BuildContext context) {
-    return Provider.of<LocationProvider>(context, listen: false);
+  static MemoProvider getInstance(BuildContext context) {
+    return Provider.of<MemoProvider>(context, listen: false);
   }
 
-  void add(Location item) async {
+  void add(Memo item) async {
     addList([item]);
   }
 
-  void addList(List<Location> items) async {
+  void addList(List<Memo> items) async {
     if (useDb) {
       final isar = await db;
       await isar!.writeTxn(() async {
         for (final item in items) {
-          await isar.locations.put(item);
+          await isar.memos.put(item);
           if (!_items.contains(item)) {
             _items.add(item);
           }
@@ -56,11 +58,11 @@ class LocationProvider extends ChangeNotifier with Storage {
     }
   }
 
-  void delete(Location item) async {
+  void delete(Memo item) async {
     if (useDb) {
       final isar = await db;
       await isar!.writeTxn(() async {
-        await isar.locations.delete(item.id);
+        await isar.memos.delete(item.id);
         _items.remove(item);
         notifyListeners();
       });
@@ -74,7 +76,7 @@ class LocationProvider extends ChangeNotifier with Storage {
     if (useDb) {
       final isar = await db;
       await isar!.writeTxn(() async {
-        await isar.locations.clear();
+        await isar.memos.clear();
         _items.clear();
         notifyListeners();
       });
@@ -94,8 +96,8 @@ class LocationProvider extends ChangeNotifier with Storage {
   void fromJson(String? jsonString) {
     if (jsonString != null) {
       List<dynamic> jsonList = jsonDecode(jsonString);
-      List<Location> newItems = jsonList
-          .map((json) => Location.fromJson(json))
+      List<Memo> newItems = jsonList
+          .map((json) => Memo.fromJson(json))
           .toList();
       clear();
       addList(newItems);

@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+
 import '../currency/currency.dart';
 import '../currency/currency_chooser_widget.dart';
 import '../currency/currency_provider.dart';
 import 'transaction_value.dart';
 
 class TransactionValueWidget extends StatefulWidget {
-  const TransactionValueWidget(
-      {super.key,
-      required this.value,
-      required this.currencyProvider,
-      this.style});
+  const TransactionValueWidget({
+    super.key,
+    required this.value,
+    required this.currencyProvider,
+    this.style,
+  });
 
   final TransactionValue value;
   final CurrencyProvider currencyProvider;
@@ -45,7 +47,7 @@ class _TransactionValueWidgetState extends State<TransactionValueWidget> {
           selected: selected,
           onChanged: onChanged,
           style: widget.style,
-        )
+        ),
       ],
     );
   }

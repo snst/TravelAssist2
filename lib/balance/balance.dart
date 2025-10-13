@@ -1,4 +1,5 @@
 import 'dart:collection';
+
 import '../currency/currency_provider.dart';
 import '../transaction_list/transaction.dart';
 import '../transaction_list/transaction_value.dart';
@@ -51,17 +52,24 @@ class Balance {
     balanceCash = initTransaction();
   }
 
-  void initMap(Map<String, TransactionValue> map, final Transaction transaction,
-      {var key}) {
+  void initMap(
+    Map<String, TransactionValue> map,
+    final Transaction transaction, {
+    var key,
+  }) {
     key ??= transaction.currency;
     if (!map.containsKey(key)) {
       map[key] = TransactionValue(
-          0, currencyProvider.getCurrencyByName(transaction.currency));
+        0,
+        currencyProvider.getCurrencyByName(transaction.currency),
+      );
     }
   }
 
   bool processExpense(
-      final Transaction transaction, final TransactionValue tv) {
+    final Transaction transaction,
+    final TransactionValue tv,
+  ) {
     if (transaction.isExpense) {
       if (transaction.isCash) {
         initMap(haveCashByCurrency, transaction);
@@ -102,7 +110,9 @@ class Balance {
   }
 
   bool processDeposit(
-      final Transaction transaction, final TransactionValue tv) {
+    final Transaction transaction,
+    final TransactionValue tv,
+  ) {
     if (transaction.isWithdrawal || transaction.isCashDeposit) {
       initMap(depositByCurrency, transaction);
       depositByCurrency[transaction.currency]!.add(tv);
@@ -122,8 +132,11 @@ class Balance {
         withdrawalByMethodCurrencyCard[key]!.add(tv);
       } else if (transaction.isCashDeposit) {
         cashDeposit.add(tv);
-        initMap(cashDepositByCurrency, transaction,
-            key: transaction.currencyString);
+        initMap(
+          cashDepositByCurrency,
+          transaction,
+          key: transaction.currencyString,
+        );
         cashDepositByCurrency[transaction.currencyString]!.add(tv);
       }
       return true;
@@ -132,7 +145,9 @@ class Balance {
   }
 
   bool processCashCount(
-      final Transaction transaction, final TransactionValue tv) {
+    final Transaction transaction,
+    final TransactionValue tv,
+  ) {
     if (transaction.isCashCorrection) {
       balanceCash.add(tv);
 

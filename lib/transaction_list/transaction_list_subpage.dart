@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
 import 'transaction.dart';
-import 'transaction_provider.dart';
 import 'transaction_list_item_widget.dart';
+import 'transaction_provider.dart';
 
 class TransactionListSubpage extends StatefulWidget {
-  const TransactionListSubpage({
-    super.key,
-    required this.onShowEditDialog,
-  });
+  const TransactionListSubpage({super.key, required this.onShowEditDialog});
+
   final void Function(Transaction currency) onShowEditDialog;
 
   @override

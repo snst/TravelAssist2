@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../currency/currency_value.dart';
 
 class CalculatorOp {
@@ -6,6 +7,7 @@ class CalculatorOp {
 
   CurrencyValue? value;
   String op;
+
   @override
   String toString() {
     return value != null ? value!.toShortString() : " $op ";
@@ -50,7 +52,9 @@ class Calculator extends ChangeNotifier {
 
   void pushValue(CurrencyValue val) {
     if (_operations.isEmpty || _operations.last.op.isNotEmpty) {
-      if (_operations.isNotEmpty && _operations.last.op.isNotEmpty && _operations.last.op == "=") {
+      if (_operations.isNotEmpty &&
+          _operations.last.op.isNotEmpty &&
+          _operations.last.op == "=") {
         _operations.last.op = "+";
       }
       _operations.add(CalculatorOp(value: val));

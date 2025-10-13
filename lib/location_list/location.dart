@@ -1,20 +1,22 @@
 import 'package:isar_community/isar.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:intl/intl.dart';
+
 part 'location.g.dart';
 
 @collection
 @JsonSerializable()
 class Location {
-  Location(
-      {required this.title,
-        required this.timestamp,
-        required this.latitude,
-        required this.longitude,
-        required this.altitude,
-        required this.accuracy,
-        this.comment = "",
-        this.tags = ""});
+  Location({
+    required this.title,
+    required this.timestamp,
+    required this.latitude,
+    required this.longitude,
+    required this.altitude,
+    required this.accuracy,
+    this.comment = "",
+    this.tags = "",
+  });
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   Id id = Isar.autoIncrement;

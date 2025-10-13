@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'calculator/calculator.dart';
+import 'calculator/calculator_page.dart';
 import 'currency/currency_list_page.dart';
 import 'currency/currency_provider.dart';
-import 'calculator/calculator_page.dart';
-import 'calculator/calculator.dart';
+import 'location_list/location_item_page.dart';
 import 'location_list/location_list_page.dart';
 import 'location_list/location_provider.dart';
-import 'location_list/location_item_page.dart';
+import 'memo_list/memo_item_page.dart';
+import 'memo_list/memo_list_page.dart';
+import 'memo_list/memo_provider.dart';
+import 'todo_list/todo_item_page.dart';
 import 'todo_list/todo_list_page.dart';
 import 'todo_list/todo_provider.dart';
+import 'transaction_list/transaction_item_page.dart';
 import 'transaction_list/transaction_main_page.dart';
 import 'transaction_list/transaction_provider.dart';
-import 'transaction_list/transaction_edit_page.dart';
-import 'transaction_list/transaction.dart';
-import 'todo_list/todo_item_page.dart';
-import 'todo_list/todo_item.dart';
 import 'widgets/widget_dual_action_button.dart';
 
 class InfoPage extends StatelessWidget {
@@ -41,17 +43,7 @@ class ExpensesPage extends StatelessWidget {
   }
 }
 
-// A class to hold the button data
-class ActionButton {
-  final String label;
-  final Widget page;
-
-  ActionButton({required this.label, required this.page});
-}
-
 void main() {
-  //runApp(const MyApp());
-
   runApp(
     MultiProvider(
       providers: [
@@ -60,6 +52,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => TransactionProvider()),
         ChangeNotifierProvider(create: (context) => LocationProvider()),
         ChangeNotifierProvider(create: (context) => Calculator()),
+        ChangeNotifierProvider(create: (context) => MemoProvider()),
       ],
       child: const MyApp(),
     ),
@@ -96,14 +89,6 @@ class MyApp extends StatelessWidget {
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
-  void _onMainPressed(String title) {
-    debugPrint('Main function pressed: $title');
-  }
-
-  void _onSubPressed(String title) {
-    debugPrint('Sub function pressed: $title');
-  }
-
   void _onShowPage(BuildContext context, Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
@@ -113,304 +98,12 @@ class MainScreen extends StatelessWidget {
     const double buttonHeight = 60;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Main Menu'), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // --- Calculator ---
-            _buildMainButton(
-              context,
-              title: 'Calculator',
-              icon: Icons.calculate,
-              height: buttonHeight,
-              onPressed: () => _onShowPage(context, const CalculatorPage()),
-            ),
-            const SizedBox(height: 16),
-            /*
-
-    ActionButton(label: 'To-Do', page: const TodoListPage()),
-    ActionButton(label: 'Transactions', page: const TransactionMainPage()),
-    ActionButton(label: 'infos', page: const ExpensesPage()),
-    ActionButton(label: 'info', page: const InfoPage()),
- */
-
-            // --- Location List ---
-            WidgetDualActionButton(
-              label: 'Locations',
-              icon: Icons.map,
-              onMainPressed: () =>
-                  _onShowPage(context, const LocationListPage()),
-              onAddPressed: () => _onShowPage(context, LocationItemPage()),
-            ),
-            /*
-            _buildMainButton(
-              context,
-              title: 'Locations',
-              icon: Icons.map,
-              height: buttonHeight,
-              onPressed: () => _onShowPage(context, const LocationListPage()),
-              onPressedSecondary: () => _onShowPage(context, LocationItemPage()),
-            ),
-            */
-            const SizedBox(height: 16),
-
-            // --- Expenses ---
-            _buildMainButton(
-              context,
-              title: 'Expenses',
-              icon: Icons.attach_money,
-              height: buttonHeight,
-              onPressed: () =>
-                  _onShowPage(context, const TransactionMainPage()),
-              onPressedSecondary: () =>
-                  _onShowPage(context, TransactionEditPage()),
-            ),
-            _buildScrollableSubfunctions(
-              height: buttonHeight,
-              subIcons: [
-                {'icon': Icons.coffee_outlined, 'name': 'Cafe Essen'},
-                {'icon': Icons.bakery_dining, 'name': 'Frühstück Essen'},
-                {'icon': Icons.local_dining, 'name': 'Restaurant Essen'},
-                {'icon': Icons.shopping_cart, 'name': 'Einkauf Essen'},
-                {'icon': Icons.directions_bus, 'name': 'Bus Transport'},
-                {'icon': Icons.local_taxi, 'name': 'Taxi Transport'},
-                {'icon': Icons.museum, 'name': 'Einritt'},
-                {'icon': Icons.hotel, 'name': 'Hotel'},
-              ],
-              onSubPressed: _onSubPressed,
-            ),
-            const SizedBox(height: 8),
-
-            // --- To-Do ---
-            _buildMainButton(
-              context,
-              title: 'To-Dos',
-              icon: Icons.list,
-              height: buttonHeight,
-              onPressed: () => _onShowPage(context, const TodoListPage()),
-              onPressedSecondary: () => _onShowPage(
-                context,
-                TodoItemPage(newItem: true, item: TodoItem(quantity: 1)),
-              ),
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// Main function button
-  Widget _buildMainButton(
-    BuildContext context, {
-    required String title,
-    required IconData icon,
-    required double height,
-    required VoidCallback onPressed,
-    VoidCallback? onPressedSecondary,
-  }) {
-    return Row(
-      children: [
-        Expanded(
-          child: SizedBox(
-            height: height,
-            child: ElevatedButton.icon(
-              icon: Icon(icon, size: 28),
-              label: Text(title, style: const TextStyle(fontSize: 18)),
-
-              onPressed: onPressed,
-            ),
-          ),
-        ),
-        if (onPressedSecondary != null) const SizedBox(width: 8),
-        if (onPressedSecondary != null)
-          SizedBox(
-            height: height,
-            width: height, // to make it square
-            child: IconButton(
-              iconSize: 32,
-              icon: const Icon(Icons.add),
-
-              onPressed: onPressedSecondary,
-            ),
-          ),
-      ],
-    );
-  }
-
-  /// Horizontally scrollable subfunction icons (below main button)
-  Widget _buildScrollableSubfunctions({
-    required double height,
-    required List<Map<String, dynamic>> subIcons,
-    required Function(String) onSubPressed,
-  }) {
-    return SizedBox(
-      height: height,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: subIcons.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
-        itemBuilder: (context, index) {
-          final sub = subIcons[index];
-          return SizedBox(
-            width: height, // square buttons
-            height: height,
-            child: IconButton(
-              icon: Icon(sub['icon'], size: 28),
-              onPressed: () => _onShowPage(
-                context,
-                TransactionEditPage(category: sub['name']),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-/*
-class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
-
-  void _onMainPressed(String title) {
-    debugPrint('Main function pressed: $title');
-  }
-
-  void _onSubPressed(String title) {
-    debugPrint('Sub function pressed: $title');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Main Menu'),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            // --- Calculator ---
-            _buildMainButton(
-              context,
-              title: 'Calculator',
-              icon: Icons.calculate,
-              onPressed: () => _onMainPressed('Calculator'),
-            ),
-
-            const SizedBox(height: 16),
-
-            // --- Todo List ---
-            _buildMainButton(
-              context,
-              title: 'Todo List',
-              icon: Icons.check_circle_outline,
-              onPressed: () => _onMainPressed('Todo List'),
-            ),
-
-            const SizedBox(height: 16),
-
-            // --- Expenses (with subfunctions) ---
-            _buildExpandableSection(
-              context,
-              title: 'Expenses',
-              icon: Icons.attach_money,
-              subFunctions: [
-                {'title': 'Breakfast', 'icon': Icons.free_breakfast},
-                {'title': 'Lunch', 'icon': Icons.lunch_dining},
-                {'title': 'Dinner', 'icon': Icons.dinner_dining},
-              ],
-              onMainPressed: () => _onMainPressed('Expenses'),
-              onSubPressed: _onSubPressed,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMainButton(BuildContext context,
-      {required String title,
-        required IconData icon,
-        required VoidCallback onPressed}) {
-    return ElevatedButton.icon(
-      icon: Icon(icon, size: 28),
-      label: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0),
-        child: Text(title, style: const TextStyle(fontSize: 18)),
-      ),
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size.fromHeight(60),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      onPressed: onPressed,
-    );
-  }
-
-  Widget _buildExpandableSection(
-      BuildContext context, {
-        required String title,
-        required IconData icon,
-        required List<Map<String, dynamic>> subFunctions,
-        required VoidCallback onMainPressed,
-        required Function(String) onSubPressed,
-      }) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 2,
-      child: ExpansionTile(
-        leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
-        title: Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-        childrenPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-        children: subFunctions.map((sub) {
-          return ListTile(
-            leading: Icon(sub['icon']),
-            title: Text(sub['title']),
-            onTap: () => onSubPressed(sub['title']),
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-*/
-
-/*
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  // Define the list of buttons and their corresponding pages
-  final List<ActionButton> _buttons = [
-    ActionButton(label: 'Calculator', page: const CalculatorPage()),
-    ActionButton(label: 'Add Location', page: LocationItemPage()),
-    ActionButton(label: 'Locations', page: const LocationListPage()),
-    ActionButton(label: 'To-Do', page: const TodoListPage()),
-    ActionButton(label: 'Transactions', page: const TransactionMainPage()),
-    ActionButton(label: 'infos', page: const ExpensesPage()),
-    ActionButton(label: 'info', page: const InfoPage()),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text("Travel Assist"),
         actions: [
           PopupMenuButton<int>(
             itemBuilder: (context) => [
-              //const PopupMenuItem(value: 0, child: Text("Currency rates")),
               const PopupMenuItem(value: 1, child: Text("Currency rates")),
             ],
             elevation: 1,
@@ -428,30 +121,88 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3, // 3 buttons per row
-            crossAxisSpacing: 8.0, // Spacing between columns
-            mainAxisSpacing: 8.0, // Spacing between rows
-          ),
-          itemCount: _buttons.length,
-          itemBuilder: (context, index) {
-            final button = _buttons[index];
-            return ElevatedButton(
-              onPressed: () {
-                // Navigate to the new page when a button is pressed
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => button.page),
-                );
-              },
-              child: Text(button.label, textAlign: TextAlign.center),
-            );
-          },
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            WidgetDualActionButton(
+              label: 'Calculator',
+              icon: Icons.calculate,
+              onMainPressed: () => _onShowPage(context, const CalculatorPage()),
+            ),
+            WidgetDualActionButton(
+              label: 'Locations',
+              icon: Icons.map,
+              onMainPressed: () =>
+                  _onShowPage(context, const LocationListPage()),
+              onAddPressed: () =>  _onShowPage(context, LocationItemPage()),
+            ),
+            // --- To-Do ---
+            WidgetDualActionButton(
+              label: 'To-Dos',
+              icon: Icons.list,
+              onMainPressed: () => _onShowPage(context, const TodoListPage()),
+              onAddPressed: () => _onShowPage(context, TodoItemPage()),
+            ),
+            // --- To-Do ---
+            WidgetDualActionButton(
+              label: 'Memos',
+              icon: Icons.note,
+              onMainPressed: () => _onShowPage(context, MemoListPage()),
+              onAddPressed: () => _onShowPage(context, MemoItemPage()),
+            ),
+
+            WidgetDualActionButton(
+              label: 'Expenses',
+              icon: Icons.attach_money,
+              onMainPressed: () =>
+                  _onShowPage(context, const TransactionMainPage()),
+              onAddPressed: () => _onShowPage(context, TransactionItemPage()),
+            ),
+            _buildScrollableSubfunctions(
+              height: buttonHeight,
+              subIcons: [
+                {'icon': Icons.coffee_outlined, 'name': 'Cafe Essen'},
+                {'icon': Icons.bakery_dining, 'name': 'Frühstück Essen'},
+                {'icon': Icons.local_dining, 'name': 'Restaurant Essen'},
+                {'icon': Icons.shopping_cart, 'name': 'Einkauf Essen'},
+                {'icon': Icons.directions_bus, 'name': 'Bus Transport'},
+                {'icon': Icons.local_taxi, 'name': 'Taxi Transport'},
+                {'icon': Icons.museum, 'name': 'Einritt'},
+                {'icon': Icons.hotel, 'name': 'Hotel'},
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
+
+  /// Horizontally scrollable subfunction icons (below main button)
+  Widget _buildScrollableSubfunctions({
+    required double height,
+    required List<Map<String, dynamic>> subIcons,
+  }) {
+    return SizedBox(
+      height: height,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: subIcons.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (context, index) {
+          final sub = subIcons[index];
+          return SizedBox(
+            width: height, // square buttons
+            height: height,
+            child: IconButton(
+              icon: Icon(sub['icon'], size: 28),
+              onPressed: () => _onShowPage(
+                context,
+                TransactionItemPage(category: sub['name']),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
-*/

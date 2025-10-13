@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
+
+import '../utils/map.dart';
+import '../widgets/widget_confirm_dialog.dart';
+import '../widgets/widget_text_input.dart';
 import 'location.dart';
 import 'location_provider.dart';
-import '../utils/map.dart';
-import '../widgets/widget_text_input.dart';
-import '../widgets/widget_confirm_dialog.dart';
 
 class LocationItemPage extends StatefulWidget {
   LocationItemPage({super.key, this.location});
@@ -71,9 +72,57 @@ class _LocationItemPageState extends State<LocationItemPage> {
             hintText: 'Enter tags',
             onChanged: (value) => tags = value,
           ),
+
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          FormattedText(
+            title: "Latitude, Longitude",
+            content:
+            "${widget.location!.latitude.toString()}, ${widget.location!.longitude.toString()}",
+          ),
+          ElevatedButton(
+            child: const Text('Map'),
+            onPressed: () {
+              //Navigator.of(context).pop(); // Close the AlertDialog
+              launchMapOnAndroid(
+                widget.location!.latitude,
+                widget.location!.longitude,
+              );
+            },
+          ),]),
+
+
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              FormattedText(
+                title: "Time",
+                content: widget.location!.getDateTimeStr(),
+              ),
+              FormattedText(
+                title: "Accuracy",
+                content: widget.location!.accuracy.round().toString(),
+              ),
+              FormattedText(
+                title: "Altitude",
+                content: widget.location!.altitude.toString(),
+              ),
+
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                child: const Text('Refresh'),
+                onPressed: () {
+                  setState(() {
+                    updatePosition(widget.location!);
+                  });
+                },
+              ),
               if (!widget.newItem)
                 ElevatedButton(
                   child: const Text('Delete'),
@@ -109,53 +158,6 @@ class _LocationItemPageState extends State<LocationItemPage> {
               ),
             ],
           ),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              FormattedText(
-                title: "Time",
-                content: widget.location!.getDateTimeStr(),
-              ),
-              FormattedText(
-                title: "Accuracy",
-                content: widget.location!.accuracy.round().toString(),
-              ),
-              ElevatedButton(
-                child: const Text('Refresh'),
-                onPressed: () {
-                  setState(() {
-                    updatePosition(widget.location!);
-                  });
-                },
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              FormattedText(
-                title: "Latitude, Longitude",
-                content:
-                    "${widget.location!.latitude.toString()}, ${widget.location!.longitude.toString()}",
-              ),
-              FormattedText(
-                title: "Altitude",
-                content: widget.location!.altitude.toString(),
-              ),
-              ElevatedButton(
-                child: const Text('Map'),
-                onPressed: () {
-                  //Navigator.of(context).pop(); // Close the AlertDialog
-                  launchMapOnAndroid(
-                    widget.location!.latitude,
-                    widget.location!.longitude,
-                  );
-                },
-              ),
-            ],
-          ),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: []),
         ],
       ),
     );

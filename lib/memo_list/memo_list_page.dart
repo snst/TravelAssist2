@@ -1,31 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'location.dart';
-import 'location_provider.dart';
-import 'location_item_page.dart';
-import '../utils/map.dart';
-import '../widgets/export_widget.dart';
-import '../widgets/widget_text_input.dart';
 
-class LocationListPage extends StatefulWidget {
-  const LocationListPage({super.key});
+import '../widgets/export_widget.dart';
+import 'memo_item_page.dart';
+import 'memo_provider.dart';
+
+class MemoListPage extends StatefulWidget {
+  const MemoListPage({super.key});
 
   @override
-  State<LocationListPage> createState() => _LocationListPageState();
+  State<MemoListPage> createState() => _MemoListPageState();
 }
 
-class _LocationListPageState extends State<LocationListPage> {
-  void updatePosition(Location location) async {
-    Position position = await getPosition();
-    location.accuracy = position.accuracy;
-    location.altitude = position.altitude;
-    location.latitude = position.latitude;
-    location.longitude = position.longitude;
-    location.timestamp = DateTime.now();
-  }
-
-  void showSettingsPage(BuildContext context, LocationProvider provider) {
+class _MemoListPageState extends State<MemoListPage> {
+  void showSettingsPage(BuildContext context, MemoProvider provider) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -33,7 +22,7 @@ class _LocationListPageState extends State<LocationListPage> {
           return Scaffold(
             appBar: AppBar(title: const Text("Settings")),
             body: ExportWidget(
-              name: 'location_list',
+              name: 'memo_list',
               toJson: provider.toJson,
               fromJson: provider.fromJson,
               clearJson: provider.clear,
@@ -46,21 +35,20 @@ class _LocationListPageState extends State<LocationListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final locationProvider = context.watch<LocationProvider>();
+    final memoProvider = context.watch<MemoProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Location List"),
+        title: const Text("Memo List"),
         actions: [
           PopupMenuButton<int>(
             itemBuilder: (context) => [
-              //const PopupMenuItem(value: 0, child: Text("Currency rates")),
               const PopupMenuItem(value: 1, child: Text("Settings")),
             ],
             elevation: 1,
             onSelected: (value) {
               switch (value) {
                 case 1:
-                  showSettingsPage(context, locationProvider);
+                  showSettingsPage(context, memoProvider);
                   break;
               }
             },
@@ -68,33 +56,34 @@ class _LocationListPageState extends State<LocationListPage> {
         ],
       ),
       body: ListView.builder(
-        itemCount: locationProvider.items.length,
+        itemCount: memoProvider.items.length,
         itemBuilder: (context, index) {
-          final reverseIndex = locationProvider.items.length - 1 - index;
+          final reverseIndex = memoProvider.items.length - 1 - index;
           return Card(
             child: ListTile(
               onTap: () {
-                // _showEditDialog(context, locationProvider,
-                //     locationProvider.items[reverseIndex], false);
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LocationItemPage(
-                      location: locationProvider.items[reverseIndex],
-                    ),
+                    builder: (context) =>
+                        MemoItemPage(item: memoProvider.items[reverseIndex]),
                   ),
                 );
               },
               title: FormattedText(
-                title: locationProvider.items[reverseIndex].getDateTimeStr(),
-                content: locationProvider.items[reverseIndex].title,
+                title: memoProvider.items[reverseIndex].title,
+                content: memoProvider.items[reverseIndex].content,
               ),
               trailing: IconButton(
-                icon: Icon(Icons.map), // The icon on the right
+                icon: Icon(Icons.copy), // The icon on the right
                 onPressed: () {
-                  launchMapOnAndroid(
-                    locationProvider.items[reverseIndex].latitude,
-                    locationProvider.items[reverseIndex].longitude,
+                  Clipboard.setData(
+                    ClipboardData(
+                      text: memoProvider.items[reverseIndex].content,
+                    ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Copied to Clipboard')),
                   );
                 },
               ),
@@ -106,7 +95,7 @@ class _LocationListPageState extends State<LocationListPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => LocationItemPage()),
+            MaterialPageRoute(builder: (context) => MemoItemPage()),
           );
         },
         tooltip: 'Add Location',
@@ -136,7 +125,7 @@ class FormattedText extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                fontSize: 14, // Smaller font size for title
+                fontSize: 16, // Smaller font size for title
                 color: Colors.grey, // Grey color for title
               ),
             ),

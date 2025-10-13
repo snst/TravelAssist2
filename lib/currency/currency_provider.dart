@@ -3,10 +3,11 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
 import 'package:provider/provider.dart';
+
 import '../transaction_list/transaction.dart';
 import '../transaction_list/transaction_value.dart';
-import 'currency.dart';
 import '../utils/storage.dart';
+import 'currency.dart';
 
 class CurrencyProvider extends ChangeNotifier with Storage {
   CurrencyProvider({this.useDb = true}) {
@@ -18,10 +19,13 @@ class CurrencyProvider extends ChangeNotifier with Storage {
 
   bool useDb;
   final HashMap<String, Currency> _currencyMap = HashMap();
+
   List<Currency> get allItems => _currencyMap.values.toList();
+
   List<Currency> get visibleItems => allItems
       .where((element) => element.state != CurrencyStateEnum.hide)
       .toList();
+
   List<Currency> getVisibleItemsWith(Currency? currency) {
     var list = allItems
         .where((element) => element.state != CurrencyStateEnum.hide)
@@ -111,8 +115,9 @@ class CurrencyProvider extends ChangeNotifier with Storage {
   }
 
   Currency getCurrencyById(int id) {
-    return allItems
-        .firstWhere((element) => element.id == id); //, orElse: () => Null);
+    return allItems.firstWhere(
+      (element) => element.id == id,
+    ); //, orElse: () => Null);
   }
 
   TransactionValue getTransactionValue(Transaction transaction) {

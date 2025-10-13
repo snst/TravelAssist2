@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinbox/material.dart';
 import 'package:provider/provider.dart';
+
 import '../widgets/widget_combobox.dart';
 import '../widgets/widget_confirm_dialog.dart';
 import '../widgets/widget_text_input.dart';
@@ -8,13 +9,10 @@ import 'todo_item.dart';
 import 'todo_provider.dart';
 
 class TodoItemPage extends StatefulWidget {
-  TodoItemPage({super.key, required this.newItem, required this.item})
-    : title = newItem ? 'Add item' : 'Edit item',
-      modifiedItem = TodoItem.copy(item);
+  TodoItemPage({super.key, this.item})
+    : modifiedItem = item == null ? TodoItem(quantity: 1) : item.clone();
 
-  final bool newItem;
-  final String title;
-  final TodoItem item;
+  final TodoItem? item;
   final TodoItem modifiedItem;
 
   @override
@@ -28,8 +26,13 @@ class _PackedItemPageState extends State<TodoItemPage> {
 
   void saveAndClose(BuildContext context) {
     if (widget.modifiedItem.name.isNotEmpty) {
-      widget.item.update(widget.modifiedItem);
-      getPackingList(context).add(widget.item);
+      if (widget.item != null) {
+        widget.item!.update(widget.modifiedItem);
+        getPackingList(context).add(widget.item!);
+      } else {
+        // new item
+        getPackingList(context).add(widget.modifiedItem);
+      }
       Navigator.of(context).pop();
     }
   }
@@ -41,12 +44,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
     List<String> categories = getPackingList(context).getCategories();
 
     return Scaffold(
-      appBar:
-          //AppBar(
-          //backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          //title: Text(widget.title)),
-          AppBar(title: Text("To-Do")),
-      //      AppBar(automaticallyImplyLeading: false, title: Text("To-Do")),
+      appBar: AppBar(title: Text("To-Do")),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
         child: Column(
@@ -57,7 +55,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
               text: widget.modifiedItem.name,
               hintText: 'Name',
               onChanged: (value) => widget.modifiedItem.name = value,
-              autofocus: widget.newItem,
+              autofocus: widget.item == null, // new item
             ),
             SizedBox(height: 5),
             WidgetComboBox(
@@ -127,7 +125,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
                   setState(() {
                     widget.modifiedItem.state = newSelection.first;
                   });
-                  if (!widget.newItem) {
+                  if (widget.item != null) {
                     saveAndClose(context);
                   }
                 },
@@ -143,8 +141,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
                   },
                 ),
 
-                // const Spacer(),
-                if (!widget.newItem)
+                if (widget.item != null)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
                     child: ElevatedButton(
@@ -155,7 +152,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
                           title: 'Confirm Delete',
                           text: 'Are you sure you want to delete this item?',
                           onConfirm: () {
-                            getPackingList(context).delete(widget.item);
+                            getPackingList(context).delete(widget.item!);
                             Navigator.of(context).pop();
                             //Navigator.of(context).popUntil((route) => route.isFirst);
                           },

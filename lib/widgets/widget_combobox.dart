@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+
 import '../utils/globals.dart';
 
 class WidgetComboBox extends StatelessWidget {
@@ -19,8 +20,9 @@ class WidgetComboBox extends StatelessWidget {
   final TextEditingController controller;
   final List<String> items;
   final bool filter;
+
   //final FocusNode _focusNode = FocusNode();
-//  final SuggestionsController _suggestionsController();
+  //  final SuggestionsController _suggestionsController();
 
   @override
   Widget build(BuildContext context) {
@@ -30,16 +32,18 @@ class WidgetComboBox extends StatelessWidget {
       controller: controller,
       builder: (context, controller, focusNode) {
         return TextField(
-            controller: controller,
-            focusNode: focusNode,
-            autofocus: false,
-            decoration: InputDecoration(
-                border: BorderStyles.input,
-                hintText: hintText,
-                suffixIcon: IconButton(
-                  onPressed: controller.clear,
-                  icon: const Icon(Icons.clear),
-                )));
+          controller: controller,
+          focusNode: focusNode,
+          autofocus: false,
+          decoration: InputDecoration(
+            border: BorderStyles.input,
+            hintText: hintText,
+            suffixIcon: IconButton(
+              onPressed: controller.clear,
+              icon: const Icon(Icons.clear),
+            ),
+          ),
+        );
       },
       suggestionsCallback: (pattern) {
         //widget.modifiedItem.category = pattern;
@@ -48,9 +52,11 @@ class WidgetComboBox extends StatelessWidget {
         List<String> strlist;
         if (filter) {
           strlist = items
-              .where((item) =>
-                  item.isNotEmpty &&
-                  item.toLowerCase().contains(pattern.toLowerCase()))
+              .where(
+                (item) =>
+                    item.isNotEmpty &&
+                    item.toLowerCase().contains(pattern.toLowerCase()),
+              )
               .toList();
           for (final s in items) {
             if (!strlist.contains(s) && s.isNotEmpty) {
@@ -67,9 +73,7 @@ class WidgetComboBox extends StatelessWidget {
         return strlist;
       },
       itemBuilder: (context, suggestion) {
-        return ListTile(
-          title: Text(suggestion),
-        );
+        return ListTile(title: Text(suggestion));
       },
       onSelected: (suggestion) {
         //print("onSelected11: $suggestion");

@@ -1,11 +1,12 @@
-import 'package:url_launcher/url_launcher.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void launchMapOnAndroid(double latitude, double longitude) async {
   try {
     const String markerLabel = 'Here';
     final url = Uri.parse(
-        'geo:$latitude,$longitude?q=$latitude,$longitude($markerLabel)');
+      'geo:$latitude,$longitude?q=$latitude,$longitude($markerLabel)',
+    );
     await launchUrl(url);
   } catch (error) {
     //if (context.mounted) {
@@ -20,7 +21,8 @@ Future<Position> getPosition() async {
     distanceFilter: 100,
   );
 
-  Position position =
-  await Geolocator.getCurrentPosition(locationSettings: locationSettings);
+  Position position = await Geolocator.getCurrentPosition(
+    locationSettings: locationSettings,
+  );
   return position;
 }

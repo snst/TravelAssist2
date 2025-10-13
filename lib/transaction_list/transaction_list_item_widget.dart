@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../currency/currency.dart';
-import '../utils/globals.dart';
 import '../currency/currency_provider.dart';
+import '../utils/globals.dart';
 import 'transaction.dart';
 
 class TransactionListItemWidget extends StatelessWidget {
@@ -43,25 +44,33 @@ class TransactionListItemWidget extends StatelessWidget {
     final valueLocal = transaction.valueCurrencyString;
 
     return Card(
-        //height: 50,
-        child: ListTile(
-      onTap: () {
-        onEditItem(transaction);
-      },
-      visualDensity: const VisualDensity(vertical: -4),
-      leading: getIcon(transaction),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(transaction.getCategoryNameStr()),
-            Text(transaction.method, style: detailStyle)
-          ]),
-          Column(
+      //height: 50,
+      child: ListTile(
+        onTap: () {
+          onEditItem(transaction);
+        },
+        visualDensity: const VisualDensity(vertical: -4),
+        leading: getIcon(transaction),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(transaction.getCategoryNameStr()),
+                Text(transaction.method, style: detailStyle),
+              ],
+            ),
+            Column(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: [Text(valueHome), Text(valueLocal, style: detailStyle)]),
-        ],
+              children: [
+                Text(valueHome),
+                Text(valueLocal, style: detailStyle),
+              ],
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 }

@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import '../widgets/export_widget.dart';
-import 'todo_list_widget.dart';
-import 'todo_item_page.dart';
 import 'todo_item.dart';
+import 'todo_item_page.dart';
+import 'todo_list_widget.dart';
 import 'todo_provider.dart';
 
 class TodoListPage extends StatefulWidget {
   const TodoListPage({super.key});
+
   static int pageIndex = 2;
+
   @override
   State<TodoListPage> createState() => _PackingListPageState();
 }
@@ -34,30 +37,30 @@ class _PackingListPageState extends State<TodoListPage> {
     setState(() {});
   }
 
-  Future<void> _showEditDialog(TodoItem item, bool newItem) async {
+  Future<void> _showEditDialog(TodoItem? item) async {
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => TodoItemPage(
-                newItem: newItem,
-                item: item,
-              )),
+      MaterialPageRoute(builder: (context) => TodoItemPage(item: item)),
     );
   }
 
   void showTodoSettingsPage(BuildContext context, TodoProvider todoProvider) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return Scaffold(
-          appBar: AppBar(
-            title: const Text("Settings"),
-          ),
-          body: ExportWidget(
-            name: 'todo',
-            toJson: todoProvider.toJson,
-            fromJson: todoProvider.fromJson,
-            clearJson: todoProvider.clear,
-          ));
-    }));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return Scaffold(
+            appBar: AppBar(title: const Text("Settings")),
+            body: ExportWidget(
+              name: 'todo',
+              toJson: todoProvider.toJson,
+              fromJson: todoProvider.fromJson,
+              clearJson: todoProvider.clear,
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -88,8 +91,9 @@ class _PackingListPageState extends State<TodoListPage> {
         ],
       ),
       body: GroupedListView<TodoItem, String>(
-        elements: todoProvider
-            .getFilteredItems(bottomIndexToStateEnum(_selectedFilterIndex)),
+        elements: todoProvider.getFilteredItems(
+          bottomIndexToStateEnum(_selectedFilterIndex),
+        ),
         groupBy: (TodoItem element) => element.category,
         groupComparator: (value1, value2) => value2.compareTo(value1),
         itemComparator: (TodoItem element1, TodoItem element2) =>
@@ -99,20 +103,19 @@ class _PackingListPageState extends State<TodoListPage> {
         groupSeparatorBuilder: (String value) => Padding(
           padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
           child: Align(
-              alignment: Alignment.center,
-              child: Text(
-                value,
-                textAlign: TextAlign.center,
-              )),
+            alignment: Alignment.center,
+            child: Text(value, textAlign: TextAlign.center),
+          ),
         ),
         itemBuilder: (context, item) => TodoListWidget(
-            item: item,
-            onItemChanged: (item) {
-              setState(() {});
-            },
-            onEditItem: (item) => _showEditDialog(item, false),
-            editable: _listEditable,
-            filterIndex: bottomIndexToStateEnum(_selectedFilterIndex)),
+          item: item,
+          onItemChanged: (item) {
+            setState(() {});
+          },
+          onEditItem: (item) => _showEditDialog(item),
+          editable: _listEditable,
+          filterIndex: bottomIndexToStateEnum(_selectedFilterIndex),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -142,7 +145,7 @@ class _PackingListPageState extends State<TodoListPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showEditDialog(TodoItem(quantity: 1), true),
+        onPressed: () => _showEditDialog(null),
         tooltip: 'Add item',
         child: const Icon(Icons.add),
       ),

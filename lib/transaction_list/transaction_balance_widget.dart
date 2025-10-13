@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../currency/currency_provider.dart';
 import 'transaction_value.dart';
 import 'transaction_value_widget.dart';
@@ -11,6 +12,7 @@ class BalanceWidget extends StatelessWidget {
     required this.currencyProvider,
     this.style,
   });
+
   final String name;
   final TransactionValue transactionValue;
   final CurrencyProvider currencyProvider;
@@ -20,13 +22,16 @@ class BalanceWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(32, 0, 32, 0),
-      child: Row(children: [
-        Expanded(child: Text(name, style: style)),
-        TransactionValueWidget(
+      child: Row(
+        children: [
+          Expanded(child: Text(name, style: style)),
+          TransactionValueWidget(
             value: transactionValue,
             currencyProvider: currencyProvider,
-            style: style)
-      ]),
+            style: style,
+          ),
+        ],
+      ),
     );
   }
 }

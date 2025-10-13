@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+
 import '../currency/currency.dart';
 import '../currency/currency_provider.dart';
+import '../widgets/export_widget.dart';
+import 'transaction.dart';
 //import 'currency_rates_page.dart';
 //import '../widgets/drawer_widget.dart';
 import 'transaction_balance_subpage.dart';
+import 'transaction_item_page.dart';
 import 'transaction_list_subpage.dart';
 import 'transaction_provider.dart';
-import 'transaction_edit_page.dart';
-import 'transaction.dart';
-import '../widgets/export_widget.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class TransactionMainPage extends StatefulWidget {
   const TransactionMainPage({super.key});
+
   static int pageIndex = 0;
+
   //final DrawerWidget drawer;
   @override
   State<TransactionMainPage> createState() => _TransactionMainPageState();
@@ -23,17 +26,15 @@ class TransactionMainPage extends StatefulWidget {
 class _TransactionMainPageState extends State<TransactionMainPage> {
   Currency? shownCurrency;
   int _selectedSubPageIndex = 0;
+
   Future<void> _showEditDialog(Transaction item) async {
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => TransactionEditPage(
-                item: item,
-              )),
+      MaterialPageRoute(builder: (context) => TransactionItemPage(item: item)),
     );
   }
 
-/*
+  /*
   void showCurrenyRatesPage(
       BuildContext context, CurrencyProvider currencyProvider) {
     Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -45,20 +46,23 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
     }));
   }*/
 
-
   void showCurrencySettingsPage(BuildContext context, TransactionProvider tp) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return Scaffold(
-          appBar: AppBar(
-            title: const Text("Settings"),
-          ),
-          body: ExportWidget(
-            name: 'transaction',
-            toJson: tp.toJson,
-            fromJson: tp.fromJson,
-            clearJson: tp.clear,
-          ));
-    }));
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return Scaffold(
+            appBar: AppBar(title: const Text("Settings")),
+            body: ExportWidget(
+              name: 'transaction',
+              toJson: tp.toJson,
+              fromJson: tp.fromJson,
+              clearJson: tp.clear,
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -97,7 +101,9 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
       body: () {
         if (_selectedSubPageIndex == 1) {
           return TransactionBalanceSubPage(
-              transactionProvider: tp, currencyProvider: cp);
+            transactionProvider: tp,
+            currencyProvider: cp,
+          );
         } else {
           return TransactionListSubpage(onShowEditDialog: _showEditDialog);
         }
@@ -106,9 +112,7 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => TransactionEditPage(
-                    )),
+            MaterialPageRoute(builder: (context) => TransactionItemPage()),
           );
         },
         tooltip: 'Add item',

@@ -1,42 +1,42 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_spinbox/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../utils/globals.dart';
+
 import '../currency/currency.dart';
-import 'transaction_provider.dart';
-import 'transaction_value.dart';
+import '../currency/currency_chooser_widget.dart';
+import '../currency/currency_provider.dart';
+import '../utils/globals.dart';
+import '../utils/map.dart';
+import '../utils/travel_assist_utils.dart';
 import '../widgets/widget_combobox.dart';
 import '../widgets/widget_date_chooser.dart';
 import '../widgets/widget_transaction_description_input.dart';
 import 'transaction.dart';
-import '../currency/currency_provider.dart';
-import '../utils/travel_assist_utils.dart';
-import '../currency/currency_chooser_widget.dart';
-import 'package:flutter_spinbox/material.dart';
-import '../utils/map.dart';
-import 'package:geolocator/geolocator.dart';
+import 'transaction_provider.dart';
+import 'transaction_value.dart';
 
-class TransactionEditPage extends StatefulWidget {
-  TransactionEditPage({
-    super.key,
-    this.item,
-    this.category,
-  })  : newItem = item == null,
-        modifiedItem = (item ?? Transaction(date: DateTime.now(), currency: "", method: "")).clone();
+class TransactionItemPage extends StatefulWidget {
+  TransactionItemPage({super.key, this.item, this.category})
+      : newItem = item == null,
+        modifiedItem = item == null
+            ? Transaction(date: DateTime.now(), currency: "", method: "")
+            : item!.clone();
 
   final bool newItem;
   final Transaction? item;
   final Transaction modifiedItem;
   final String? category;
 
-
   @override
-  State<TransactionEditPage> createState() => _TransactionEditPageState();
+  State<TransactionItemPage> createState() => _TransactionItemPageState();
 }
 
-class _TransactionEditPageState extends State<TransactionEditPage> {
+class _TransactionItemPageState extends State<TransactionItemPage> {
   final TextEditingController categoryController = TextEditingController();
   final TextEditingController paymentMethodController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
 
   @override
   void initState() {
@@ -46,6 +46,17 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
       _getGpsPos();
       widget.modifiedItem.category = widget.category ?? "";
     }
+    _amountController.text = widget.modifiedItem.value == 0
+        ? ""
+        : widget.modifiedItem.valueString;
+  }
+
+  @override
+  void dispose() {
+    categoryController.dispose();
+    paymentMethodController.dispose();
+    _amountController.dispose();
+    super.dispose();
   }
 
   String defaultCurrency = "";
@@ -106,8 +117,9 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
     CurrencyProvider currencyProvider = CurrencyProvider.getInstance(context);
 
     if (widget.modifiedItem.method == "") {
-      final paymentMethodList =
-          TransactionProvider.getInstance(context).getPaymentMethodList(false);
+      final paymentMethodList = TransactionProvider.getInstance(
+        context,
+      ).getPaymentMethodList(false);
       if (paymentMethodList.isNotEmpty) {
         widget.modifiedItem.method = paymentMethodList[0];
       }
@@ -115,8 +127,9 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
 
     return Scaffold(
       appBar: AppBar(
-          //automaticallyImplyLeading: false,
-          title: widgetAmountInput(currencyProvider)),
+        //automaticallyImplyLeading: false,
+        title: widgetAmountInput(currencyProvider),
+      ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
         child: SingleChildScrollView(
@@ -135,8 +148,9 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
                       widget.modifiedItem.category = p0;
                     });
                   },
-                  items: TransactionProvider.getInstance(context)
-                      .getCategoryList(),
+                  items: TransactionProvider.getInstance(
+                    context,
+                  ).getCategoryList(),
                 ),
               ],
               // DESCRIPTION
@@ -147,8 +161,7 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
                   hintText: "Description",
                 ),
               ),
-              if (widget.modifiedItem.type == TransactionTypeEnum.expense)
-                ...[],
+              if (widget.modifiedItem.type == TransactionTypeEnum.expense) ...[],
               Row(
                 children: [
                   SizedBox(
@@ -164,17 +177,21 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
                           // decoration: ,
                           items: const [
                             DropdownMenuItem(
-                                value: TransactionTypeEnum.expense,
-                                child: Text("Expense")),
+                              value: TransactionTypeEnum.expense,
+                              child: Text("Expense"),
+                            ),
                             DropdownMenuItem(
-                                value: TransactionTypeEnum.withdrawal,
-                                child: Text("Withdrawal")),
+                              value: TransactionTypeEnum.withdrawal,
+                              child: Text("Withdrawal"),
+                            ),
                             DropdownMenuItem(
-                                value: TransactionTypeEnum.cashCorrection,
-                                child: Text("Cash Count")),
+                              value: TransactionTypeEnum.cashCorrection,
+                              child: Text("Cash Count"),
+                            ),
                             DropdownMenuItem(
-                                value: TransactionTypeEnum.deposit,
-                                child: Text("Deposit")),
+                              value: TransactionTypeEnum.deposit,
+                              child: Text("Deposit"),
+                            ),
                           ],
                           onChanged: (value) {
                             setState(() {
@@ -185,9 +202,7 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
+                  SizedBox(width: 10),
                   if (widget.modifiedItem.type == TransactionTypeEnum.expense ||
                       widget.modifiedItem.type ==
                           TransactionTypeEnum.withdrawal) ...[
@@ -203,8 +218,10 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
                           });
                         },
                         items: TransactionProvider.getInstance(context)
-                            .getPaymentMethodList(widget.modifiedItem.type ==
-                                TransactionTypeEnum.withdrawal),
+                            .getPaymentMethodList(
+                              widget.modifiedItem.type ==
+                                  TransactionTypeEnum.withdrawal,
+                            ),
                       ),
                     ),
                   ],
@@ -217,11 +234,14 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
                   child: Row(
                     children: [
                       ElevatedButton(
-                          child: const Text('Map'),
-                          onPressed: () {
-                            launchMapOnAndroid(
-                                widget.modifiedItem.latitude, widget.modifiedItem.longitude);
-                          }),
+                        child: const Text('Map'),
+                        onPressed: () {
+                          launchMapOnAndroid(
+                            widget.modifiedItem.latitude,
+                            widget.modifiedItem.longitude,
+                          );
+                        },
+                      ),
                       Spacer(),
                       WidgetDateChooser(
                         date: widget.modifiedItem.date,
@@ -233,10 +253,9 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
                       SpinBox(
                         value: widget.modifiedItem.averageDays.toDouble(),
                         decoration: const InputDecoration(
-                            constraints: BoxConstraints.tightFor(
-                              width: 170,
-                            ),
-                            labelText: 'Average Days'),
+                          constraints: BoxConstraints.tightFor(width: 170),
+                          labelText: 'Average Days',
+                        ),
                         onChanged: (value) =>
                             widget.modifiedItem.averageDays = value.toInt(),
                       ),
@@ -258,10 +277,7 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
         Flexible(
           child: TextField(
             textAlign: TextAlign.right,
-            controller: TextEditingController()
-              ..text = widget.modifiedItem.value == 0
-                  ? ""
-                  : widget.modifiedItem.valueString,
+            controller: _amountController,
             decoration: const InputDecoration(hintText: 'Amount'),
             onChanged: (value) {
               //modified = true;
@@ -270,7 +286,6 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
             autofocus: widget.newItem,
             style: const TextStyle(
               fontSize: 30,
-              //color: Colors.blue.shade700,
               fontWeight: FontWeight.w600,
             ),
             autocorrect: false,
@@ -281,15 +296,18 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
           ),
         ),
         CurrencyChooserWidget(
-            currencies: currencyProvider.getVisibleItemsWith(currencyProvider
-                .getCurrencyFromTransaction(widget.modifiedItem)),
-            selected: currencyProvider
-                .getCurrencyFromTransaction(widget.modifiedItem),
-            onChanged: (currency) {
-              setState(() {
-                widget.modifiedItem.currency = currency.name;
-              });
-            })
+          currencies: currencyProvider.getVisibleItemsWith(
+            currencyProvider.getCurrencyFromTransaction(widget.modifiedItem),
+          ),
+          selected: currencyProvider.getCurrencyFromTransaction(
+            widget.modifiedItem,
+          ),
+          onChanged: (currency) {
+            setState(() {
+              widget.modifiedItem.currency = currency.name;
+            });
+          },
+        ),
       ],
     );
   }
@@ -297,40 +315,44 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
   Padding widgetButtons(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: Row(children: [
-        /*WidgetDateChooser(
+      child: Row(
+        children: [
+          /*WidgetDateChooser(
           date: widget.modifiedItem.date,
           onChanged: (val) => setState(() {
             widget.modifiedItem.date = val;
           }),
         ),*/
-
-        const Spacer(),
-        ElevatedButton(
+          const Spacer(),
+          ElevatedButton(
             child: const Text('Cancel'),
             onPressed: () {
               Navigator.of(context).pop();
-            }),
-        if (!widget.newItem)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-            child:         ElevatedButton(
+            },
+          ),
+          if (!widget.newItem)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+              child: ElevatedButton(
                 child: const Text('Delete'),
                 onPressed: () {
                   TransactionProvider.getInstance(context).delete(widget.item!);
                   Navigator.of(context).pop();
-                }),
-          ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-          child:         ElevatedButton(
+                },
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+            child: ElevatedButton(
               child: const Text('Save'),
               //alignment: Alignment.centerRight,
               onPressed: () {
                 saveAndClose(context);
-              }),
-        ),
-      ]),
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

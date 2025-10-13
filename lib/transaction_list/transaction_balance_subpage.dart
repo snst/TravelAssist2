@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import '../balance/balance.dart';
 import '../balance/balance_row_widget.dart';
 import '../currency/currency.dart';
 import '../currency/currency_provider.dart';
 import '../utils/globals.dart';
-import 'transaction_value.dart';
 import 'transaction_provider.dart';
+import 'transaction_value.dart';
 
 class TransactionBalanceSubPage extends StatefulWidget {
   const TransactionBalanceSubPage({
@@ -14,6 +15,7 @@ class TransactionBalanceSubPage extends StatefulWidget {
     required this.transactionProvider,
     required this.currencyProvider,
   });
+
   final TransactionProvider transactionProvider;
   final CurrencyProvider currencyProvider;
 
@@ -27,62 +29,84 @@ class _TransactionBalanceSubPageState extends State<TransactionBalanceSubPage> {
   Currency? homeCurrency;
 
   TableRow makeRow(String title, TransactionValue? tv, Currency? homeCurrency) {
-    return TableRow(children: <Widget>[
-      TableCell(
+    return TableRow(
+      children: <Widget>[
+        TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
-          child: Text("", style: _style)),
-      TableCell(
+          child: Text("", style: _style),
+        ),
+        TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
-          child: Text(tv.toString(), style: _style)),
-      TableCell(
+          child: Text(tv.toString(), style: _style),
+        ),
+        TableCell(
           verticalAlignment: TableCellVerticalAlignment.middle,
-          child: Text(tv!.convertTo(homeCurrency).toString(), style: _style)),
+          child: Text(tv!.convertTo(homeCurrency).toString(), style: _style),
+        ),
 
-      //TransactionCell(value: tv, currency: tv!.currency),
-    ]);
+        //TransactionCell(value: tv, currency: tv!.currency),
+      ],
+    );
   }
 
   void showExpenses(String title, List<Widget> children, Balance balance) {
     // Expenses
-    children.add(BalanceRowHeader(
-      FontAwesomeIcons.sackDollar,
-      title,
-      balance.expenseAll.convertTo(homeCurrency),
-      AppColors.expense,
-    ));
+    children.add(
+      BalanceRowHeader(
+        FontAwesomeIcons.sackDollar,
+        title,
+        balance.expenseAll.convertTo(homeCurrency),
+        AppColors.expense,
+      ),
+    );
 
-    children.add(BalanceRowWidget(
+    children.add(
+      BalanceRowWidget(
         text1: 'Cash',
         tv1: null,
         tv2: balance.expenseCash,
-        style: AppBalanceStyle.subheader));
+        style: AppBalanceStyle.subheader,
+      ),
+    );
     balance.expenseByMethodCurrencyCash.forEach((key, tv) {
-      children.add(BalanceRowWidget(
+      children.add(
+        BalanceRowWidget(
           text1: null,
           tv1: tv,
           tv2: tv.convertTo(homeCurrency),
-          style: AppBalanceStyle.normal));
+          style: AppBalanceStyle.normal,
+        ),
+      );
     });
 
-    children.add(BalanceRowWidget(
+    children.add(
+      BalanceRowWidget(
         text1: 'Card',
         tv1: null,
         tv2: balance.expenseCard,
-        style: AppBalanceStyle.subheader));
+        style: AppBalanceStyle.subheader,
+      ),
+    );
     balance.expenseByMethod.forEach((key, tv) {
-      children.add(BalanceRowWidget(
+      children.add(
+        BalanceRowWidget(
           text1: "  $key",
           tv1: null,
           tv2: tv.convertTo(homeCurrency),
-          style: AppBalanceStyle.method));
+          style: AppBalanceStyle.method,
+        ),
+      );
 
       balance.expenseByMethodCurrencyCard.forEach((key2, tv) {
         if (key2.startsWith(key)) {
-          children.add(BalanceRowWidget(
+          children.add(
+            BalanceRowWidget(
               text1: null,
               tv1: tv,
               tv2: tv.convertTo(homeCurrency),
-              style: AppBalanceStyle.normal));
+              style: AppBalanceStyle.normal,
+            ),
+          );
         }
       });
     });
@@ -98,110 +122,132 @@ class _TransactionBalanceSubPageState extends State<TransactionBalanceSubPage> {
     List<Widget> children = [];
 
     // Cash
-    children.add(Padding(
-      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: BalanceRowHeader(
-        FontAwesomeIcons.sackDollar,
-        "Cash Balance",
-        balance.haveCash.convertTo(homeCurrency),
-        AppColors.cash,
+    children.add(
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+        child: BalanceRowHeader(
+          FontAwesomeIcons.sackDollar,
+          "Cash Balance",
+          balance.haveCash.convertTo(homeCurrency),
+          AppColors.cash,
+        ),
       ),
-    ));
+    );
 
     balance.haveCashByCurrency.forEach((key, tv) {
-      children.add(BalanceRowWidget(
+      children.add(
+        BalanceRowWidget(
           text1: null,
           tv1: tv,
           tv2: tv.convertTo(homeCurrency),
-          style: AppBalanceStyle.normal));
+          style: AppBalanceStyle.normal,
+        ),
+      );
     });
 
     showExpenses("Expenses", children, balance);
     showExpenses(
-        "Ø Expenses (${expensesPerDay.days}d)", children, expensesPerDay);
+      "Ø Expenses (${expensesPerDay.days}d)",
+      children,
+      expensesPerDay,
+    );
 
     // Withdrawal
-    children.add(Padding(
-      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: BalanceRowHeader(
-        FontAwesomeIcons.sackDollar,
-        "Withdrawal",
-        balance.withdrawalAll.convertTo(homeCurrency),
-        AppColors.withdrawal,
+    children.add(
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+        child: BalanceRowHeader(
+          FontAwesomeIcons.sackDollar,
+          "Withdrawal",
+          balance.withdrawalAll.convertTo(homeCurrency),
+          AppColors.withdrawal,
+        ),
       ),
-    ));
+    );
 
     balance.withdrawalByMethod.forEach((key, tv) {
-      children.add(BalanceRowWidget(
+      children.add(
+        BalanceRowWidget(
           text1: "  $key",
           tv1: null,
           tv2: tv.convertTo(homeCurrency),
-          style: AppBalanceStyle.method));
+          style: AppBalanceStyle.method,
+        ),
+      );
 
       balance.withdrawalByMethodCurrencyCard.forEach((key2, tv) {
         if (key2.startsWith(key)) {
-          children.add(BalanceRowWidget(
+          children.add(
+            BalanceRowWidget(
               text1: null,
               tv1: tv,
               tv2: tv.convertTo(homeCurrency),
-              style: AppBalanceStyle.normal));
+              style: AppBalanceStyle.normal,
+            ),
+          );
         }
       });
     });
 
     // Cash deposit
-    children.add(Padding(
-      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: BalanceRowHeader(
-        FontAwesomeIcons.sackDollar,
-        "Cash deposit",
-        balance.cashDeposit.convertTo(homeCurrency),
-        AppColors.deposit,
+    children.add(
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+        child: BalanceRowHeader(
+          FontAwesomeIcons.sackDollar,
+          "Cash deposit",
+          balance.cashDeposit.convertTo(homeCurrency),
+          AppColors.deposit,
+        ),
       ),
-    ));
+    );
 
     balance.cashDepositByCurrency.forEach((key, tv) {
-      children.add(BalanceRowWidget(
+      children.add(
+        BalanceRowWidget(
           text1: null,
           tv1: tv,
           tv2: tv.convertTo(homeCurrency),
-          style: AppBalanceStyle.normal));
+          style: AppBalanceStyle.normal,
+        ),
+      );
     });
 
     // Balance
-    children.add(Padding(
-      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: BalanceRowHeader(
-        FontAwesomeIcons.sackDollar,
-        "Cash Correction",
-        balance.balanceCash.convertTo(homeCurrency),
-        AppColors.balance,
+    children.add(
+      Padding(
+        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+        child: BalanceRowHeader(
+          FontAwesomeIcons.sackDollar,
+          "Cash Correction",
+          balance.balanceCash.convertTo(homeCurrency),
+          AppColors.balance,
+        ),
       ),
-    ));
+    );
 
     balance.balanceByCurrency.forEach((key, tv) {
-      children.add(BalanceRowWidget(
+      children.add(
+        BalanceRowWidget(
           text1: null,
           tv1: tv,
           tv2: tv.convertTo(homeCurrency),
-          style: AppBalanceStyle.normal));
+          style: AppBalanceStyle.normal,
+        ),
+      );
     });
 
-    children.add(SizedBox(
-      height: 100,
-    ));
+    children.add(SizedBox(height: 100));
 
     return SingleChildScrollView(
-        reverse: false, child: Column(children: children));
+      reverse: false,
+      child: Column(children: children),
+    );
   }
 }
 
 class TransactionCell extends StatelessWidget {
-  const TransactionCell({
-    super.key,
-    this.value,
-    this.currency,
-  });
+  const TransactionCell({super.key, this.value, this.currency});
 
   final TransactionValue? value;
   final Currency? currency;
@@ -210,8 +256,11 @@ class TransactionCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TableCell(
-        verticalAlignment: TableCellVerticalAlignment.middle,
-        child: Text(value != null ? value!.convertTo(currency).valueString : "",
-            style: _style));
+      verticalAlignment: TableCellVerticalAlignment.middle,
+      child: Text(
+        value != null ? value!.convertTo(currency).valueString : "",
+        style: _style,
+      ),
+    );
   }
 }

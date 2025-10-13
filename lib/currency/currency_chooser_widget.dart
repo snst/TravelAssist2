@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'currency.dart';
 
 class CurrencyChooserWidget extends StatelessWidget {
@@ -7,7 +8,7 @@ class CurrencyChooserWidget extends StatelessWidget {
     required this.currencies,
     required this.selected,
     required this.onChanged,
-    this.style
+    this.style,
   });
 
   final List<Currency> currencies;
@@ -21,15 +22,12 @@ class CurrencyChooserWidget extends StatelessWidget {
       value: selected,
       //icon: const Icon(Icons.arrow_downward),
       //elevation: 16,
-      underline: Container(
-        height: 2,
-      ),
-      onChanged: (currency) => onChanged(currency!)
-      ,
+      underline: Container(height: 2),
+      onChanged: (currency) => onChanged(currency!),
       items: currencies.map<DropdownMenuItem<Currency>>((Currency value) {
         return DropdownMenuItem<Currency>(
           value: value,
-          child: Text(value.toString(), style:style),
+          child: Text(value.toString(), style: style),
         );
       }).toList(),
     );

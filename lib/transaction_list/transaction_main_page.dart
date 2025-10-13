@@ -28,7 +28,6 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
       context,
       MaterialPageRoute(
           builder: (context) => TransactionEditPage(
-                newItem: false,
                 item: item,
               )),
     );
@@ -109,8 +108,6 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
             context,
             MaterialPageRoute(
                 builder: (context) => TransactionEditPage(
-                      newItem: true,
-                      item: Transaction(date: DateTime.now(), currency: "", method: ""), 
                     )),
           );
         },

@@ -19,14 +19,16 @@ import 'package:geolocator/geolocator.dart';
 class TransactionEditPage extends StatefulWidget {
   TransactionEditPage({
     super.key,
-    required this.newItem,
-    required this.item,
-  })  :
-        modifiedItem = item.clone();
+    this.item,
+    this.category,
+  })  : newItem = item == null,
+        modifiedItem = (item ?? Transaction(date: DateTime.now(), currency: "", method: "")).clone();
 
   final bool newItem;
-  final Transaction item;
+  final Transaction? item;
   final Transaction modifiedItem;
+  final String? category;
+
 
   @override
   State<TransactionEditPage> createState() => _TransactionEditPageState();
@@ -42,6 +44,7 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
     _loadStoredValue();
     if (widget.newItem) {
       _getGpsPos();
+      widget.modifiedItem.category = widget.category ?? "";
     }
   }
 
@@ -87,8 +90,8 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
         break;
     }
 
-    widget.item.update(widget.modifiedItem);
-    tp.add(widget.item);
+    (widget.item ?? widget.modifiedItem).update(widget.modifiedItem);
+    tp.add(widget.item ?? widget.modifiedItem);
 
     if (widget.modifiedItem.currency != defaultCurrency) {
       defaultCurrency = widget.modifiedItem.currency;
@@ -314,7 +317,7 @@ class _TransactionEditPageState extends State<TransactionEditPage> {
             child:         ElevatedButton(
                 child: const Text('Delete'),
                 onPressed: () {
-                  TransactionProvider.getInstance(context).delete(widget.item);
+                  TransactionProvider.getInstance(context).delete(widget.item!);
                   Navigator.of(context).pop();
                 }),
           ),

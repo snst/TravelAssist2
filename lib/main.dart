@@ -160,20 +160,19 @@ class MainScreen extends StatelessWidget {
               icon: Icons.attach_money,
               height: buttonHeight,
               onPressed: () => _onShowPage(context, const TransactionMainPage()),
-              onPressedSecondary: () => _onShowPage(context, TransactionEditPage(
-                newItem: true,
-                item: Transaction(date: DateTime.now(), currency: "", method: ""),
-              )),
+              onPressedSecondary: () => _onShowPage(context, TransactionEditPage()),
             ),
             _buildScrollableSubfunctions(
               height: buttonHeight,
               subIcons: [
-                {'icon': Icons.free_breakfast, 'name': 'Breakfast'},
-                {'icon': Icons.lunch_dining, 'name': 'Lunch'},
-                {'icon': Icons.dinner_dining, 'name': 'Dinner'},
-                {'icon': Icons.local_cafe, 'name': 'Coffee'},
-                {'icon': Icons.icecream, 'name': 'Dessert'},
-                {'icon': Icons.local_pizza, 'name': 'Snack'},
+                {'icon': Icons.coffee_outlined, 'name': 'Cafe Essen'},
+                {'icon': Icons.bakery_dining, 'name': 'Frühstück Essen'},
+                {'icon': Icons.local_dining, 'name': 'Restaurant Essen'},
+                {'icon': Icons.shopping_cart, 'name': 'Einkauf Essen'},
+                {'icon': Icons.directions_bus, 'name': 'Bus Transport'},
+                {'icon': Icons.local_taxi, 'name': 'Taxi Transport'},
+                {'icon': Icons.museum, 'name': 'Einritt'},
+                {'icon': Icons.hotel, 'name': 'Hotel'},
               ],
               onSubPressed: _onSubPressed,
             ),
@@ -255,14 +254,8 @@ class MainScreen extends StatelessWidget {
           return SizedBox(
             width: height, // square buttons
             height: height,
-            child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              onPressed: () => onSubPressed(sub['name']),
-              child: Icon(sub['icon'], size: 28),
+            child: IconButton(icon: Icon(sub['icon'], size: 28),
+              onPressed: () => _onShowPage(context, TransactionEditPage(category: sub['name'])),
             ),
           );
         },

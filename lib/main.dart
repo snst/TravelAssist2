@@ -15,6 +15,7 @@ import 'transaction_list/transaction_edit_page.dart';
 import 'transaction_list/transaction.dart';
 import 'todo_list/todo_item_page.dart';
 import 'todo_list/todo_item.dart';
+import 'widgets/widget_dual_action_button.dart';
 
 class InfoPage extends StatelessWidget {
   const InfoPage({super.key});
@@ -88,7 +89,6 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.dark,
       //home: const MyHomePage(title: 'TravelAssist'),
       home: MainScreen(),
-
     );
   }
 }
@@ -105,10 +105,7 @@ class MainScreen extends StatelessWidget {
   }
 
   void _onShowPage(BuildContext context, Widget page) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => page),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
   @override
@@ -116,10 +113,7 @@ class MainScreen extends StatelessWidget {
     const double buttonHeight = 60;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Main Menu'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Main Menu'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -133,7 +127,7 @@ class MainScreen extends StatelessWidget {
               onPressed: () => _onShowPage(context, const CalculatorPage()),
             ),
             const SizedBox(height: 16),
-/*
+            /*
 
     ActionButton(label: 'To-Do', page: const TodoListPage()),
     ActionButton(label: 'Transactions', page: const TransactionMainPage()),
@@ -141,8 +135,15 @@ class MainScreen extends StatelessWidget {
     ActionButton(label: 'info', page: const InfoPage()),
  */
 
-
             // --- Location List ---
+            WidgetDualActionButton(
+              label: 'Locations',
+              icon: Icons.map,
+              onMainPressed: () =>
+                  _onShowPage(context, const LocationListPage()),
+              onAddPressed: () => _onShowPage(context, LocationItemPage()),
+            ),
+            /*
             _buildMainButton(
               context,
               title: 'Locations',
@@ -151,6 +152,7 @@ class MainScreen extends StatelessWidget {
               onPressed: () => _onShowPage(context, const LocationListPage()),
               onPressedSecondary: () => _onShowPage(context, LocationItemPage()),
             ),
+            */
             const SizedBox(height: 16),
 
             // --- Expenses ---
@@ -159,8 +161,10 @@ class MainScreen extends StatelessWidget {
               title: 'Expenses',
               icon: Icons.attach_money,
               height: buttonHeight,
-              onPressed: () => _onShowPage(context, const TransactionMainPage()),
-              onPressedSecondary: () => _onShowPage(context, TransactionEditPage()),
+              onPressed: () =>
+                  _onShowPage(context, const TransactionMainPage()),
+              onPressedSecondary: () =>
+                  _onShowPage(context, TransactionEditPage()),
             ),
             _buildScrollableSubfunctions(
               height: buttonHeight,
@@ -185,13 +189,12 @@ class MainScreen extends StatelessWidget {
               icon: Icons.list,
               height: buttonHeight,
               onPressed: () => _onShowPage(context, const TodoListPage()),
-              onPressedSecondary: () => _onShowPage(context, TodoItemPage(
-                newItem: true,
-                item: TodoItem(quantity: 1),
-              )),
+              onPressedSecondary: () => _onShowPage(
+                context,
+                TodoItemPage(newItem: true, item: TodoItem(quantity: 1)),
+              ),
             ),
             const SizedBox(height: 8),
-
           ],
         ),
       ),
@@ -200,13 +203,13 @@ class MainScreen extends StatelessWidget {
 
   /// Main function button
   Widget _buildMainButton(
-      BuildContext context, {
-        required String title,
-        required IconData icon,
-        required double height,
-        required VoidCallback onPressed,
-        VoidCallback? onPressedSecondary,
-      }) {
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required double height,
+    required VoidCallback onPressed,
+    VoidCallback? onPressedSecondary,
+  }) {
     return Row(
       children: [
         Expanded(
@@ -220,8 +223,7 @@ class MainScreen extends StatelessWidget {
             ),
           ),
         ),
-        if (onPressedSecondary != null)
-          const SizedBox(width: 8),
+        if (onPressedSecondary != null) const SizedBox(width: 8),
         if (onPressedSecondary != null)
           SizedBox(
             height: height,
@@ -254,8 +256,12 @@ class MainScreen extends StatelessWidget {
           return SizedBox(
             width: height, // square buttons
             height: height,
-            child: IconButton(icon: Icon(sub['icon'], size: 28),
-              onPressed: () => _onShowPage(context, TransactionEditPage(category: sub['name'])),
+            child: IconButton(
+              icon: Icon(sub['icon'], size: 28),
+              onPressed: () => _onShowPage(
+                context,
+                TransactionEditPage(category: sub['name']),
+              ),
             ),
           );
         },

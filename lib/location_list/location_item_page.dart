@@ -55,7 +55,9 @@ class _LocationItemPageState extends State<LocationItemPage> {
     String tags = widget.location!.tags;
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Location")),
+      appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: const Text("Location")),
 
       body: Column(
         children: [
@@ -107,7 +109,7 @@ class _LocationItemPageState extends State<LocationItemPage> {
               ),
               FormattedText(
                 title: "Altitude",
-                content: widget.location!.altitude.toString(),
+                content: widget.location!.altitude.toStringAsFixed(1),
               ),
 
             ],

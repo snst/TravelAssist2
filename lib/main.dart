@@ -19,29 +19,6 @@ import 'transaction_list/transaction_main_page.dart';
 import 'transaction_list/transaction_provider.dart';
 import 'widgets/widget_dual_action_button.dart';
 
-class InfoPage extends StatelessWidget {
-  const InfoPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Info')),
-      body: const Center(child: Text('Info Page')),
-    );
-  }
-}
-
-class ExpensesPage extends StatelessWidget {
-  const ExpensesPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Expenses')),
-      body: const Center(child: Text('Expenses Page')),
-    );
-  }
-}
 
 void main() {
   runApp(
@@ -95,7 +72,6 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double buttonHeight = 60;
 
     return Scaffold(
       appBar: AppBar(
@@ -159,7 +135,7 @@ class MainScreen extends StatelessWidget {
               onAddPressed: () => _onShowPage(context, TransactionItemPage()),
             ),
             _buildScrollableSubfunctions(
-              height: buttonHeight,
+              height: 60,
               subIcons: [
                 {'icon': Icons.coffee_outlined, 'name': 'Cafe Essen'},
                 {'icon': Icons.bakery_dining, 'name': 'Frühstück Essen'},

@@ -120,7 +120,9 @@ class CurrencyListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final currencyProvider = context.watch<CurrencyProvider>();
     return Scaffold(
-      appBar: AppBar(title: const Text("Currency Rates")),
+      appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: const Text("Currency Rates")),
       //drawer: widget.drawer,
       body: ListView.builder(
         itemCount: currencyProvider.allItems.length,

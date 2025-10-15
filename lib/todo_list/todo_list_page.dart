@@ -50,7 +50,9 @@ class _PackingListPageState extends State<TodoListPage> {
       MaterialPageRoute(
         builder: (context) {
           return Scaffold(
-            appBar: AppBar(title: const Text("Settings")),
+            appBar: AppBar(
+                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                title: const Text("Settings")),
             body: ExportWidget(
               name: 'todo',
               toJson: todoProvider.toJson,
@@ -69,6 +71,7 @@ class _PackingListPageState extends State<TodoListPage> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("To-Do List"),
         actions: [
           PopupMenuButton<int>(

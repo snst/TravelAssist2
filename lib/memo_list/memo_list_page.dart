@@ -20,7 +20,9 @@ class _MemoListPageState extends State<MemoListPage> {
       MaterialPageRoute(
         builder: (context) {
           return Scaffold(
-            appBar: AppBar(title: const Text("Settings")),
+            appBar: AppBar(
+                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                title: const Text("Settings")),
             body: ExportWidget(
               name: 'memo_list',
               toJson: provider.toJson,
@@ -38,6 +40,7 @@ class _MemoListPageState extends State<MemoListPage> {
     final memoProvider = context.watch<MemoProvider>();
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Memo List"),
         actions: [
           PopupMenuButton<int>(

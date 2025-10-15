@@ -87,7 +87,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
     const buttonStyle = TextStyle(fontSize: 30);
     return Scaffold(
-      appBar: AppBar(title: const Text("Currency Converter")),
+      appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: const Text("Currency Converter")),
       //        drawer: widget.drawer,
       body: Column(
         children: [

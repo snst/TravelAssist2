@@ -44,7 +44,9 @@ class _PackedItemPageState extends State<TodoItemPage> {
     List<String> categories = getPackingList(context).getCategories();
 
     return Scaffold(
-      appBar: AppBar(title: Text("To-Do")),
+      appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text("To-Do")),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
         child: Column(

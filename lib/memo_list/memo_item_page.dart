@@ -41,7 +41,9 @@ class _PackedItemPageState extends State<MemoItemPage> {
     final TextEditingController controller = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(title: Text("Memo")),
+      appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text("Memo")),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
         child: Column(

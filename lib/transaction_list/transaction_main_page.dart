@@ -52,7 +52,9 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
       MaterialPageRoute(
         builder: (context) {
           return Scaffold(
-            appBar: AppBar(title: const Text("Settings")),
+            appBar: AppBar(
+                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                title: const Text("Settings")),
             body: ExportWidget(
               name: 'transaction',
               toJson: tp.toJson,
@@ -77,6 +79,7 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Expenses"),
         actions: [
           PopupMenuButton<int>(

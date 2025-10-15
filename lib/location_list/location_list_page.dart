@@ -31,7 +31,9 @@ class _LocationListPageState extends State<LocationListPage> {
       MaterialPageRoute(
         builder: (context) {
           return Scaffold(
-            appBar: AppBar(title: const Text("Settings")),
+            appBar: AppBar(
+                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                title: const Text("Settings")),
             body: ExportWidget(
               name: 'location_list',
               toJson: provider.toJson,
@@ -49,6 +51,7 @@ class _LocationListPageState extends State<LocationListPage> {
     final locationProvider = context.watch<LocationProvider>();
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Location List"),
         actions: [
           PopupMenuButton<int>(

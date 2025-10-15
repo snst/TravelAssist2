@@ -128,6 +128,8 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
     return Scaffold(
       appBar: AppBar(
         //automaticallyImplyLeading: false,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+
         title: widgetAmountInput(currencyProvider),
       ),
       body: Padding(

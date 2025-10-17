@@ -109,7 +109,7 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
       _saveStoredValues();
     }
 
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(true);
   }
 
   @override

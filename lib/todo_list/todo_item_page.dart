@@ -33,7 +33,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
         // new item
         getPackingList(context).add(widget.modifiedItem);
       }
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     }
   }
 
@@ -55,7 +55,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
           children: <Widget>[
             WidgetTextInput(
               text: widget.modifiedItem.name,
-              hintText: 'Name',
+              hintText: 'Enter Name',
               onChanged: (value) => widget.modifiedItem.name = value,
               autofocus: widget.item == null, // new item
             ),
@@ -63,7 +63,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
             WidgetComboBox(
               controller: TextEditingController(),
               selectedText: widget.modifiedItem.category,
-              hintText: 'Category',
+              hintText: 'Enter Category',
               filter: true,
               onChanged: (suggestion) {
                 setState(() {

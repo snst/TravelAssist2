@@ -56,14 +56,15 @@ class _LocationItemPageState extends State<LocationItemPage> {
 
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: const Text("Location")),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: const Text("Location"),
+      ),
 
       body: Column(
         children: [
           WidgetTextInput(
             text: title,
-            hintText: 'Enter title',
+            hintText: 'Enter Location',
             lines: 4,
             onChanged: (value) => title = value,
             autofocus: widget.newItem,
@@ -71,30 +72,30 @@ class _LocationItemPageState extends State<LocationItemPage> {
           SizedBox(height: 5),
           WidgetTextInput(
             text: tags,
-            hintText: 'Enter tags',
+            hintText: 'Enter Info',
             onChanged: (value) => tags = value,
           ),
 
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          FormattedText(
-            title: "Latitude, Longitude",
-            content:
-            "${widget.location!.latitude.toString()}, ${widget.location!.longitude.toString()}",
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              FormattedText(
+                title: "Latitude, Longitude",
+                content:
+                    "${widget.location!.latitude.toString()}, ${widget.location!.longitude.toString()}",
+              ),
+              ElevatedButton(
+                child: const Text('Map'),
+                onPressed: () {
+                  //Navigator.of(context).pop(); // Close the AlertDialog
+                  launchMapOnAndroid(
+                    widget.location!.latitude,
+                    widget.location!.longitude,
+                  );
+                },
+              ),
+            ],
           ),
-          ElevatedButton(
-            child: const Text('Map'),
-            onPressed: () {
-              //Navigator.of(context).pop(); // Close the AlertDialog
-              launchMapOnAndroid(
-                widget.location!.latitude,
-                widget.location!.longitude,
-              );
-            },
-          ),]),
-
-
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -111,7 +112,6 @@ class _LocationItemPageState extends State<LocationItemPage> {
                 title: "Altitude",
                 content: widget.location!.altitude.toStringAsFixed(1),
               ),
-
             ],
           ),
           Row(
@@ -155,7 +155,7 @@ class _LocationItemPageState extends State<LocationItemPage> {
                   widget.location!.title = title;
                   widget.location!.tags = tags;
                   locationProvider.add(widget.location!);
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(true);
                 },
               ),
             ],

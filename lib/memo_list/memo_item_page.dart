@@ -32,7 +32,7 @@ class _PackedItemPageState extends State<MemoItemPage> {
         // new item
         getPackingList(context).add(widget.modifiedItem);
       }
-      Navigator.of(context).pop();
+      Navigator.of(context).pop(true);
     }
   }
 
@@ -52,7 +52,7 @@ class _PackedItemPageState extends State<MemoItemPage> {
           children: <Widget>[
             WidgetTextInput(
               text: widget.modifiedItem.title,
-              hintText: 'Title',
+              hintText: 'Enter Title',
               onChanged: (value) => widget.modifiedItem.title = value,
               autofocus: widget.item == null, // new item
             ),
@@ -60,7 +60,7 @@ class _PackedItemPageState extends State<MemoItemPage> {
             TextField(
               controller: TextEditingController()
                 ..text = widget.modifiedItem.content,
-              decoration: const InputDecoration(hintText: 'Content'),
+              decoration: const InputDecoration(hintText: 'Enter Content'),
               onChanged: (value) => widget.modifiedItem.content = value,
               keyboardType: TextInputType.multiline,
               minLines: 5,

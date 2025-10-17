@@ -19,7 +19,6 @@ import 'transaction_list/transaction_main_page.dart';
 import 'transaction_list/transaction_provider.dart';
 import 'widgets/widget_dual_action_button.dart';
 
-
 void main() {
   runApp(
     MultiProvider(
@@ -72,7 +71,6 @@ class MainScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -110,21 +108,45 @@ class MainScreen extends StatelessWidget {
               icon: Icons.map,
               onMainPressed: () =>
                   _onShowPage(context, const LocationListPage()),
-              onAddPressed: () =>  _onShowPage(context, LocationItemPage()),
+              onAddPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LocationItemPage()),
+                );
+                if (result != null && context.mounted) {
+                  _onShowPage(context, const LocationListPage());
+                }
+              },
             ),
             // --- To-Do ---
             WidgetDualActionButton(
               label: 'To-Dos',
               icon: Icons.list,
               onMainPressed: () => _onShowPage(context, const TodoListPage()),
-              onAddPressed: () => _onShowPage(context, TodoItemPage()),
+              onAddPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TodoItemPage()),
+                );
+                if (result != null && context.mounted) {
+                  _onShowPage(context, const TodoListPage());
+                }
+              },
             ),
             // --- To-Do ---
             WidgetDualActionButton(
               label: 'Memos',
               icon: Icons.note,
               onMainPressed: () => _onShowPage(context, MemoListPage()),
-              onAddPressed: () => _onShowPage(context, MemoItemPage()),
+              onAddPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MemoItemPage()),
+                );
+                if (result != null && context.mounted) {
+                  _onShowPage(context, const MemoListPage());
+                }
+              },
             ),
 
             WidgetDualActionButton(
@@ -132,7 +154,17 @@ class MainScreen extends StatelessWidget {
               icon: Icons.attach_money,
               onMainPressed: () =>
                   _onShowPage(context, const TransactionMainPage()),
-              onAddPressed: () => _onShowPage(context, TransactionItemPage()),
+              onAddPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TransactionItemPage(),
+                  ),
+                );
+                if (result != null && context.mounted) {
+                  _onShowPage(context, const TransactionMainPage());
+                }
+              },
             ),
             _buildScrollableSubfunctions(
               height: 60,
@@ -171,10 +203,18 @@ class MainScreen extends StatelessWidget {
             height: height,
             child: IconButton(
               icon: Icon(sub['icon'], size: 28),
-              onPressed: () => _onShowPage(
-                context,
-                TransactionItemPage(category: sub['name']),
-              ),
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        TransactionItemPage(category: sub['name']),
+                  ),
+                );
+                if (result != null && context.mounted) {
+                  _onShowPage(context, const TransactionMainPage());
+                }
+              },
             ),
           );
         },

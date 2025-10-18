@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 import 'calculator/calculator.dart';
 import 'calculator/calculator_page.dart';
@@ -57,13 +60,59 @@ class MyApp extends StatelessWidget {
       ),
       themeMode: ThemeMode.dark,
       //home: const MyHomePage(title: 'TravelAssist'),
-      home: MainScreen(),
+      home: const MainScreen(),
     );
   }
 }
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  late StreamSubscription _intentSub;
+  final _sharedFiles = <SharedMediaFile>[];
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Listen to media sharing coming from outside the app while the app is in the memory.
+    _intentSub = ReceiveSharingIntent.instance.getMediaStream().listen(
+      (value) {
+        setState(() {
+          _sharedFiles.clear();
+          _sharedFiles.addAll(value);
+
+          print(_sharedFiles.map((f) => f.toMap()));
+        });
+      },
+      onError: (err) {
+        print("getIntentDataStream error: $err");
+      },
+    );
+
+    // Get the media sharing coming from outside the app while the app is closed.
+    ReceiveSharingIntent.instance.getInitialMedia().then((value) {
+      setState(() {
+        _sharedFiles.clear();
+        _sharedFiles.addAll(value);
+        print(_sharedFiles.map((f) => f.toMap()));
+
+        // Tell the library that we are done processing the intent.
+        ReceiveSharingIntent.instance.reset();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _intentSub.cancel();
+    super.dispose();
+  }
 
   void _onShowPage(BuildContext context, Widget page) {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
@@ -74,7 +123,7 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Travel Assist"),
+        title: const Text("Travel Assist"),
         actions: [
           PopupMenuButton<int>(
             itemBuilder: (context) => [
@@ -86,7 +135,9 @@ class MainScreen extends StatelessWidget {
                 case 1:
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => CurrencyListPage()),
+                    MaterialPageRoute(
+                      builder: (context) => const CurrencyListPage(),
+                    ),
                   );
                   break;
               }
@@ -137,7 +188,7 @@ class MainScreen extends StatelessWidget {
             WidgetDualActionButton(
               label: 'Memos',
               icon: Icons.note,
-              onMainPressed: () => _onShowPage(context, MemoListPage()),
+              onMainPressed: () => _onShowPage(context, const MemoListPage()),
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,

@@ -21,6 +21,10 @@ import 'transaction_list/transaction_item_page.dart';
 import 'transaction_list/transaction_main_page.dart';
 import 'transaction_list/transaction_provider.dart';
 import 'widgets/widget_dual_action_button.dart';
+import 'bookmark_list/bookmark_provider.dart';
+import 'bookmark_list/bookmark_list_page.dart';
+import 'bookmark_list/bookmark_item_page.dart';
+import 'bookmark_list/bookmark.dart';
 
 void main() {
   runApp(
@@ -32,6 +36,7 @@ void main() {
         ChangeNotifierProvider(create: (context) => LocationProvider()),
         ChangeNotifierProvider(create: (context) => Calculator()),
         ChangeNotifierProvider(create: (context) => MemoProvider()),
+        ChangeNotifierProvider(create: (context) => BookmarkProvider()),
       ],
       child: const MyApp(),
     ),
@@ -74,20 +79,31 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late StreamSubscription _intentSub;
-  final _sharedFiles = <SharedMediaFile>[];
+  //final _sharedFiles = <SharedMediaFile>[];
+  late BookmarkProvider _bookmarkProvider;
 
   @override
   void initState() {
     super.initState();
-
+    // Access the provider here using `context.read` as the context is available.
+    // We use `read` because we don't need to rebuild the widget when the provider changes.
+    _bookmarkProvider = context.read<BookmarkProvider>();
     // Listen to media sharing coming from outside the app while the app is in the memory.
     _intentSub = ReceiveSharingIntent.instance.getMediaStream().listen(
       (value) {
         setState(() {
-          _sharedFiles.clear();
-          _sharedFiles.addAll(value);
+          //_sharedFiles.clear();
+          //_sharedFiles.addAll(value);
+          //_bookmarkProvider.add(Bookmark(title:value[0].path));
+          final String link = value[0].path;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BookmarkItemPage(link: link),
+            ),
+          );
 
-          print(_sharedFiles.map((f) => f.toMap()));
+          //print(_sharedFiles.map((f) => f.toMap()));
         });
       },
       onError: (err) {
@@ -98,9 +114,18 @@ class _MainScreenState extends State<MainScreen> {
     // Get the media sharing coming from outside the app while the app is closed.
     ReceiveSharingIntent.instance.getInitialMedia().then((value) {
       setState(() {
-        _sharedFiles.clear();
-        _sharedFiles.addAll(value);
-        print(_sharedFiles.map((f) => f.toMap()));
+        //_sharedFiles.clear();
+        //_sharedFiles.addAll(value);
+        //_bookmarkProvider.add(Bookmark(title:value[0].path));
+        //print(_sharedFiles.map((f) => f.toMap()));
+        final String link = value[0].path;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BookmarkItemPage(link: link),
+          ),
+        );
+
 
         // Tell the library that we are done processing the intent.
         ReceiveSharingIntent.instance.reset();
@@ -201,6 +226,21 @@ class _MainScreenState extends State<MainScreen> {
             ),
 
             WidgetDualActionButton(
+              label: 'Bookmarks',
+              icon: Icons.note,
+              onMainPressed: () => _onShowPage(context, const BookmarkListPage()),
+              onAddPressed: () async {/*
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MemoItemPage()),
+                );
+                if (result != null && context.mounted) {
+                  _onShowPage(context, const MemoListPage());
+                }*/
+              },
+            ),
+
+            WidgetDualActionButton(
               label: 'Expenses',
               icon: Icons.attach_money,
               onMainPressed: () =>
@@ -226,7 +266,7 @@ class _MainScreenState extends State<MainScreen> {
                 {'icon': Icons.shopping_cart, 'name': 'Einkauf Essen'},
                 {'icon': Icons.directions_bus, 'name': 'Bus Transport'},
                 {'icon': Icons.local_taxi, 'name': 'Taxi Transport'},
-                {'icon': Icons.museum, 'name': 'Einritt'},
+                {'icon': Icons.attractions, 'name': 'Einritt'},
                 {'icon': Icons.hotel, 'name': 'Hotel'},
               ],
             ),

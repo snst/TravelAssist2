@@ -3,7 +3,41 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:open_app_file/open_app_file.dart';
 import 'package:path/path.dart' as path;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+openExternally(String link) async {
+  if (link.startsWith('http')) {
+    await launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication);
+  } else if (File(link).existsSync()) {
+    OpenAppFile.open(link);
+  }
+}
+
+Future<String?> getBookmarkFolder() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? path = prefs.getString('bookmarks');
+  if (path == null) {
+    path = await selectBookmarkFolder();
+  }
+  return path;
+}
+
+void setBookmarkFolder(String path) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString('bookmarks', path);
+}
+
+Future<String?> selectBookmarkFolder() async {
+  String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
+
+  if (selectedDirectory != null) {
+    setBookmarkFolder(selectedDirectory);
+  }
+  return selectedDirectory;
+}
 
 double safeConvertToDouble(String input) {
   input = input.replaceAll(',', '.');

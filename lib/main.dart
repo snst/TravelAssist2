@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
+import 'bookmark_list/bookmark.dart';
+import 'bookmark_list/bookmark_item_page.dart';
+import 'bookmark_list/bookmark_list_page.dart';
+import 'bookmark_list/bookmark_provider.dart';
 import 'calculator/calculator.dart';
 import 'calculator/calculator_page.dart';
 import 'currency/currency_list_page.dart';
@@ -21,10 +25,6 @@ import 'transaction_list/transaction_item_page.dart';
 import 'transaction_list/transaction_main_page.dart';
 import 'transaction_list/transaction_provider.dart';
 import 'widgets/widget_dual_action_button.dart';
-import 'bookmark_list/bookmark_provider.dart';
-import 'bookmark_list/bookmark_list_page.dart';
-import 'bookmark_list/bookmark_item_page.dart';
-import 'bookmark_list/bookmark.dart';
 
 void main() {
   runApp(
@@ -79,8 +79,17 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late StreamSubscription _intentSub;
-  //final _sharedFiles = <SharedMediaFile>[];
   late BookmarkProvider _bookmarkProvider;
+
+  void handleSharedFile(SharedMediaFile file) async {
+    final link = await moveSharedImageToDataFolder(file.path);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookmarkItemPage(item: Bookmark(link: link)),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -92,18 +101,7 @@ class _MainScreenState extends State<MainScreen> {
     _intentSub = ReceiveSharingIntent.instance.getMediaStream().listen(
       (value) {
         setState(() {
-          //_sharedFiles.clear();
-          //_sharedFiles.addAll(value);
-          //_bookmarkProvider.add(Bookmark(title:value[0].path));
-          final String link = value[0].path;
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => BookmarkItemPage(link: link),
-            ),
-          );
-
-          //print(_sharedFiles.map((f) => f.toMap()));
+          handleSharedFile(value[0]);
         });
       },
       onError: (err) {
@@ -113,23 +111,14 @@ class _MainScreenState extends State<MainScreen> {
 
     // Get the media sharing coming from outside the app while the app is closed.
     ReceiveSharingIntent.instance.getInitialMedia().then((value) {
-      setState(() {
-        //_sharedFiles.clear();
-        //_sharedFiles.addAll(value);
-        //_bookmarkProvider.add(Bookmark(title:value[0].path));
-        //print(_sharedFiles.map((f) => f.toMap()));
-        final String link = value[0].path;
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BookmarkItemPage(link: link),
-          ),
-        );
+      if (value.isNotEmpty) {
+        setState(() {
+          handleSharedFile(value[0]);
 
-
-        // Tell the library that we are done processing the intent.
-        ReceiveSharingIntent.instance.reset();
-      });
+          // Tell the library that we are done processing the intent.
+          ReceiveSharingIntent.instance.reset();
+        });
+      }
     });
   }
 
@@ -227,16 +216,20 @@ class _MainScreenState extends State<MainScreen> {
 
             WidgetDualActionButton(
               label: 'Bookmarks',
-              icon: Icons.note,
-              onMainPressed: () => _onShowPage(context, const BookmarkListPage()),
-              onAddPressed: () async {/*
+              icon: Icons.bookmark,
+              onMainPressed: () =>
+                  _onShowPage(context, const BookmarkListPage()),
+              onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => MemoItemPage()),
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        BookmarkItemPage(item: Bookmark(link: "")),
+                  ),
                 );
                 if (result != null && context.mounted) {
-                  _onShowPage(context, const MemoListPage());
-                }*/
+                  _onShowPage(context, const BookmarkListPage());
+                }
               },
             ),
 

@@ -12,6 +12,7 @@ import '../utils/map.dart';
 import '../utils/travel_assist_utils.dart';
 import '../widgets/widget_combobox.dart';
 import '../widgets/widget_date_chooser.dart';
+import '../widgets/widget_item_edit_actions.dart';
 import '../widgets/widget_transaction_description_input.dart';
 import 'transaction.dart';
 import 'transaction_provider.dart';
@@ -82,7 +83,7 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
     prefs.setString('defaultCurreny', defaultCurrency);
   }
 
-  void saveAndClose(BuildContext context) {
+  bool save(BuildContext context) {
     final tp = TransactionProvider.getInstance(context);
 
     switch (widget.modifiedItem.type) {
@@ -109,7 +110,7 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
       _saveStoredValues();
     }
 
-    Navigator.of(context).pop(true);
+    return true;
   }
 
   @override
@@ -326,33 +327,17 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
           }),
         ),*/
           const Spacer(),
-          ElevatedButton(
-            child: const Text('Cancel'),
-            onPressed: () {
-              Navigator.of(context).pop();
+          WidgetItemEditActions(
+            onSave: () {
+              return save(context);
+            },
+            onDelete: (widget.newItem)
+                ? null
+                : () {
+              TransactionProvider.getInstance(context).delete(widget.item!);
             },
           ),
-          if (!widget.newItem)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-              child: ElevatedButton(
-                child: const Text('Delete'),
-                onPressed: () {
-                  TransactionProvider.getInstance(context).delete(widget.item!);
-                  Navigator.of(context).pop();
-                },
-              ),
-            ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-            child: ElevatedButton(
-              child: const Text('Save'),
-              //alignment: Alignment.centerRight,
-              onPressed: () {
-                saveAndClose(context);
-              },
-            ),
-          ),
+
         ],
       ),
     );

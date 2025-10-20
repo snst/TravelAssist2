@@ -30,6 +30,15 @@ class BookmarkProvider extends ChangeNotifier with Storage {
     return Provider.of<BookmarkProvider>(context, listen: false);
   }
 
+  List<String> getTags() {
+    final tags = <String>{};
+    _items.forEach((item) => tags.addAll(item.tags));
+    final tagList = tags.toList();
+    tagList.sort();
+    return tagList;
+  }
+
+
   void add(Bookmark item) async {
     addList([item]);
   }

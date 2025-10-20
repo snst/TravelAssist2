@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
+
+import '../utils/travel_assist_utils.dart';
 import 'bookmark.dart';
+import 'bookmark_item_page.dart';
 import 'bookmark_provider.dart';
-//import 'bookmark_item_page.dart';
-import '../utils/map.dart';
-import '../widgets/export_widget.dart';
-import '../widgets/widget_text_input.dart';
 
 class BookmarkListPage extends StatefulWidget {
   const BookmarkListPage({super.key});
@@ -57,14 +55,17 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
         actions: [
           PopupMenuButton<int>(
             itemBuilder: (context) => [
-              //const PopupMenuItem(value: 0, child: Text("Currency rates")),
-              const PopupMenuItem(value: 1, child: Text("Settings")),
+              const PopupMenuItem(value: 1, child: Text("Export")),
+              const PopupMenuItem(value: 2, child: Text("File Dir")),
             ],
             elevation: 1,
             onSelected: (value) {
               switch (value) {
                 case 1:
                   //showSettingsPage(context, locationProvider);
+                  break;
+                case 2:
+                  selectBookmarkFolder();
                   break;
               }
             },
@@ -78,31 +79,22 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
           return Card(
             child: ListTile(
               onTap: () {
-                // _showEditDialog(context, locationProvider,
-                //     locationProvider.items[reverseIndex], false);
-                /*Navigator.push(
+                Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LocationItemPage(
-                      location: locationProvider.items[reverseIndex],
+                    builder: (context) => BookmarkItemPage(
+                      item: bookmarkProvider.items[reverseIndex],
                     ),
                   ),
-                );*/
+                );
               },
-              title: Text(bookmarkProvider.items[reverseIndex].title)
-                  /*
-              FormattedText(
-                title: locationProvider.items[reverseIndex].getDateTimeStr(),
-                content: locationProvider.items[reverseIndex].title,
-              )*/
-              ,
+              title: WidgetBookmark(
+                bookmark: bookmarkProvider.items[reverseIndex],
+              ),
               trailing: IconButton(
-                icon: Icon(Icons.map), // The icon on the right
-                onPressed: () {/*
-                  launchMapOnAndroid(
-                    locationProvider.items[reverseIndex].latitude,
-                    locationProvider.items[reverseIndex].longitude,
-                  );*/
+                icon: Icon(Icons.open_in_browser), // The icon on the right
+                onPressed: () {
+                  openExternally(bookmarkProvider.items[reverseIndex].link);
                 },
               ),
             ),
@@ -110,11 +102,13 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {/*
+        onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => LocationItemPage()),
-          );*/
+            MaterialPageRoute(
+              builder: (context) => BookmarkItemPage(item: Bookmark()),
+            ),
+          );
         },
         tooltip: 'Add Location',
         child: const Icon(Icons.add),
@@ -123,44 +117,40 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
   }
 }
 
-/*
-class FormattedText extends StatelessWidget {
-  final String title;
-  final String content;
+class WidgetBookmark extends StatelessWidget {
+  final Bookmark bookmark;
 
-  const FormattedText({Key? key, required this.title, required this.content})
-    : super(key: key);
+  const WidgetBookmark({Key? key, required this.bookmark}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title - smaller and grey
+            if (bookmark.tags.isNotEmpty) ...[
             Text(
-              title,
-              style: TextStyle(
-                fontSize: 14, // Smaller font size for title
-                color: Colors.grey, // Grey color for title
-              ),
+              bookmark.tags.map((tag) => '#$tag').join(' '),
+              style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.surfaceTint),
             ),
-            SizedBox(height: 2), // Spacing between title and content
-            // Content - normal text
-            Text(
-              content,
-              style: TextStyle(
-                fontSize: 16, // Regular font size for content
-                //color: Colors.black, // Default color for content
+            ],
+            if (bookmark.title.isNotEmpty) ...[
+              SizedBox(height: 2),
+              Text(bookmark.title, style: TextStyle(fontSize: 14)),
+            ],
+            if (bookmark.link.isNotEmpty) ...[
+              SizedBox(height: 2),
+              Text(
+                bookmark.shortLink(),
+                style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.secondaryFixed),
               ),
-            ),
+            ],
           ],
         ),
       ),
     );
   }
 }
-*/

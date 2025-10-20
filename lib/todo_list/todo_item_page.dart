@@ -7,6 +7,7 @@ import '../widgets/widget_confirm_dialog.dart';
 import '../widgets/widget_text_input.dart';
 import 'todo_item.dart';
 import 'todo_provider.dart';
+import '../widgets/widget_item_edit_actions.dart';
 
 class TodoItemPage extends StatefulWidget {
   TodoItemPage({super.key, this.item})
@@ -25,6 +26,12 @@ class _PackedItemPageState extends State<TodoItemPage> {
   }
 
   void saveAndClose(BuildContext context) {
+    if (save(context)) {
+      Navigator.of(context).pop(true);
+    }
+  }
+
+  bool save(BuildContext context) {
     if (widget.modifiedItem.name.isNotEmpty) {
       if (widget.item != null) {
         widget.item!.update(widget.modifiedItem);
@@ -33,9 +40,13 @@ class _PackedItemPageState extends State<TodoItemPage> {
         // new item
         getPackingList(context).add(widget.modifiedItem);
       }
-      Navigator.of(context).pop(true);
+      //Navigator.of(context).pop(true);
+      return true;
+    } else {
+      return false;
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -133,60 +144,13 @@ class _PackedItemPageState extends State<TodoItemPage> {
                 },
               ),
             ),
-            Row(
-              children: [
-                const Spacer(),
-                ElevatedButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-
-                if (widget.item != null)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                    child: ElevatedButton(
-                      child: const Text('Delete'),
-                      onPressed: () {
-                        showConfirmationDialog(
-                          context: context,
-                          title: 'Confirm Delete',
-                          text: 'Are you sure you want to delete this item?',
-                          onConfirm: () {
-                            getPackingList(context).delete(widget.item!);
-                            Navigator.of(context).pop();
-                            //Navigator.of(context).popUntil((route) => route.isFirst);
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                /*
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                      child: IconButton(
-                          // Cancel
-                          iconSize: 30,
-                          icon: const Icon(
-                            Icons.cancel_outlined,
-                          ),
-                          //alignment: Alignment.centerRight,
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          }),
-                    ),*/
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                  child: ElevatedButton(
-                    child: const Text('Save'),
-                    onPressed: () {
-                      saveAndClose(context);
-                    },
-                  ),
-                ),
-              ],
+            WidgetItemEditActions(
+              onSave: () { return save(context); },
+              onDelete: (widget.item == null) ? null : () {
+                getPackingList(context).delete(widget.item!);
+              }
             ),
+
             TextField(
               controller: TextEditingController()
                 ..text = widget.modifiedItem.comment,

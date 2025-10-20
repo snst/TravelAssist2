@@ -19,3 +19,5 @@ samples, guidance on mobile development, and a full API reference.
 flutter pub run build_runner build
 
 flutter pub run flutter_launcher_icons
+
+flutter run -d linux

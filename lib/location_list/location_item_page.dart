@@ -3,7 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/map.dart';
-import '../widgets/widget_confirm_dialog.dart';
+import '../widgets/widget_item_edit_actions.dart';
 import '../widgets/widget_text_input.dart';
 import 'location.dart';
 import 'location_provider.dart';
@@ -125,38 +125,18 @@ class _LocationItemPageState extends State<LocationItemPage> {
                   });
                 },
               ),
-              if (!widget.newItem)
-                ElevatedButton(
-                  child: const Text('Delete'),
-                  onPressed: () {
-                    showConfirmationDialog(
-                      context: context,
-                      title: 'Confirm Delete',
-                      text: 'Are you sure you want to delete this location?',
-                      onConfirm: () {
-                        locationProvider.delete(widget.location!);
-                        Navigator.of(context).pop();
-                        //Navigator.of(context).popUntil((route) => route.isFirst);
-                      },
-                    );
-                  },
-
-                  //const Text('Delete'),
-                ),
-              ElevatedButton(
-                child: const Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              ElevatedButton(
-                child: const Text('Save'),
-                onPressed: () {
+              WidgetItemEditActions(
+                onSave: () {
                   widget.location!.title = title;
                   widget.location!.tags = tags;
                   locationProvider.add(widget.location!);
-                  Navigator.of(context).pop(true);
+                  return true;
                 },
+                onDelete: (widget.newItem)
+                    ? null
+                    : () {
+                        locationProvider.delete(widget.location!);
+                      },
               ),
             ],
           ),
@@ -170,8 +150,7 @@ class FormattedText extends StatelessWidget {
   final String title;
   final String content;
 
-  const FormattedText({Key? key, required this.title, required this.content})
-    : super(key: key);
+  const FormattedText({super.key, required this.title, required this.content});
 
   @override
   Widget build(BuildContext context) {

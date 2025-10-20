@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/widget_confirm_dialog.dart';
+import '../widgets/widget_item_edit_actions.dart';
 import '../widgets/widget_text_input.dart';
 import 'memo.dart';
 import 'memo_provider.dart';
@@ -23,7 +24,7 @@ class _PackedItemPageState extends State<MemoItemPage> {
     return Provider.of<MemoProvider>(context, listen: false);
   }
 
-  void saveAndClose(BuildContext context) {
+  bool save(BuildContext context) {
     if (widget.modifiedItem.title.isNotEmpty) {
       if (widget.item != null) {
         widget.item!.update(widget.modifiedItem);
@@ -32,8 +33,9 @@ class _PackedItemPageState extends State<MemoItemPage> {
         // new item
         getPackingList(context).add(widget.modifiedItem);
       }
-      Navigator.of(context).pop(true);
+      return true;
     }
+    return false;
   }
 
   @override
@@ -78,38 +80,15 @@ class _PackedItemPageState extends State<MemoItemPage> {
                 ).showSnackBar(SnackBar(content: Text('Copied to Clipboard')));
               },
             ),
-            Row(
-              children: [
-                ElevatedButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-
-                if (widget.item != null)
-                  ElevatedButton(
-                    child: const Text('Delete'),
-                    onPressed: () {
-                      showConfirmationDialog(
-                        context: context,
-                        title: 'Confirm Delete',
-                        text: 'Are you sure you want to delete this item?',
-                        onConfirm: () {
-                          getPackingList(context).delete(widget.item!);
-                          Navigator.of(context).pop();
-                          //Navigator.of(context).popUntil((route) => route.isFirst);
-                        },
-                      );
-                    },
-                  ),
-                ElevatedButton(
-                  child: const Text('Save'),
-                  onPressed: () {
-                    saveAndClose(context);
-                  },
-                ),
-              ],
+            WidgetItemEditActions(
+              onSave: () {
+                return save(context);
+              },
+              onDelete: (widget.item == null)
+                  ? null
+                  : () {
+                getPackingList(context).delete(widget.item!);
+              },
             ),
           ],
         ),

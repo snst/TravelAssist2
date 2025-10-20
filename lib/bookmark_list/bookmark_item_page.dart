@@ -1,29 +1,53 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path/path.dart' as p;
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:textfield_tags/textfield_tags.dart';
+import 'package:travelassist2/bookmark_list/bookmark.dart';
 
+import '../utils/travel_assist_utils.dart';
+import '../widgets/widget_item_edit_actions.dart';
 import '../widgets/widget_text_input.dart';
 import 'bookmark_provider.dart';
 
+Future<Directory> getAppDataDirectory() async {
+  return await getApplicationDocumentsDirectory();
+}
+
+Future<String> moveSharedImageToDataFolder(String srcPath) async {
+  final file = File(srcPath);
+  if (await file.exists()) {
+    String? destDir = await getBookmarkFolder();
+    if (destDir != null) {
+      final fileName = p.basename(srcPath);
+      String destPath = path.join(destDir, fileName);
+      final newFile = await file.copy(destPath);
+      srcPath = newFile.uri.path;
+    }
+  }
+  return srcPath;
+}
+
 class BookmarkItemPage extends StatefulWidget {
-  BookmarkItemPage({super.key, required this.link});
+  BookmarkItemPage({super.key, required this.item, this.newItem = false})
+    : modifiedItem = item.clone();
 
-  //: modifiedItem = item == null ? Bookmark(title: "", content: "") : item.clone();
-
-  //final Memo? item;
-  //final Memo modifiedItem;
-  final String link;
+  final Bookmark item;
+  final Bookmark modifiedItem;
+  final bool newItem;
 
   @override
   State<BookmarkItemPage> createState() => _PackedItemPageState();
 }
 
-
 class _PackedItemPageState extends State<BookmarkItemPage> {
   late StringTagController _stringTagController;
   late double _distanceToField;
 
-  BookmarkProvider getPackingList(BuildContext context) {
+  BookmarkProvider getProvider(BuildContext context) {
     return Provider.of<BookmarkProvider>(context, listen: false);
   }
 
@@ -39,27 +63,15 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
     _stringTagController.dispose();
   }
 
-  void saveAndClose(BuildContext context) {
-    /*if (widget.modifiedItem.title.isNotEmpty) {
-      if (widget.item != null) {
-        widget.item!.update(widget.modifiedItem);
-        getPackingList(context).add(widget.item!);
-      } else {
-        // new item
-        getPackingList(context).add(widget.modifiedItem);
-      }
-      Navigator.of(context).pop(true);
-    }*/
+  bool save(BuildContext context) {
+    var tags = _stringTagController.getTags;
+    widget.modifiedItem.tags = tags ?? [];
+    widget.item.update(widget.modifiedItem);
+    getProvider(context).add(widget.item);
+    return true;
   }
 
-  static const List<String> _initialTags = <String>[
-    'c',
-    'c++',
-    'java',
-    'json',
-    'python',
-    'javascript',
-  ];
+  List<String> _initialTags = [];
 
   @override
   void didChangeDependencies() {
@@ -69,27 +81,23 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_initialTags.isEmpty) {
+      _initialTags = getProvider(context).getTags();
+    }
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 74, 137, 92),
-        centerTitle: true,
-        title: const Text(
-          'String Tag Autocomplete Demo...',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18.0,
-          ),
-        ),
-      ),
+      appBar: AppBar(title: const Text('Bookmark')),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Column(
           children: [
+
             Autocomplete<String>(
               optionsViewBuilder: (context, onSelected, options) {
                 return Container(
                   margin: const EdgeInsets.symmetric(
-                      horizontal: 10.0, vertical: 4.0),
+                    horizontal: 10.0,
+                    vertical: 4.0,
+                  ),
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: Material(
@@ -110,9 +118,9 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
                                 child: Text(
                                   '#$option',
                                   textAlign: TextAlign.left,
-                                  style: const TextStyle(
+                                  /*style: const TextStyle(
                                     color: Color.fromARGB(255, 74, 137, 92),
-                                  ),
+                                  ),*/
                                 ),
                               ),
                             );
@@ -134,252 +142,171 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
               onSelected: (String selectedTag) {
                 _stringTagController.onTagSubmitted(selectedTag);
               },
-              fieldViewBuilder: (context, textEditingController, focusNode,
-                  onFieldSubmitted) {
-                return TextFieldTags<String>(
-                  textEditingController: textEditingController,
-                  focusNode: focusNode,
-                  textfieldTagsController: _stringTagController,
-                  initialTags: const [
-                    'yaml',
-                    'gradle',
-                  ],
-                  textSeparators: const [' ', ','],
-                  letterCase: LetterCase.normal,
-                  validator: (String tag) {
-                    if (tag == 'php') {
-                      return 'No, please just no';
-                    } else if (_stringTagController.getTags!.contains(tag)) {
-                      return 'You\'ve already entered that';
-                    }
-                    return null;
-                  },
-                  inputFieldBuilder: (context, inputFieldValues) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: TextField(
-                        controller: inputFieldValues.textEditingController,
-                        focusNode: inputFieldValues.focusNode,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          border: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color.fromARGB(255, 74, 137, 92),
-                              width: 3.0,
-                            ),
-                          ),
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Color.fromARGB(255, 74, 137, 92),
-                              width: 3.0,
-                            ),
-                          ),
-                          helperText: 'Enter language...',
-                          helperStyle: const TextStyle(
-                            color: Color.fromARGB(255, 74, 137, 92),
-                          ),
-                          hintText: inputFieldValues.tags.isNotEmpty
-                              ? ''
-                              : "Enter tag...",
-                          errorText: inputFieldValues.error,
-                          prefixIconConstraints:
-                          BoxConstraints(maxWidth: _distanceToField * 0.74),
-                          prefixIcon: inputFieldValues.tags.isNotEmpty
-                              ? SingleChildScrollView(
-                            controller:
-                            inputFieldValues.tagScrollController,
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                                children: inputFieldValues.tags
-                                    .map((String tag) {
-                                  return Container(
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(20.0),
+              fieldViewBuilder:
+                  (
+                    context,
+                    textEditingController,
+                  focusNode,
+                    onFieldSubmitted,
+                  ) {
+                    return TextFieldTags<String>(
+                      textEditingController: textEditingController,
+                      focusNode: focusNode,
+                      textfieldTagsController: _stringTagController,
+                      initialTags: widget.modifiedItem.tags,
+                      textSeparators: const [' ', ','],
+                      validator: (String tag) {
+                        if ((_stringTagController.getTags ?? []).contains(
+                          tag,
+                        )) {
+                          return 'You\'ve already entered that';
+                        }
+                        return null;
+                      },
+                      inputFieldBuilder: (context, inputFieldValues) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                          child: TextField(
+                            autofocus: true,
+                            controller: inputFieldValues.textEditingController,
+                            focusNode: inputFieldValues.focusNode,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              border: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  //color: Color.fromARGB(255, 74, 137, 92),
+                                  width: 3.0,
+                                ),
+                              ),
+                              focusedBorder: const OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  //color: Color.fromARGB(255, 74, 137, 92),
+                                  width: 3.0,
+                                ),
+                              ),
+                              /* helperText: 'Enter tags...',
+                              helperStyle: const TextStyle(
+                                //color: Color.fromARGB(255, 74, 137, 92),
+                              ),*/
+                              hintText: inputFieldValues.tags.isNotEmpty
+                                  ? ''
+                                  : "Enter tag...",
+                              errorText: inputFieldValues.error,
+                              prefixIconConstraints: BoxConstraints(
+                                maxWidth: _distanceToField * 0.74,
+                              ),
+                              prefixIcon: inputFieldValues.tags.isNotEmpty
+                                  ? SingleChildScrollView(
+                                      controller:
+                                          inputFieldValues.tagScrollController,
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: inputFieldValues.tags.map((
+                                          String tag,
+                                        ) {
+                                          return Container(
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(20.0),
+                                              ),
+                                              color: Color.fromARGB(
+                                                255,
+                                                74,
+                                                137,
+                                                92,
+                                              ),
+                                            ),
+                                            margin: const EdgeInsets.only(
+                                              right: 10.0,
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 10.0,
+                                              vertical: 4.0,
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                InkWell(
+                                                  child: Text(
+                                                    '#$tag',
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  onTap: () {
+                                                    //print("$tag selected");
+                                                  },
+                                                ),
+                                                const SizedBox(width: 4.0),
+                                                InkWell(
+                                                  child: const Icon(
+                                                    Icons.cancel,
+                                                    size: 14.0,
+                                                    /*color: Color.fromARGB(
+                                                      255,
+                                                      233,
+                                                      233,
+                                                      233,
+                                                    ),*/
+                                                  ),
+                                                  onTap: () {
+                                                    inputFieldValues
+                                                        .onTagRemoved(tag);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }).toList(),
                                       ),
-                                      color: Color.fromARGB(255, 74, 137, 92),
-                                    ),
-                                    margin:
-                                    const EdgeInsets.only(right: 10.0),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0, vertical: 4.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        InkWell(
-                                          child: Text(
-                                            '#$tag',
-                                            style: const TextStyle(
-                                                color: Colors.white),
-                                          ),
-                                          onTap: () {
-                                            //print("$tag selected");
-                                          },
-                                        ),
-                                        const SizedBox(width: 4.0),
-                                        InkWell(
-                                          child: const Icon(
-                                            Icons.cancel,
-                                            size: 14.0,
-                                            color: Color.fromARGB(
-                                                255, 233, 233, 233),
-                                          ),
-                                          onTap: () {
-                                            inputFieldValues
-                                                .onTagRemoved(tag);
-                                          },
-                                        )
-                                      ],
-                                    ),
-                                  );
-                                }).toList()),
-                          )
-                              : null,
-                        ),
-                        onChanged: inputFieldValues.onTagChanged,
-                        onSubmitted: inputFieldValues.onTagSubmitted,
-                      ),
+                                    )
+                                  : null,
+                            ),
+                            onChanged: inputFieldValues.onTagChanged,
+                            onSubmitted: inputFieldValues.onTagSubmitted,
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              },
             ),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(
-                  const Color.fromARGB(255, 74, 137, 92),
-                ),
-              ),
-              onPressed: () {
-                _stringTagController.clearTags();
-              },
-              child: const Text(
-                'CLEAR TAGS',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+            SizedBox(height: 5),
 
-  @override
-  Widget build2(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Bookmark"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
             WidgetTextInput(
-              text: widget.link,
+              text: widget.modifiedItem.link,
               hintText: 'Enter Link',
-              onChanged: (value) {},
-              //onChanged: (value) => widget.modifiedItem.title = value,
+              onChanged: (value) => widget.modifiedItem.link = value,
               //autofocus: widget.item == null, // new item
             ),
-            TextFieldTags<String>(
-              textfieldTagsController: _stringTagController,
-              initialTags: ['python', 'java'],
-              textSeparators: const [' ', ','],
-              validator: (String tag) {
-                if (tag == 'php') {
-                  return 'Php not allowed';
-                }
-                return null;
-              },
-              inputFieldBuilder: (context, inputFieldValues) {
-                return TextField(
-                  controller: inputFieldValues.textEditingController,
-                  focusNode: inputFieldValues.focusNode,
-                );
-              },
-            ),
-
-            Row(
-              children: [
-                ElevatedButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            ),
-
-            /*
+            SizedBox(height: 5),
             WidgetTextInput(
               text: widget.modifiedItem.title,
               hintText: 'Enter Title',
               onChanged: (value) => widget.modifiedItem.title = value,
-              autofocus: widget.item == null, // new item
+              //autofocus: widget.item == null, // new item
             ),
             SizedBox(height: 5),
-            TextField(
-              controller: TextEditingController()
-                ..text = widget.modifiedItem.content,
-              decoration: const InputDecoration(hintText: 'Enter Content'),
-              onChanged: (value) => widget.modifiedItem.content = value,
-              keyboardType: TextInputType.multiline,
-              minLines: 5,
-              maxLines: 5, // when user presses enter it will adapt to it
-            ),
-            SizedBox(height: 5),
+
+
             ElevatedButton(
-              child: const Text('Copy'),
-              onPressed: () {
-                Clipboard.setData(
-                  ClipboardData(text: widget.modifiedItem.content),
-                );
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('Copied to Clipboard')));
+              child: const Text('Open'),
+              onPressed: () async {
+                openExternally(widget.modifiedItem.link);
               },
             ),
-            Row(
-              children: [
-                ElevatedButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
 
-                if (widget.item != null)
-                  ElevatedButton(
-                    child: const Text('Delete'),
-                    onPressed: () {
-                      showConfirmationDialog(
-                        context: context,
-                        title: 'Confirm Delete',
-                        text: 'Are you sure you want to delete this item?',
-                        onConfirm: () {
-                          getPackingList(context).delete(widget.item!);
-                          Navigator.of(context).pop();
-                          //Navigator.of(context).popUntil((route) => route.isFirst);
-                        },
-                      );
+            WidgetItemEditActions(
+              onSave: () {
+                return save(context);
+              },
+              onDelete: (widget.newItem)
+                  ? null
+                  : () {
+                      getProvider(context).delete(widget.item);
                     },
-                  ),
-                ElevatedButton(
-                  child: const Text('Save'),
-                  onPressed: () {
-                    saveAndClose(context);
-                  },
-                ),
-              ],
             ),
-
-            */
           ],
         ),
       ),

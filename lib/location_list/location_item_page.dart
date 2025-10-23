@@ -5,15 +5,16 @@ import 'package:provider/provider.dart';
 import '../utils/map.dart';
 import '../widgets/widget_item_edit_actions.dart';
 import '../widgets/widget_text_input.dart';
+import '../widgets/widget_tags.dart';
 import 'location.dart';
 import 'location_provider.dart';
 
 class LocationItemPage extends StatefulWidget {
-  LocationItemPage({super.key, this.location});
+  LocationItemPage({super.key, this.modifiedItem});
 
   @override
   State<LocationItemPage> createState() => _LocationItemPageState();
-  Location? location;
+  Location? modifiedItem;
   bool newItem = false;
 }
 
@@ -34,9 +35,9 @@ class _LocationItemPageState extends State<LocationItemPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.location == null) {
+    if (widget.modifiedItem == null) {
       widget.newItem = true;
-      widget.location = Location(
+      widget.modifiedItem = Location(
         title: "",
         timestamp: DateTime(2000),
         longitude: 0,
@@ -44,15 +45,15 @@ class _LocationItemPageState extends State<LocationItemPage> {
         altitude: 0,
         accuracy: 0,
       );
-      updatePosition(widget.location!);
+      updatePosition(widget.modifiedItem!);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final locationProvider = context.watch<LocationProvider>();
-    String title = widget.location!.title;
-    String tags = widget.location!.tags;
+    String title = widget.modifiedItem!.title;
+    String tags = widget.modifiedItem!.tags;
 
     return Scaffold(
       appBar: AppBar(
@@ -62,6 +63,7 @@ class _LocationItemPageState extends State<LocationItemPage> {
 
       body: Column(
         children: [
+          SizedBox(height: 5),
           WidgetTextInput(
             text: title,
             hintText: 'Enter Location',
@@ -70,10 +72,22 @@ class _LocationItemPageState extends State<LocationItemPage> {
             autofocus: widget.newItem,
           ),
           SizedBox(height: 5),
-          WidgetTextInput(
+          /*WidgetTextInput(
             text: tags,
             hintText: 'Enter Info',
             onChanged: (value) => tags = value,
+          ),*/
+          //WidgetTags(),
+          SizedBox(height: 5),
+          TextField(
+            controller: TextEditingController()
+              ..text = widget.modifiedItem!.comment,
+            decoration: const InputDecoration(hintText: 'Comment'),
+            onChanged: (value) => widget.modifiedItem!.comment = value,
+            keyboardType: TextInputType.multiline,
+            minLines: 3,
+            //Normal textInputField will be displayed
+            maxLines: 3, // when user presses enter it will adapt to it
           ),
 
           Row(
@@ -82,15 +96,15 @@ class _LocationItemPageState extends State<LocationItemPage> {
               FormattedText(
                 title: "Latitude, Longitude",
                 content:
-                    "${widget.location!.latitude.toString()}, ${widget.location!.longitude.toString()}",
+                    "${widget.modifiedItem!.latitude.toString()}, ${widget.modifiedItem!.longitude.toString()}",
               ),
               ElevatedButton(
                 child: const Text('Map'),
                 onPressed: () {
                   //Navigator.of(context).pop(); // Close the AlertDialog
                   launchMapOnAndroid(
-                    widget.location!.latitude,
-                    widget.location!.longitude,
+                    widget.modifiedItem!.latitude,
+                    widget.modifiedItem!.longitude,
                   );
                 },
               ),
@@ -102,21 +116,21 @@ class _LocationItemPageState extends State<LocationItemPage> {
             children: [
               FormattedText(
                 title: "Time",
-                content: widget.location!.getDateTimeStr(),
+                content: widget.modifiedItem!.getDateTimeStr(),
               ),
               FormattedText(
                 title: "Accuracy",
-                content: widget.location!.accuracy.round().toString(),
+                content: widget.modifiedItem!.accuracy.round().toString(),
               ),
               FormattedText(
                 title: "Altitude",
-                content: widget.location!.altitude.toStringAsFixed(1),
+                content: widget.modifiedItem!.altitude.toStringAsFixed(1),
               ),
             ],
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
+            //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [/*
               ElevatedButton(
                 child: const Text('Refresh'),
                 onPressed: () {
@@ -124,21 +138,23 @@ class _LocationItemPageState extends State<LocationItemPage> {
                     updatePosition(widget.location!);
                   });
                 },
-              ),
-              WidgetItemEditActions(
-                onSave: () {
-                  widget.location!.title = title;
-                  widget.location!.tags = tags;
-                  locationProvider.add(widget.location!);
-                  return true;
-                },
-                onDelete: (widget.newItem)
-                    ? null
-                    : () {
-                        locationProvider.delete(widget.location!);
-                      },
-              ),
+              ),*/
+
+
             ],
+          ),
+          WidgetItemEditActions(
+            onSave: () {
+              widget.modifiedItem!.title = title;
+              widget.modifiedItem!.tags = tags;
+              locationProvider.add(widget.modifiedItem!);
+              return true;
+            },
+            onDelete: (widget.newItem)
+                ? null
+                : () {
+              locationProvider.delete(widget.modifiedItem!);
+            },
           ),
         ],
       ),

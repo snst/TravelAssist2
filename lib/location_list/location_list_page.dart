@@ -83,7 +83,7 @@ class _LocationListPageState extends State<LocationListPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => LocationItemPage(
-                      location: locationProvider.items[reverseIndex],
+                      modifiedItem: locationProvider.items[reverseIndex],
                     ),
                   ),
                 );

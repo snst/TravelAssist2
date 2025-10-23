@@ -137,9 +137,9 @@ class WidgetBookmark extends StatelessWidget {
               style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.surfaceTint),
             ),
             ],
-            if (bookmark.title.isNotEmpty) ...[
+            if (bookmark.comment.isNotEmpty) ...[
               SizedBox(height: 2),
-              Text(bookmark.title, style: TextStyle(fontSize: 14)),
+              Text(bookmark.comment, style: TextStyle(fontSize: 14)),
             ],
             if (bookmark.link.isNotEmpty) ...[
               SizedBox(height: 2),

@@ -6,7 +6,6 @@ import 'location_provider.dart';
 import 'location_item_page.dart';
 import '../utils/map.dart';
 import '../widgets/export_widget.dart';
-import '../widgets/widget_text_input.dart';
 
 class LocationListPage extends StatefulWidget {
   const LocationListPage({super.key});
@@ -83,14 +82,14 @@ class _LocationListPageState extends State<LocationListPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => LocationItemPage(
-                      modifiedItem: locationProvider.items[reverseIndex],
+                      item: locationProvider.items[reverseIndex],
                     ),
                   ),
                 );
               },
               title: FormattedText(
                 title: locationProvider.items[reverseIndex].getDateTimeStr(),
-                content: locationProvider.items[reverseIndex].title,
+                content: locationProvider.items[reverseIndex].comment,
               ),
               trailing: IconButton(
                 icon: Icon(Icons.map), // The icon on the right
@@ -109,7 +108,7 @@ class _LocationListPageState extends State<LocationListPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => LocationItemPage()),
+            MaterialPageRoute(builder: (context) => LocationItemPage(item:Location(), newItem:true)),
           );
         },
         tooltip: 'Add Location',

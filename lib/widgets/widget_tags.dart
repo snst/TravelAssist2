@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../utils/globals.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 class WidgetTags extends StatelessWidget {
@@ -8,8 +7,6 @@ class WidgetTags extends StatelessWidget {
   List<String> allTags;
   List<String> tags;
   StringTagController stringTagController;
-  //late double _distanceToField;
-  double _distanceToField = 1;
 /*
   @override
   void didChangeDependencies() {

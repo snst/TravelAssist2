@@ -101,4 +101,13 @@ class LocationProvider extends ChangeNotifier with Storage {
       addList(newItems);
     }
   }
+
+
+  List<String> getTags() {
+    final tags = <String>{};
+    _items.forEach((item) => tags.addAll(item.tags));
+    final tagList = tags.toList();
+    tagList.sort();
+    return tagList;
+  }
 }

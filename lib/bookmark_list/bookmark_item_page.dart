@@ -35,13 +35,13 @@ Future<String> moveSharedImageToDataFolder(String srcPath) async {
 
 class BookmarkItemPage extends StatefulWidget {
   BookmarkItemPage({super.key, required this.item, this.newItem = false})
-    : modifiedItem = item.clone(),
-      comment = StringHolder(item.comment);
+    : modifiedItem = item.clone();
+      //,comment = StringHolder(item.comment);
 
   final Bookmark item;
   final Bookmark modifiedItem;
   final bool newItem;
-  final StringHolder comment;
+  //final StringHolder comment;
 
   @override
   State<BookmarkItemPage> createState() => _PackedItemPageState();
@@ -70,7 +70,7 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
   bool save(BuildContext context) {
     var tags = _stringTagController.getTags;
     widget.modifiedItem.tags = tags ?? [];
-    widget.modifiedItem.comment = widget.comment.value;
+    //widget.modifiedItem.comment = widget.comment.value;
     widget.item.update(widget.modifiedItem);
     getProvider(context).add(widget.item);
     return true;
@@ -100,7 +100,7 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
               //autofocus: widget.item == null, // new item
             ),
             SizedBox(height: 5),
-            WidgetComment(comment: widget.comment),
+            WidgetComment(comment: widget.modifiedItem.comment, onChanged: (value) => widget.modifiedItem.comment = value),
 
             SizedBox(height: 5),
 

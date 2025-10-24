@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
+import 'package:textfield_tags/textfield_tags.dart';
 
 import '../utils/map.dart';
+import '../widgets/widget_comment.dart';
 import '../widgets/widget_item_edit_actions.dart';
-import '../widgets/widget_text_input.dart';
 import '../widgets/widget_tags.dart';
 import 'location.dart';
 import 'location_provider.dart';
 
 class LocationItemPage extends StatefulWidget {
-  LocationItemPage({super.key, this.modifiedItem});
+  LocationItemPage({super.key, required this.item, this.newItem = false})
+  : modifiedItem = item.clone();
 
   @override
   State<LocationItemPage> createState() => _LocationItemPageState();
-  Location? modifiedItem;
-  bool newItem = false;
+  final Location item;
+  final Location modifiedItem;
+  final bool newItem;
 }
 
 class _LocationItemPageState extends State<LocationItemPage> {
+  late StringTagController _stringTagController;
+  List<String> _initialTags = [];
+
   void updatePosition(Location location) async {
     Position position = await getPosition();
     if (mounted) {
@@ -35,25 +41,26 @@ class _LocationItemPageState extends State<LocationItemPage> {
   @override
   void initState() {
     super.initState();
-    if (widget.modifiedItem == null) {
-      widget.newItem = true;
-      widget.modifiedItem = Location(
-        title: "",
-        timestamp: DateTime(2000),
-        longitude: 0,
-        latitude: 0,
-        altitude: 0,
-        accuracy: 0,
-      );
-      updatePosition(widget.modifiedItem!);
+    _stringTagController = StringTagController();
+
+    if (widget.newItem) {
+      updatePosition(widget.modifiedItem);
     }
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    _stringTagController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final locationProvider = context.watch<LocationProvider>();
-    String title = widget.modifiedItem!.title;
-    String tags = widget.modifiedItem!.tags;
+    if (_initialTags.isEmpty) {
+      _initialTags = locationProvider.getTags();
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -64,31 +71,14 @@ class _LocationItemPageState extends State<LocationItemPage> {
       body: Column(
         children: [
           SizedBox(height: 5),
-          WidgetTextInput(
-            text: title,
-            hintText: 'Enter Location',
-            lines: 4,
-            onChanged: (value) => title = value,
-            autofocus: widget.newItem,
+          WidgetTags(
+            allTags: _initialTags,
+            tags: widget.modifiedItem.tags,
+            stringTagController: _stringTagController,
           ),
           SizedBox(height: 5),
-          /*WidgetTextInput(
-            text: tags,
-            hintText: 'Enter Info',
-            onChanged: (value) => tags = value,
-          ),*/
-          //WidgetTags(),
-          SizedBox(height: 5),
-          TextField(
-            controller: TextEditingController()
-              ..text = widget.modifiedItem!.comment,
-            decoration: const InputDecoration(hintText: 'Comment'),
-            onChanged: (value) => widget.modifiedItem!.comment = value,
-            keyboardType: TextInputType.multiline,
-            minLines: 3,
-            //Normal textInputField will be displayed
-            maxLines: 3, // when user presses enter it will adapt to it
-          ),
+          WidgetComment(comment: widget.modifiedItem.comment, onChanged: (value) => widget.modifiedItem.comment = value),
+
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -96,15 +86,15 @@ class _LocationItemPageState extends State<LocationItemPage> {
               FormattedText(
                 title: "Latitude, Longitude",
                 content:
-                    "${widget.modifiedItem!.latitude.toString()}, ${widget.modifiedItem!.longitude.toString()}",
+                    "${widget.modifiedItem.latitude.toString()}, ${widget.modifiedItem.longitude.toString()}",
               ),
               ElevatedButton(
                 child: const Text('Map'),
                 onPressed: () {
                   //Navigator.of(context).pop(); // Close the AlertDialog
                   launchMapOnAndroid(
-                    widget.modifiedItem!.latitude,
-                    widget.modifiedItem!.longitude,
+                    widget.modifiedItem.latitude,
+                    widget.modifiedItem.longitude,
                   );
                 },
               ),
@@ -116,15 +106,15 @@ class _LocationItemPageState extends State<LocationItemPage> {
             children: [
               FormattedText(
                 title: "Time",
-                content: widget.modifiedItem!.getDateTimeStr(),
+                content: widget.modifiedItem.getDateTimeStr(),
               ),
               FormattedText(
                 title: "Accuracy",
-                content: widget.modifiedItem!.accuracy.round().toString(),
+                content: widget.modifiedItem.accuracy.round().toString(),
               ),
               FormattedText(
                 title: "Altitude",
-                content: widget.modifiedItem!.altitude.toStringAsFixed(1),
+                content: widget.modifiedItem.altitude.toStringAsFixed(1),
               ),
             ],
           ),
@@ -145,15 +135,14 @@ class _LocationItemPageState extends State<LocationItemPage> {
           ),
           WidgetItemEditActions(
             onSave: () {
-              widget.modifiedItem!.title = title;
-              widget.modifiedItem!.tags = tags;
-              locationProvider.add(widget.modifiedItem!);
+              widget.item.update(widget.modifiedItem);
+              locationProvider.add(widget.item);
               return true;
             },
             onDelete: (widget.newItem)
                 ? null
                 : () {
-              locationProvider.delete(widget.modifiedItem!);
+              locationProvider.delete(widget.item);
             },
           ),
         ],

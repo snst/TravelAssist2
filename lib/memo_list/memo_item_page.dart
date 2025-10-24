@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../widgets/widget_confirm_dialog.dart';
 import '../widgets/widget_item_edit_actions.dart';
 import '../widgets/widget_text_input.dart';
 import 'memo.dart';
@@ -40,7 +39,6 @@ class _PackedItemPageState extends State<MemoItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController controller = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(

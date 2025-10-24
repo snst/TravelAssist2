@@ -3,11 +3,11 @@ import 'package:flutter_spinbox/material.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/widget_combobox.dart';
-import '../widgets/widget_confirm_dialog.dart';
 import '../widgets/widget_text_input.dart';
 import 'todo_item.dart';
 import 'todo_provider.dart';
 import '../widgets/widget_item_edit_actions.dart';
+import '../widgets/widget_comment.dart';
 
 class TodoItemPage extends StatefulWidget {
   TodoItemPage({super.key, this.item})
@@ -86,7 +86,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
                   child: SpinBox(
                     value: widget.modifiedItem.quantity.toDouble(),
                     decoration: const InputDecoration(
@@ -99,7 +99,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
                 ),
                 const Spacer(),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
+                  padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
                   child: SpinBox(
                     value: widget.modifiedItem.used.toDouble(),
                     decoration: const InputDecoration(
@@ -113,7 +113,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 18, 0, 12),
+              padding: const EdgeInsets.fromLTRB(0, 9, 0, 12),
               child: SegmentedButton<TodoItemStateEnum>(
                 showSelectedIcon: false,
                 segments: const <ButtonSegment<TodoItemStateEnum>>[
@@ -150,7 +150,9 @@ class _PackedItemPageState extends State<TodoItemPage> {
                 getPackingList(context).delete(widget.item!);
               }
             ),
+            WidgetComment(comment: widget.modifiedItem.comment, onChanged: (value) => widget.modifiedItem.comment = value),
 
+            /*
             TextField(
               controller: TextEditingController()
                 ..text = widget.modifiedItem.comment,
@@ -160,7 +162,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
               minLines: 10,
               //Normal textInputField will be displayed
               maxLines: 10, // when user presses enter it will adapt to it
-            ),
+            ),*/
           ],
         ),
       ),

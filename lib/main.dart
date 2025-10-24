@@ -12,6 +12,7 @@ import 'calculator/calculator.dart';
 import 'calculator/calculator_page.dart';
 import 'currency/currency_list_page.dart';
 import 'currency/currency_provider.dart';
+import 'location_list/location.dart';
 import 'location_list/location_item_page.dart';
 import 'location_list/location_list_page.dart';
 import 'location_list/location_provider.dart';
@@ -79,7 +80,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   late StreamSubscription _intentSub;
-  late BookmarkProvider _bookmarkProvider;
 
   void handleSharedFile(SharedMediaFile file) async {
     final link = await moveSharedImageToDataFolder(file.path);
@@ -96,7 +96,6 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     // Access the provider here using `context.read` as the context is available.
     // We use `read` because we don't need to rebuild the widget when the provider changes.
-    _bookmarkProvider = context.read<BookmarkProvider>();
     // Listen to media sharing coming from outside the app while the app is in the memory.
     _intentSub = ReceiveSharingIntent.instance.getMediaStream().listen(
       (value) {
@@ -176,7 +175,10 @@ class _MainScreenState extends State<MainScreen> {
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => LocationItemPage()),
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        LocationItemPage(item: Location(), newItem: true),
+                  ),
                 );
                 if (result != null && context.mounted) {
                   _onShowPage(context, const LocationListPage());

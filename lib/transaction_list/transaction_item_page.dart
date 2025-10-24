@@ -23,7 +23,7 @@ class TransactionItemPage extends StatefulWidget {
       : newItem = item == null,
         modifiedItem = item == null
             ? Transaction(date: DateTime.now(), currency: "", method: "")
-            : item!.clone();
+            : item.clone();
 
   final bool newItem;
   final Transaction? item;

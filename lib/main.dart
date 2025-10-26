@@ -26,18 +26,27 @@ import 'transaction_list/transaction_item_page.dart';
 import 'transaction_list/transaction_main_page.dart';
 import 'transaction_list/transaction_provider.dart';
 import 'widgets/widget_dual_action_button.dart';
+//import 'package:isar_community/isar.dart';
+import 'providers/isar_service.dart';
 
-void main() {
+
+void main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    final isarService = IsarService();
+    await isarService.init();
+
   runApp(
     MultiProvider(
       providers: [
+        //Provider<IsarService>.value(value: isarService),
         ChangeNotifierProvider(create: (context) => TodoProvider()),
         ChangeNotifierProvider(create: (context) => CurrencyProvider()),
         ChangeNotifierProvider(create: (context) => TransactionProvider()),
         ChangeNotifierProvider(create: (context) => LocationProvider()),
         ChangeNotifierProvider(create: (context) => Calculator()),
         ChangeNotifierProvider(create: (context) => MemoProvider()),
-        ChangeNotifierProvider(create: (context) => BookmarkProvider()),
+        ChangeNotifierProvider(create: (context) => BookmarkProvider(isarService.isar)),
       ],
       child: const MyApp(),
     ),
@@ -104,7 +113,7 @@ class _MainScreenState extends State<MainScreen> {
         });
       },
       onError: (err) {
-        print("getIntentDataStream error: $err");
+        //print("getIntentDataStream error: $err");
       },
     );
 

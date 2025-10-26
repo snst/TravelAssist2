@@ -57,10 +57,6 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
   @override
   Widget build(BuildContext context) {
     final bookmarkProvider = context.watch<BookmarkProvider>();
-    List<MultiSelectCard> tags =
-      bookmarkProvider.getTags().map((tag) => MultiSelectCard(value: tag, label: tag)).toList();
-    List<Bookmark> bookmarks = bookmarkProvider.getItemsWithTag(widget.selectedTags);
-
 
     return Scaffold(
       appBar: AppBar(
@@ -90,62 +86,83 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
 
       Column(
         children: [
-
           Expanded(
-            child: ListView.builder(
-              itemCount: bookmarks.length,
-              itemBuilder: (context, index) {
-                final reverseIndex = bookmarks.length - 1 - index;
-                return Card(
-                  child: ListTile(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BookmarkItemPage(
-                            item: bookmarks[reverseIndex],
-                          ),
+            child: FutureBuilder<List<Bookmark>>(
+              future: bookmarkProvider.getWithTag(widget.selectedTags),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                final bookmarks = snapshot.data ?? [];
+                if (bookmarks.isEmpty) {
+                  return const Center(child: Text('No bookmarks found.'));
+                }
+                return ListView.builder(
+                  itemCount: bookmarks.length,
+                  itemBuilder: (context, index) {
+                    final reverseIndex = bookmarks.length - 1 - index;
+                    return Card(
+                      child: ListTile(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BookmarkItemPage(
+                                item: bookmarks[reverseIndex],
+                              ),
+                            ),
+                          );
+                        },
+                        title: WidgetBookmark(
+                          bookmark: bookmarks[reverseIndex],
                         ),
-                      );
-                    },
-                    title: WidgetBookmark(
-                      bookmark: bookmarks[reverseIndex],
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.open_in_browser), // The icon on the right
-                      onPressed: () {
-                        openExternally(bookmarks[reverseIndex].link);
-                      },
-                    ),
-                  ),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.open_in_browser), // The icon on the right
+                          onPressed: () {
+                            openExternally(bookmarks[reverseIndex].link);
+                          },
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             ),
           ),
-        //  Padding(
-        //    padding: const EdgeInsets.only(left: 16.0, right: 80.0), // Leave space on the right for the FAB
-        //    child:
     SizedBox(
               height: 60,
               width: double.infinity, // Take the full width of the parent (within padding)
-              child: MultiSelectContainer(
-                  showInListView: true,
-                  listViewSettings: ListViewSettings(
-                      scrollDirection: Axis.horizontal,
-                      separatorBuilder: (_, __) => const SizedBox(
-                        width: 10,
-                      )),
-                  items: tags,
-                  onChange: (allSelectedItems, selectedItem) { setSelected(allSelectedItems);}),
+              child: FutureBuilder<List<String>>(
+                future: bookmarkProvider.getTags(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const SizedBox.shrink();
+                  }
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  final tags = snapshot.data ?? [];
+                  if (tags.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  final tagCards = tags.map((tag) => MultiSelectCard(value: tag, label: tag)).toList();
+                  return MultiSelectContainer(
+                      showInListView: true,
+                      listViewSettings: ListViewSettings(
+                          scrollDirection: Axis.horizontal,
+                          separatorBuilder: (_, __) => const SizedBox(
+                            width: 10,
+                          )),
+                      items: tagCards,
+                      onChange: (allSelectedItems, selectedItem) { setSelected(allSelectedItems);});
+                }
+              ),
             ),
-         // ),
-
         ],
       ),
-
-
-
-
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -158,7 +175,6 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
         tooltip: 'Add Location',
         child: const Icon(Icons.add),
       ),
-
     );
   }
 }
@@ -184,11 +200,11 @@ class WidgetBookmark extends StatelessWidget {
             ),
             ],
             if (bookmark.comment.isNotEmpty) ...[
-              SizedBox(height: 2),
-              Text(bookmark.comment, style: TextStyle(fontSize: 14)),
+              const SizedBox(height: 2),
+              Text(bookmark.comment, style: const TextStyle(fontSize: 14)),
             ],
             if (bookmark.link.isNotEmpty) ...[
-              SizedBox(height: 2),
+              const SizedBox(height: 2),
               Text(
                 bookmark.shortLink(),
                 style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.secondaryFixed),

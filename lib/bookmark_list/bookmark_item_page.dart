@@ -45,7 +45,6 @@ class BookmarkItemPage extends StatefulWidget {
 
 class _PackedItemPageState extends State<BookmarkItemPage> {
   late StringTagController _stringTagController;
-  List<String> _initialTags = [];
 
   BookmarkProvider getProvider(BuildContext context) {
     return Provider.of<BookmarkProvider>(context, listen: false);
@@ -73,9 +72,8 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_initialTags.isEmpty) {
-      _initialTags = getProvider(context).getTags();
-    }
+    final provider = context.watch<BookmarkProvider>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Bookmark'),
@@ -89,40 +87,45 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          children: [
-            WidgetTags(
-              allTags: _initialTags,
-              tags: widget.modifiedItem.tags,
-              stringTagController: _stringTagController,
-            ),
-            SizedBox(height: 5),
-            WidgetTextInput(
-              text: widget.modifiedItem.link,
-              hintText: 'Enter Link',
-              onChanged: (value) => widget.modifiedItem.link = value,
-              //autofocus: widget.item == null, // new item
-            ),
-            SizedBox(height: 5),
-            WidgetComment(
-              comment: widget.modifiedItem.comment,
-              onChanged: (value) => widget.modifiedItem.comment = value,
-            ),
+        child: FutureBuilder<List<String>>(
+          future: provider.getTags(),
+          builder: (context, asyncSnapshot) {
+            return Column(
+              children: [
+                WidgetTags(
+                  allTags: asyncSnapshot.data ?? [],
+                  tags: widget.modifiedItem.tags,
+                  stringTagController: _stringTagController,
+                ),
+                SizedBox(height: 5),
+                WidgetTextInput(
+                  text: widget.modifiedItem.link,
+                  hintText: 'Enter Link',
+                  onChanged: (value) => widget.modifiedItem.link = value,
+                  //autofocus: widget.item == null, // new item
+                ),
+                SizedBox(height: 5),
+                WidgetComment(
+                  comment: widget.modifiedItem.comment,
+                  onChanged: (value) => widget.modifiedItem.comment = value,
+                ),
 
-            SizedBox(height: 5),
+                SizedBox(height: 5),
 
-            if (widget.doEdit || widget.newItem)
-            WidgetItemEditActions(
-              onSave: () {
-                return save(context);
-              },
-              onDelete: (widget.newItem)
-                  ? null
-                  : () {
-                      getProvider(context).delete(widget.item);
-                    },
-            ),
-          ],
+                if (widget.doEdit || widget.newItem)
+                WidgetItemEditActions(
+                  onSave: () {
+                    return save(context);
+                  },
+                  onDelete: (widget.newItem)
+                      ? null
+                      : () {
+                          getProvider(context).delete(widget.item);
+                        },
+                ),
+              ],
+            );
+          }
         ),
       ),
       floatingActionButton: FloatingActionButton(

@@ -18,6 +18,13 @@ class BookmarkProvider extends ChangeNotifier with Storage {
 
   List<Bookmark> get items => _items;
 
+  List<Bookmark> getItemsWithTag(List<String> tags)
+  {
+    if (tags.isEmpty) return _items;
+    return _items.where((bookmark) =>
+        tags.every((tag) => bookmark.tags.contains(tag))).toList();
+  }
+
   void init() async {
     final isar = await db;
     isar!.txn(() async {

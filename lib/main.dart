@@ -220,7 +220,7 @@ class _MainScreenState extends State<MainScreen> {
               label: 'Bookmarks',
               icon: Icons.bookmark,
               onMainPressed: () =>
-                  _onShowPage(context, const BookmarkListPage()),
+                  _onShowPage(context, BookmarkListPage()),
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
@@ -230,7 +230,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 );
                 if (result != null && context.mounted) {
-                  _onShowPage(context, const BookmarkListPage());
+                  _onShowPage(context, BookmarkListPage());
                 }
               },
             ),

@@ -8,10 +8,11 @@ import 'bookmark_item_page.dart';
 import 'bookmark_provider.dart';
 
 class BookmarkListPage extends StatefulWidget {
-  const BookmarkListPage({super.key});
+  BookmarkListPage({super.key});
 
   @override
   State<BookmarkListPage> createState() => _BookmarkListPageState();
+  List<String> selectedTags = [];
 }
 
 class _BookmarkListPageState extends State<BookmarkListPage> {
@@ -46,11 +47,19 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
     );
   }
 */
+  void setSelected(List<dynamic> selectedItems)
+  {
+    setState(() {
+      widget.selectedTags = selectedItems.cast<String>();
+
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final bookmarkProvider = context.watch<BookmarkProvider>();
     List<MultiSelectCard> tags =
       bookmarkProvider.getTags().map((tag) => MultiSelectCard(value: tag, label: tag)).toList();
+    List<Bookmark> bookmarks = bookmarkProvider.getItemsWithTag(widget.selectedTags);
 
 
     return Scaffold(
@@ -84,9 +93,9 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
 
           Expanded(
             child: ListView.builder(
-              itemCount: bookmarkProvider.items.length,
+              itemCount: bookmarks.length,
               itemBuilder: (context, index) {
-                final reverseIndex = bookmarkProvider.items.length - 1 - index;
+                final reverseIndex = bookmarks.length - 1 - index;
                 return Card(
                   child: ListTile(
                     onTap: () {
@@ -94,18 +103,18 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => BookmarkItemPage(
-                            item: bookmarkProvider.items[reverseIndex],
+                            item: bookmarks[reverseIndex],
                           ),
                         ),
                       );
                     },
                     title: WidgetBookmark(
-                      bookmark: bookmarkProvider.items[reverseIndex],
+                      bookmark: bookmarks[reverseIndex],
                     ),
                     trailing: IconButton(
                       icon: Icon(Icons.open_in_browser), // The icon on the right
                       onPressed: () {
-                        openExternally(bookmarkProvider.items[reverseIndex].link);
+                        openExternally(bookmarks[reverseIndex].link);
                       },
                     ),
                   ),
@@ -113,17 +122,24 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
               },
             ),
           ),
-          SizedBox(
-            height: 50,
-            child: MultiSelectContainer(
-                showInListView: true,
-                listViewSettings: ListViewSettings(
-                    scrollDirection: Axis.horizontal,
-                    separatorBuilder: (_, __) => const SizedBox(
-                      width: 10,
-                    )),
-                items: tags, onChange: (allSelectedItems, selectedItem) {}),
-          ),
+        //  Padding(
+        //    padding: const EdgeInsets.only(left: 16.0, right: 80.0), // Leave space on the right for the FAB
+        //    child:
+    SizedBox(
+              height: 60,
+              width: double.infinity, // Take the full width of the parent (within padding)
+              child: MultiSelectContainer(
+                  showInListView: true,
+                  listViewSettings: ListViewSettings(
+                      scrollDirection: Axis.horizontal,
+                      separatorBuilder: (_, __) => const SizedBox(
+                        width: 10,
+                      )),
+                  items: tags,
+                  onChange: (allSelectedItems, selectedItem) { setSelected(allSelectedItems);}),
+            ),
+         // ),
+
         ],
       ),
 
@@ -142,6 +158,7 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
         tooltip: 'Add Location',
         child: const Icon(Icons.add),
       ),
+
     );
   }
 }

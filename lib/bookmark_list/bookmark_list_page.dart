@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/travel_assist_utils.dart';
@@ -48,6 +49,10 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
   @override
   Widget build(BuildContext context) {
     final bookmarkProvider = context.watch<BookmarkProvider>();
+    List<MultiSelectCard> tags =
+      bookmarkProvider.getTags().map((tag) => MultiSelectCard(value: tag, label: tag)).toList();
+
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -72,41 +77,65 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: bookmarkProvider.items.length,
-        itemBuilder: (context, index) {
-          final reverseIndex = bookmarkProvider.items.length - 1 - index;
-          return Card(
-            child: ListTile(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BookmarkItemPage(
-                      item: bookmarkProvider.items[reverseIndex],
+      body:
+
+      Column(
+        children: [
+
+          Expanded(
+            child: ListView.builder(
+              itemCount: bookmarkProvider.items.length,
+              itemBuilder: (context, index) {
+                final reverseIndex = bookmarkProvider.items.length - 1 - index;
+                return Card(
+                  child: ListTile(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => BookmarkItemPage(
+                            item: bookmarkProvider.items[reverseIndex],
+                          ),
+                        ),
+                      );
+                    },
+                    title: WidgetBookmark(
+                      bookmark: bookmarkProvider.items[reverseIndex],
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(Icons.open_in_browser), // The icon on the right
+                      onPressed: () {
+                        openExternally(bookmarkProvider.items[reverseIndex].link);
+                      },
                     ),
                   ),
                 );
               },
-              title: WidgetBookmark(
-                bookmark: bookmarkProvider.items[reverseIndex],
-              ),
-              trailing: IconButton(
-                icon: Icon(Icons.open_in_browser), // The icon on the right
-                onPressed: () {
-                  openExternally(bookmarkProvider.items[reverseIndex].link);
-                },
-              ),
             ),
-          );
-        },
+          ),
+          SizedBox(
+            height: 50,
+            child: MultiSelectContainer(
+                showInListView: true,
+                listViewSettings: ListViewSettings(
+                    scrollDirection: Axis.horizontal,
+                    separatorBuilder: (_, __) => const SizedBox(
+                      width: 10,
+                    )),
+                items: tags, onChange: (allSelectedItems, selectedItem) {}),
+          ),
+        ],
       ),
+
+
+
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => BookmarkItemPage(item: Bookmark()),
+              builder: (context) => BookmarkItemPage(item: Bookmark(), newItem: true,),
             ),
           );
         },

@@ -15,9 +15,6 @@ import '../widgets/widget_tags.dart';
 import '../widgets/widget_text_input.dart';
 import 'bookmark_provider.dart';
 
-Future<Directory> getAppDataDirectory() async {
-  return await getApplicationDocumentsDirectory();
-}
 
 Future<String> moveSharedImageToDataFolder(String srcPath) async {
   final file = File(srcPath);
@@ -36,12 +33,11 @@ Future<String> moveSharedImageToDataFolder(String srcPath) async {
 class BookmarkItemPage extends StatefulWidget {
   BookmarkItemPage({super.key, required this.item, this.newItem = false})
     : modifiedItem = item.clone();
-      //,comment = StringHolder(item.comment);
 
   final Bookmark item;
   final Bookmark modifiedItem;
   final bool newItem;
-  //final StringHolder comment;
+  bool doEdit = false;
 
   @override
   State<BookmarkItemPage> createState() => _PackedItemPageState();
@@ -70,7 +66,6 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
   bool save(BuildContext context) {
     var tags = _stringTagController.getTags;
     widget.modifiedItem.tags = tags ?? [];
-    //widget.modifiedItem.comment = widget.comment.value;
     widget.item.update(widget.modifiedItem);
     getProvider(context).add(widget.item);
     return true;
@@ -82,7 +77,16 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
       _initialTags = getProvider(context).getTags();
     }
     return Scaffold(
-      appBar: AppBar(title: const Text('Bookmark')),
+      appBar: AppBar(
+        title: const Text('Bookmark'),
+        actions: [
+          if (!widget.newItem)
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () => setState(() {widget.doEdit = true;} )  ,
+            ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Column(
@@ -100,18 +104,14 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
               //autofocus: widget.item == null, // new item
             ),
             SizedBox(height: 5),
-            WidgetComment(comment: widget.modifiedItem.comment, onChanged: (value) => widget.modifiedItem.comment = value),
+            WidgetComment(
+              comment: widget.modifiedItem.comment,
+              onChanged: (value) => widget.modifiedItem.comment = value,
+            ),
 
             SizedBox(height: 5),
 
-
-            ElevatedButton(
-              child: const Text('Open'),
-              onPressed: () async {
-                openExternally(widget.modifiedItem.link);
-              },
-            ),
-
+            if (widget.doEdit || widget.newItem)
             WidgetItemEditActions(
               onSave: () {
                 return save(context);
@@ -124,6 +124,12 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          openExternally(widget.modifiedItem.link);
+        },
+        child: const Icon(Icons.open_in_new),
       ),
     );
   }

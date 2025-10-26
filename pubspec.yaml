@@ -49,6 +49,7 @@ dependencies:
   shared_preferences: ^2.3.2
   textfield_tags: ^3.0.1
   open_app_file: ^4.0.4
+  flutter_multi_select_items: ^0.4.3
   receive_sharing_intent:
     git:
       url: https://github.com/KasemJaffer/receive_sharing_intent

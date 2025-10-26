@@ -226,7 +226,7 @@ class _MainScreenState extends State<MainScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        BookmarkItemPage(item: Bookmark(link: "")),
+                        BookmarkItemPage(item: Bookmark(), newItem: true,),
                   ),
                 );
                 if (result != null && context.mounted) {

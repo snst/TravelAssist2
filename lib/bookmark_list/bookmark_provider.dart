@@ -1,28 +1,31 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
 import 'package:provider/provider.dart';
-import 'bookmark.dart';
+
 import '../utils/storage.dart';
+import 'bookmark.dart';
 
 class BookmarkProvider extends ChangeNotifier with Storage {
-  BookmarkProvider({this.useDb = true}) {
-    if (useDb) {
-      db = openDB();
-      init();
-    }
+  BookmarkProvider() {
+    db = openDB();
+    init();
   }
 
-  bool useDb;
   List<Bookmark> _items = [];
 
   List<Bookmark> get items => _items;
 
-  List<Bookmark> getItemsWithTag(List<String> tags)
-  {
+  List<Bookmark> getItems() {
+    return _items;
+  }
+
+    List<Bookmark> getItemsWithTag(List<String> tags) {
     if (tags.isEmpty) return _items;
-    return _items.where((bookmark) =>
-        tags.every((tag) => bookmark.tags.contains(tag))).toList();
+    return _items
+        .where((bookmark) => tags.every((tag) => bookmark.tags.contains(tag)))
+        .toList();
   }
 
   void init() async {
@@ -45,59 +48,39 @@ class BookmarkProvider extends ChangeNotifier with Storage {
     return tagList;
   }
 
-
   void add(Bookmark item) async {
     addList([item]);
   }
 
   void addList(List<Bookmark> items) async {
-    if (useDb) {
-      final isar = await db;
-      await isar!.writeTxn(() async {
-        for (final item in items) {
-          await isar.bookmarks.put(item);
-          if (!_items.contains(item)) {
-            _items.add(item);
-          }
-        }
-        notifyListeners();
-      });
-    } else {
+    final isar = await db;
+    await isar!.writeTxn(() async {
       for (final item in items) {
+        await isar.bookmarks.put(item);
         if (!_items.contains(item)) {
           _items.add(item);
         }
       }
       notifyListeners();
-    }
+    });
   }
 
   void delete(Bookmark item) async {
-    if (useDb) {
-      final isar = await db;
-      await isar!.writeTxn(() async {
-        await isar.bookmarks.delete(item.id);
-        _items.remove(item);
-        notifyListeners();
-      });
-    } else {
+    final isar = await db;
+    await isar!.writeTxn(() async {
+      await isar.bookmarks.delete(item.id);
       _items.remove(item);
       notifyListeners();
-    }
+    });
   }
 
   void clear() async {
-    if (useDb) {
-      final isar = await db;
-      await isar!.writeTxn(() async {
-        await isar.bookmarks.clear();
-        _items.clear();
-        notifyListeners();
-      });
-    } else {
+    final isar = await db;
+    await isar!.writeTxn(() async {
+      await isar.bookmarks.clear();
       _items.clear();
       notifyListeners();
-    }
+    });
   }
 
   String toJson() {

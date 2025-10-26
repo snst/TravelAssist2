@@ -11,6 +11,7 @@ import 'package:travelassist2/note_list/note.dart';
 import '../utils/globals.dart';
 import '../utils/travel_assist_utils.dart';
 import '../widgets/widget_comment.dart';
+import '../widgets/widget_confirm_dialog.dart';
 import '../widgets/widget_item_edit_actions.dart';
 import '../widgets/widget_tags.dart';
 import '../widgets/widget_text_input.dart';
@@ -127,16 +128,52 @@ class _PackedItemPageState extends State<NoteItemPage> {
                 SizedBox(height: 5),
 
                 if (widget.doEdit || widget.newItem)
-                WidgetItemEditActions(
-                  onSave: () {
-                    return save(context);
-                  },
-                  onDelete: (widget.newItem)
-                      ? null
-                      : () {
-                          getProvider(context).delete(widget.item);
+                  Row(
+                    children: [
+                      const Spacer(),
+                      if (widget.modifiedItem.tags.contains(Tags.loc))
+                        ElevatedButton(
+                          child: const Text('GPS'),
+                          onPressed: () {
+                            updatePosition(widget.modifiedItem);
+                            //Navigator.of(context).pop();
+                          },
+                        ),
+                      ElevatedButton(
+                          child: const Text('Cancel'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+
+                      if (!widget.newItem)
+                        ElevatedButton(
+                          child: const Text('Delete'),
+                          onPressed: () {
+                            showConfirmationDialog(
+                              context: context,
+                              title: 'Confirm Delete',
+                              text: 'Are you sure you want to delete this item?',
+                              onConfirm: () {
+                                getProvider(context).delete(widget.item);
+                                //getPackingList(context).delete(widget.item!);
+                                Navigator.of(context).pop();
+                                //Navigator.of(context).popUntil((route) => route.isFirst);
+                              },
+                            );
+                          },
+                        ),
+
+                      ElevatedButton(
+                        child: const Text('Save'),
+                        onPressed: () {
+                          if (save(context)) {
+                            Navigator.of(context).pop();
+                          }
                         },
-                ),
+                      ),
+                    ],
+                  )
               ],
             );
           }

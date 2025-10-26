@@ -21,8 +21,13 @@ Future<Position> getPosition() async {
     distanceFilter: 100,
   );
 
-  Position position = await Geolocator.getCurrentPosition(
+  final Position position = await Geolocator.getCurrentPosition(
     locationSettings: locationSettings,
   );
   return position;
+}
+
+Future<String> getPositionString() async {
+  final Position position = await getPosition();
+  return '${position.latitude},${position.longitude}';
 }

@@ -4,50 +4,50 @@ import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
 import 'package:provider/provider.dart';
 
-import 'bookmark.dart';
+import 'note.dart';
 
-class BookmarkProvider extends ChangeNotifier {
+class NoteProvider extends ChangeNotifier {
   final Isar isar;
 
-  BookmarkProvider(this.isar);
+  NoteProvider(this.isar);
 
-  static BookmarkProvider getInstance(BuildContext context) {
-    return Provider.of<BookmarkProvider>(context, listen: false);
+  static NoteProvider getInstance(BuildContext context) {
+    return Provider.of<NoteProvider>(context, listen: false);
   }
 
-  Future<void> add(Bookmark item, {bool notify = false}) async {
+  Future<void> add(Note item, {bool notify = false}) async {
     await isar.writeTxn(() async {
-      await isar.bookmarks.put(item);
+      await isar.notes.put(item);
     });
     notifyListeners();
   }
 
-  void addList(List<Bookmark> items) async {
+  void addList(List<Note> items) async {
     for (final item in items) {
       await add(item, notify: false);
     }
     notifyListeners();
   }
 
-  Future<void> delete(Bookmark item) async {
+  Future<void> delete(Note item) async {
     await isar.writeTxn(() async {
-      await isar.bookmarks.delete(item.id);
+      await isar.notes.delete(item.id);
     });
     notifyListeners();
   }
 
   Future<void> clear() async {
     await isar.writeTxn(() async {
-      await isar.bookmarks.clear();
+      await isar.notes.clear();
     });
     notifyListeners();
   }
 
-  Future<List<Bookmark>> getAll() async {
-    return await isar.bookmarks.where().findAll();
+  Future<List<Note>> getAll() async {
+    return await isar.notes.where().findAll();
   }
 
-  Future<List<Bookmark>> getWithTag(List<String> tags) async {
+  Future<List<Note>> getWithTag(List<String> tags) async {
     final all = await getAll(); // await the Future
     if (tags.isEmpty) return all;
 
@@ -76,8 +76,8 @@ class BookmarkProvider extends ChangeNotifier {
   void fromJson(String? jsonString) {
     if (jsonString != null) {
       List<dynamic> jsonList = jsonDecode(jsonString);
-      List<Bookmark> newItems = jsonList
-          .map((json) => Bookmark.fromJson(json))
+      List<Note> newItems = jsonList
+          .map((json) => Note.fromJson(json))
           .toList();
       clear();
       addList(newItems);

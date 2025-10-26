@@ -3,19 +3,19 @@ import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/travel_assist_utils.dart';
-import 'bookmark.dart';
-import 'bookmark_item_page.dart';
-import 'bookmark_provider.dart';
+import 'note.dart';
+import 'note_item_page.dart';
+import 'note_provider.dart';
 
-class BookmarkListPage extends StatefulWidget {
-  BookmarkListPage({super.key});
+class NoteListPage extends StatefulWidget {
+  NoteListPage({super.key, this.selectedTags = const []});
 
   @override
-  State<BookmarkListPage> createState() => _BookmarkListPageState();
-  List<String> selectedTags = [];
+  State<NoteListPage> createState() => _NoteListPageState();
+  List<String> selectedTags;
 }
 
-class _BookmarkListPageState extends State<BookmarkListPage> {
+class _NoteListPageState extends State<NoteListPage> {
   /*
   void updatePosition(Location location) async {
     Position position = await getPosition();
@@ -47,16 +47,15 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
     );
   }
 */
-  void setSelected(List<dynamic> selectedItems)
-  {
+  void selectTags(List<dynamic> selectedItems) {
     setState(() {
       widget.selectedTags = selectedItems.cast<String>();
-
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    final bookmarkProvider = context.watch<BookmarkProvider>();
+    final provider = context.watch<NoteProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -82,13 +81,11 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
           ),
         ],
       ),
-      body:
-
-      Column(
+      body: Column(
         children: [
           Expanded(
-            child: FutureBuilder<List<Bookmark>>(
-              future: bookmarkProvider.getWithTag(widget.selectedTags),
+            child: FutureBuilder<List<Note>>(
+              future: provider.getWithTag(widget.selectedTags),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -96,33 +93,33 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
                 if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
-                final bookmarks = snapshot.data ?? [];
-                if (bookmarks.isEmpty) {
-                  return const Center(child: Text('No bookmarks found.'));
+                final items = snapshot.data ?? [];
+                if (items.isEmpty) {
+                  return const Center(child: Text('No items found.'));
                 }
                 return ListView.builder(
-                  itemCount: bookmarks.length,
+                  itemCount: items.length,
                   itemBuilder: (context, index) {
-                    final reverseIndex = bookmarks.length - 1 - index;
+                    final reverseIndex = items.length - 1 - index;
                     return Card(
                       child: ListTile(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => BookmarkItemPage(
-                                item: bookmarks[reverseIndex],
-                              ),
+                              builder: (context) =>
+                                  NoteItemPage(item: items[reverseIndex]),
                             ),
                           );
                         },
                         title: WidgetBookmark(
-                          bookmark: bookmarks[reverseIndex],
+                          bookmark: items[reverseIndex],
                         ),
                         trailing: IconButton(
-                          icon: const Icon(Icons.open_in_browser), // The icon on the right
+                          icon: const Icon(Icons.open_in_browser),
+                          // The icon on the right
                           onPressed: () {
-                            openExternally(bookmarks[reverseIndex].link);
+                            openExternally(context, items[reverseIndex].link);
                           },
                         ),
                       ),
@@ -132,35 +129,40 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
               },
             ),
           ),
-    SizedBox(
-              height: 60,
-              width: double.infinity, // Take the full width of the parent (within padding)
-              child: FutureBuilder<List<String>>(
-                future: bookmarkProvider.getTags(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const SizedBox.shrink();
-                  }
-                  if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  }
-                  final tags = snapshot.data ?? [];
-                  if (tags.isEmpty) {
-                    return const SizedBox.shrink();
-                  }
-                  final tagCards = tags.map((tag) => MultiSelectCard(value: tag, label: tag)).toList();
-                  return MultiSelectContainer(
-                      showInListView: true,
-                      listViewSettings: ListViewSettings(
-                          scrollDirection: Axis.horizontal,
-                          separatorBuilder: (_, __) => const SizedBox(
-                            width: 10,
-                          )),
-                      items: tagCards,
-                      onChange: (allSelectedItems, selectedItem) { setSelected(allSelectedItems);});
+          SizedBox(
+            height: 60,
+            width: double.infinity,
+            // Take the full width of the parent (within padding)
+            child: FutureBuilder<List<String>>(
+              future: provider.getTags(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox.shrink();
                 }
-              ),
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+                final tags = snapshot.data ?? [];
+                if (tags.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+                final tagCards = tags
+                    .map((tag) => MultiSelectCard(value: tag, label: tag))
+                    .toList();
+                return MultiSelectContainer(
+                  showInListView: true,
+                  listViewSettings: ListViewSettings(
+                    scrollDirection: Axis.horizontal,
+                    separatorBuilder: (_, __) => const SizedBox(width: 10),
+                  ),
+                  items: tagCards,
+                  onChange: (allSelectedItems, selectedItem) {
+                    selectTags(allSelectedItems);
+                  },
+                );
+              },
             ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -168,7 +170,7 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => BookmarkItemPage(item: Bookmark(), newItem: true,),
+              builder: (context) => NoteItemPage(item: Note(), newItem: true),
             ),
           );
         },
@@ -180,7 +182,7 @@ class _BookmarkListPageState extends State<BookmarkListPage> {
 }
 
 class WidgetBookmark extends StatelessWidget {
-  final Bookmark bookmark;
+  final Note bookmark;
 
   const WidgetBookmark({Key? key, required this.bookmark}) : super(key: key);
 
@@ -194,10 +196,13 @@ class WidgetBookmark extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (bookmark.tags.isNotEmpty) ...[
-            Text(
-              bookmark.tags.map((tag) => '#$tag').join(' '),
-              style: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.surfaceTint),
-            ),
+              Text(
+                bookmark.tags.map((tag) => '#$tag').join(' '),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.surfaceTint,
+                ),
+              ),
             ],
             if (bookmark.comment.isNotEmpty) ...[
               const SizedBox(height: 2),
@@ -207,7 +212,10 @@ class WidgetBookmark extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 bookmark.shortLink(),
-                style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.secondaryFixed),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Theme.of(context).colorScheme.secondaryFixed,
+                ),
               ),
             ],
           ],

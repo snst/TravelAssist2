@@ -3,30 +3,23 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:travelassist2/todo_list/todo_item_page.dart';
+import 'package:travelassist2/todo_list/todo_list_page.dart';
+import 'package:travelassist2/utils/globals.dart';
 
-import 'bookmark_list/bookmark.dart';
-import 'bookmark_list/bookmark_item_page.dart';
-import 'bookmark_list/bookmark_list_page.dart';
-import 'bookmark_list/bookmark_provider.dart';
+import 'note_list/note.dart';
+import 'note_list/note_item_page.dart';
+import 'note_list/note_list_page.dart';
+import 'note_list/note_provider.dart';
 import 'calculator/calculator.dart';
 import 'calculator/calculator_page.dart';
 import 'currency/currency_list_page.dart';
 import 'currency/currency_provider.dart';
-import 'location_list/location.dart';
-import 'location_list/location_item_page.dart';
-import 'location_list/location_list_page.dart';
-import 'location_list/location_provider.dart';
-import 'memo_list/memo_item_page.dart';
-import 'memo_list/memo_list_page.dart';
-import 'memo_list/memo_provider.dart';
-import 'todo_list/todo_item_page.dart';
-import 'todo_list/todo_list_page.dart';
 import 'todo_list/todo_provider.dart';
 import 'transaction_list/transaction_item_page.dart';
 import 'transaction_list/transaction_main_page.dart';
 import 'transaction_list/transaction_provider.dart';
 import 'widgets/widget_dual_action_button.dart';
-//import 'package:isar_community/isar.dart';
 import 'providers/isar_service.dart';
 
 
@@ -43,10 +36,8 @@ void main() async {
         ChangeNotifierProvider(create: (context) => TodoProvider()),
         ChangeNotifierProvider(create: (context) => CurrencyProvider()),
         ChangeNotifierProvider(create: (context) => TransactionProvider()),
-        ChangeNotifierProvider(create: (context) => LocationProvider()),
         ChangeNotifierProvider(create: (context) => Calculator()),
-        ChangeNotifierProvider(create: (context) => MemoProvider()),
-        ChangeNotifierProvider(create: (context) => BookmarkProvider(isarService.isar)),
+        ChangeNotifierProvider(create: (context) => NoteProvider(isarService.isar)),
       ],
       child: const MyApp(),
     ),
@@ -95,7 +86,7 @@ class _MainScreenState extends State<MainScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BookmarkItemPage(item: Bookmark(link: link)),
+        builder: (context) => NoteItemPage(item: Note(link: link, tags:["link"])),
       ),
     );
   }
@@ -176,24 +167,8 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icons.calculate,
               onMainPressed: () => _onShowPage(context, const CalculatorPage()),
             ),
-            WidgetDualActionButton(
-              label: 'Locations',
-              icon: Icons.map,
-              onMainPressed: () =>
-                  _onShowPage(context, const LocationListPage()),
-              onAddPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        LocationItemPage(item: Location(), newItem: true),
-                  ),
-                );
-                if (result != null && context.mounted) {
-                  _onShowPage(context, const LocationListPage());
-                }
-              },
-            ),
+
+
             // --- To-Do ---
             WidgetDualActionButton(
               label: 'To-Dos',
@@ -209,44 +184,67 @@ class _MainScreenState extends State<MainScreen> {
                 }
               },
             ),
+
             // --- To-Do ---
             WidgetDualActionButton(
-              label: 'Memos',
-              icon: Icons.note,
-              onMainPressed: () => _onShowPage(context, const MemoListPage()),
-              onAddPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MemoItemPage()),
-                );
-                if (result != null && context.mounted) {
-                  _onShowPage(context, const MemoListPage());
-                }
-              },
-            ),
-
-            WidgetDualActionButton(
-              label: 'Bookmarks',
-              icon: Icons.bookmark,
-              onMainPressed: () =>
-                  _onShowPage(context, BookmarkListPage()),
+              label: 'Lookup',
+              icon: Icons.flash_on_sharp,
+              onMainPressed: () => _onShowPage(context, NoteListPage(selectedTags:[Tags.lookup])),
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        BookmarkItemPage(item: Bookmark(), newItem: true,),
+                        NoteItemPage(item: Note(tags:[Tags.lookup]), newItem: true),
                   ),
                 );
                 if (result != null && context.mounted) {
-                  _onShowPage(context, BookmarkListPage());
+                  _onShowPage(context, NoteListPage(selectedTags:[Tags.lookup]));
+                }
+              },
+            ),
+
+
+            WidgetDualActionButton(
+              label: 'Locations',
+              icon: Icons.map,
+              onMainPressed: () =>
+                  _onShowPage(context, NoteListPage(selectedTags:[Tags.loc])),
+              onAddPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        NoteItemPage(item: Note(tags:[Tags.loc]), newItem: true),
+                  ),
+                );
+                if (result != null && context.mounted) {
+                  _onShowPage(context, NoteListPage(selectedTags:[Tags.loc]));
+                }
+              },
+            ),
+            WidgetDualActionButton(
+              label: 'Notes',
+              icon: Icons.bookmark,
+              onMainPressed: () =>
+                  _onShowPage(context, NoteListPage()),
+              onAddPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        NoteItemPage(item: Note(), newItem: true),
+                  ),
+                );
+                if (result != null && context.mounted) {
+                  _onShowPage(context, NoteListPage());
                 }
               },
             ),
 
             WidgetDualActionButton(
               label: 'Expenses',
-              icon: Icons.attach_money,
+              icon: Icons.euro,
               onMainPressed: () =>
                   _onShowPage(context, const TransactionMainPage()),
               onAddPressed: () async {

@@ -2,20 +2,20 @@ import 'package:isar_community/isar.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:json_annotation/json_annotation.dart';
-part 'bookmark.g.dart';
+part 'note.g.dart';
 
 @collection
 @JsonSerializable()
-class Bookmark {
-  Bookmark(
-      {this.link = ""});
+class Note {
+  Note(
+      {this.link = "", this.tags=const []});
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   Id id = Isar.autoIncrement;
-  String title="";
-  String comment="";
   String link;
-  List<String> tags = [];
+  String comment="";
+  List<String> tags;
+  DateTime timestamp = DateTime.now();
 
 
   String shortLink() {
@@ -29,28 +29,27 @@ class Bookmark {
     return link;
   }
 
-  Bookmark clone() {
-    var item = Bookmark();
+  Note clone() {
+    var item = Note();
     item.update(this);
     return item;
   }
 
-  void update(Bookmark other) {
+  void update(Note other) {
     id = other.id;
-    title = other.title;
     comment = other.comment;
     link = other.link;
     tags = other.tags.toList();
   }
-
+/*
   @override
   String toString() {
     return 'Bookmark{title: $title, tags: $tags, link: $link}';
   }
+*/
 
+  factory Note.fromJson(Map<String, dynamic> json) =>
+      _$NoteFromJson(json);
 
-  factory Bookmark.fromJson(Map<String, dynamic> json) =>
-      _$BookmarkFromJson(json);
-
-  Map<String, dynamic> toJson() => _$BookmarkToJson(this);
+  Map<String, dynamic> toJson() => _$NoteToJson(this);
 }

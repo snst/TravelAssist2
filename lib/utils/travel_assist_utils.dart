@@ -2,17 +2,32 @@ import 'dart:io';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:open_app_file/open_app_file.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-openExternally(String link) async {
+openExternally(BuildContext context, String link) async {
   if (link.startsWith('http')) {
     await launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication);
-  } else if (File(link).existsSync()) {
+  } else if (link.startsWith("geo:")) {
+    String pos = link.substring(4);
+    final url = Uri.parse(
+      'geo:$pos?q=$pos(Here)',
+    );
+    await launchUrl(url);
+  }
+  else if (File(link).existsSync()) {
     OpenAppFile.open(link);
+  } else {
+    Clipboard.setData(
+      ClipboardData(text: link),
+    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Copied to Clipboard')));
   }
 }
 

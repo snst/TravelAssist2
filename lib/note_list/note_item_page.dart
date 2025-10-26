@@ -6,14 +6,16 @@ import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:textfield_tags/textfield_tags.dart';
-import 'package:travelassist2/bookmark_list/bookmark.dart';
+import 'package:travelassist2/note_list/note.dart';
 
+import '../utils/globals.dart';
 import '../utils/travel_assist_utils.dart';
 import '../widgets/widget_comment.dart';
 import '../widgets/widget_item_edit_actions.dart';
 import '../widgets/widget_tags.dart';
 import '../widgets/widget_text_input.dart';
-import 'bookmark_provider.dart';
+import 'note_provider.dart';
+import '../utils/map.dart';
 
 
 Future<String> moveSharedImageToDataFolder(String srcPath) async {
@@ -30,36 +32,48 @@ Future<String> moveSharedImageToDataFolder(String srcPath) async {
   return srcPath;
 }
 
-class BookmarkItemPage extends StatefulWidget {
-  BookmarkItemPage({super.key, required this.item, this.newItem = false})
+class NoteItemPage extends StatefulWidget {
+  NoteItemPage({super.key, required this.item, this.newItem = false})
     : modifiedItem = item.clone();
 
-  final Bookmark item;
-  final Bookmark modifiedItem;
+  final Note item;
+  final Note modifiedItem;
   final bool newItem;
   bool doEdit = false;
 
   @override
-  State<BookmarkItemPage> createState() => _PackedItemPageState();
+  State<NoteItemPage> createState() => _PackedItemPageState();
 }
 
-class _PackedItemPageState extends State<BookmarkItemPage> {
+class _PackedItemPageState extends State<NoteItemPage> {
   late StringTagController _stringTagController;
 
-  BookmarkProvider getProvider(BuildContext context) {
-    return Provider.of<BookmarkProvider>(context, listen: false);
+  NoteProvider getProvider(BuildContext context) {
+    return Provider.of<NoteProvider>(context, listen: false);
   }
 
   @override
   void initState() {
     super.initState();
     _stringTagController = StringTagController();
+    if (widget.newItem && widget.modifiedItem.tags.contains(Tags.loc)) {
+      updatePosition(widget.modifiedItem);
+    }
   }
 
   @override
   void dispose() {
     super.dispose();
     _stringTagController.dispose();
+  }
+
+  void updatePosition(Note note) async {
+    final String position = await getPositionString();
+    if (mounted) {
+      setState(() {
+        note.link = "geo:$position";
+      });
+    }
   }
 
   bool save(BuildContext context) {
@@ -72,7 +86,7 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<BookmarkProvider>();
+    final provider = context.watch<NoteProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -130,7 +144,7 @@ class _PackedItemPageState extends State<BookmarkItemPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          openExternally(widget.modifiedItem.link);
+          openExternally(context, widget.modifiedItem.link);
         },
         child: const Icon(Icons.open_in_new),
       ),

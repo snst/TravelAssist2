@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../bookmark_list/bookmark.dart';
+import '../note_list/note.dart';
 import '../currency/currency.dart';
 import '../location_list/location.dart';
 import '../memo_list/memo.dart';
@@ -28,7 +28,7 @@ class IsarService extends ChangeNotifier {
         TransactionSchema,
         LocationSchema,
         MemoSchema,
-        BookmarkSchema,
+        NoteSchema,
       ],
       directory: dir.path,
       //      inspector: true,

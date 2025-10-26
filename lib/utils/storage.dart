@@ -6,7 +6,7 @@ import '../location_list/location.dart';
 import '../memo_list/memo.dart';
 import '../todo_list/todo_item.dart';
 import '../transaction_list/transaction.dart';
-import '../bookmark_list/bookmark.dart';
+import '../note_list/note.dart';
 
 mixin Storage {
   late Future<Isar?> db;
@@ -21,7 +21,7 @@ mixin Storage {
           TransactionSchema,
           LocationSchema,
           MemoSchema,
-          BookmarkSchema,
+          NoteSchema,
         ],
         directory: dir.path,
         inspector: true,

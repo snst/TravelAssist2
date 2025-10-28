@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:isar_community/isar.dart';
 
 // ignore: depend_on_referenced_packages
@@ -17,6 +18,7 @@ class Note {
   List<String> tags;
   DateTime timestamp = DateTime.now();
 
+  String getDateTimeStr() => DateFormat.yMd().add_Hm().format(timestamp);
 
   String shortLink() {
     if (link.startsWith("/")) {
@@ -53,3 +55,26 @@ class Note {
 
   Map<String, dynamic> toJson() => _$NoteToJson(this);
 }
+
+
+/*
+
+  String toJson() {
+    List<Map<String, dynamic>> jsonList = _items
+        .map((item) => item.toJson())
+        .toList();
+    return jsonEncode(jsonList);
+  }
+
+  void fromJson(String? jsonString) {
+    if (jsonString != null) {
+      List<dynamic> jsonList = jsonDecode(jsonString);
+      List<Memo> newItems = jsonList
+          .map((json) => Memo.fromJson(json))
+          .toList();
+      clear();
+      addList(newItems);
+    }
+  }
+
+ */

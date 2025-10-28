@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:travelassist2/transaction_list/transaction.dart';
 
 import '../balance/balance.dart';
 import '../balance/balance_row_widget.dart';
@@ -12,12 +14,7 @@ import 'transaction_value.dart';
 class TransactionBalanceSubPage extends StatefulWidget {
   const TransactionBalanceSubPage({
     super.key,
-    required this.transactionProvider,
-    required this.currencyProvider,
   });
-
-  final TransactionProvider transactionProvider;
-  final CurrencyProvider currencyProvider;
 
   @override
   State<TransactionBalanceSubPage> createState() =>
@@ -112,14 +109,11 @@ class _TransactionBalanceSubPageState extends State<TransactionBalanceSubPage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final tp = widget.transactionProvider;
-    var balance = tp.caluculateAll(widget.currencyProvider);
-    var expensesPerDay = tp.caluculateExpensesPerDay(widget.currencyProvider);
-
-    homeCurrency = widget.currencyProvider.getHomeCurrency();
+  List<Widget> createChildren(List<Transaction> items, TransactionProvider tp, CurrencyProvider cp)
+  {
     List<Widget> children = [];
+    var balance = tp.caluculateAll(items, cp);
+    var expensesPerDay = tp.caluculateExpensesPerDay(items, cp);
 
     // Cash
     children.add(
@@ -238,10 +232,30 @@ class _TransactionBalanceSubPageState extends State<TransactionBalanceSubPage> {
     });
 
     children.add(SizedBox(height: 100));
+    return children;
+  }
 
-    return SingleChildScrollView(
-      reverse: false,
-      child: Column(children: children),
+  @override
+  Widget build(BuildContext context) {
+
+    final tp  = context.watch<TransactionProvider>();
+    final cp = context.watch<CurrencyProvider>();
+
+
+    homeCurrency = cp.getHomeCurrency();
+
+
+    return FutureBuilder(
+      future: tp.getAll(),
+      builder: (context, asyncSnapshot) {
+        List<Transaction> items = asyncSnapshot.data ?? [];
+
+        var children = createChildren(items, tp, cp);
+        return SingleChildScrollView(
+          reverse: false,
+          child: Column(children: children),
+        );
+      }
     );
   }
 }

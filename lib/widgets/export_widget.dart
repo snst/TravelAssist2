@@ -9,13 +9,11 @@ class ExportWidget extends StatelessWidget {
     required this.toJson,
     required this.fromJson,
     required this.clearJson,
-    //required this.transactionProvider,
   });
 
   final String name;
 
-  //  final TransactionProvider transactionProvider;
-  final String Function() toJson;
+  final Future<String> Function() toJson;
   final void Function(String?) fromJson;
   final void Function() clearJson;
 
@@ -26,8 +24,11 @@ class ExportWidget extends StatelessWidget {
         ElevatedButton(
           child: const Text("Export"),
           onPressed: () {
-            saveJson(context, name, toJson() /*transactionProvider.toJson()*/);
-          },
+            Future<String> data = toJson();
+            data.then((jsonString) {
+              saveJson(context, name, jsonString);
+            });
+            }
         ),
         ElevatedButton(
           child: const Text("Import"),
@@ -35,14 +36,13 @@ class ExportWidget extends StatelessWidget {
             Future<String?> jsonData = loadJson();
             jsonData.then((jsonString) {
               fromJson(jsonString);
-              /*transactionProvider.fromJson(jsonString);*/
             });
           },
         ),
         ElevatedButton(
           child: const Text("Clear"),
           onPressed: () {
-            clearJson(); /*transactionProvider.clear();*/
+            clearJson();
           },
         ),
       ],

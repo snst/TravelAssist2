@@ -4,8 +4,6 @@ import 'package:path_provider/path_provider.dart';
 
 import '../note_list/note.dart';
 import '../currency/currency.dart';
-import '../location_list/location.dart';
-import '../memo_list/memo.dart';
 import '../todo_list/todo_item.dart';
 import '../transaction_list/transaction.dart';
 
@@ -26,8 +24,6 @@ class IsarService extends ChangeNotifier {
         CurrencySchema,
         TodoItemSchema,
         TransactionSchema,
-        LocationSchema,
-        MemoSchema,
         NoteSchema,
       ],
       directory: dir.path,

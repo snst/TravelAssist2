@@ -21,26 +21,22 @@ class TodoItemPage extends StatefulWidget {
 }
 
 class _PackedItemPageState extends State<TodoItemPage> {
-  TodoProvider getPackingList(BuildContext context) {
-    return Provider.of<TodoProvider>(context, listen: false);
-  }
 
-  void saveAndClose(BuildContext context) {
-    if (save(context)) {
+  void saveAndClose(BuildContext context, TodoProvider provider) {
+    if (save(provider)) {
       Navigator.of(context).pop(true);
     }
   }
 
-  bool save(BuildContext context) {
+  bool save(TodoProvider provider) {
     if (widget.modifiedItem.name.isNotEmpty) {
       if (widget.item != null) {
         widget.item!.update(widget.modifiedItem);
-        getPackingList(context).add(widget.item!);
+        provider.add(widget.item!);
       } else {
         // new item
-        getPackingList(context).add(widget.modifiedItem);
+        provider.add(widget.modifiedItem);
       }
-      //Navigator.of(context).pop(true);
       return true;
     } else {
       return false;
@@ -52,7 +48,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
   Widget build(BuildContext context) {
     final TextEditingController controller = TextEditingController();
     controller.text = widget.modifiedItem.category;
-    List<String> categories = getPackingList(context).getCategories();
+    final provider = context.watch<TodoProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -71,17 +67,22 @@ class _PackedItemPageState extends State<TodoItemPage> {
               autofocus: widget.item == null, // new item
             ),
             SizedBox(height: 5),
-            WidgetComboBox(
-              controller: TextEditingController(),
-              selectedText: widget.modifiedItem.category,
-              hintText: 'Enter Category',
-              filter: true,
-              onChanged: (suggestion) {
-                setState(() {
-                  widget.modifiedItem.category = suggestion;
-                });
-              },
-              items: categories,
+            FutureBuilder(
+              future: provider.getCategories(),
+              builder: (context, asyncSnapshot) {
+                return WidgetComboBox(
+                  controller: TextEditingController(),
+                  selectedText: widget.modifiedItem.category,
+                  hintText: 'Enter Category',
+                  filter: true,
+                  onChanged: (suggestion) {
+                    setState(() {
+                      widget.modifiedItem.category = suggestion;
+                    });
+                  },
+                  items: asyncSnapshot.data ?? [],
+                );
+              }
             ),
             Row(
               children: [
@@ -139,30 +140,19 @@ class _PackedItemPageState extends State<TodoItemPage> {
                     widget.modifiedItem.state = newSelection.first;
                   });
                   if (widget.item != null) {
-                    saveAndClose(context);
+                    saveAndClose(context, provider);
                   }
                 },
               ),
             ),
             WidgetItemEditActions(
-              onSave: () { return save(context); },
+              onSave: () { return save(provider); },
               onDelete: (widget.item == null) ? null : () {
-                getPackingList(context).delete(widget.item!);
+                provider.delete(widget.item!);
               }
             ),
             WidgetComment(comment: widget.modifiedItem.comment, onChanged: (value) => widget.modifiedItem.comment = value),
 
-            /*
-            TextField(
-              controller: TextEditingController()
-                ..text = widget.modifiedItem.comment,
-              decoration: const InputDecoration(hintText: 'Comment'),
-              onChanged: (value) => widget.modifiedItem.comment = value,
-              keyboardType: TextInputType.multiline,
-              minLines: 10,
-              //Normal textInputField will be displayed
-              maxLines: 10, // when user presses enter it will adapt to it
-            ),*/
           ],
         ),
       ),

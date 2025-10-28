@@ -19,28 +19,33 @@ class TransactionListSubpage extends StatefulWidget {
 class _TransactionListSubpageState extends State<TransactionListSubpage> {
   @override
   Widget build(BuildContext context) {
-    //final currencyProvider = context.watch<CurrencyProvider>();
-    final transactionProvider = context.watch<TransactionProvider>();
+    final provider = context.watch<TransactionProvider>();
 
-    return GroupedListView<Transaction, DateTime>(
-      shrinkWrap: true,
-      elements: transactionProvider.getSortedTransactions(null),
-      groupBy: (Transaction element) => element.groupDate,
-      itemComparator: (Transaction element1, Transaction element2) =>
-          element1.date.compareTo(element2.date),
-      order: GroupedListOrder.DESC,
-      useStickyGroupSeparators: false,
-      groupSeparatorBuilder: (DateTime value) => Padding(
-        padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-        child: Text(
-          DateFormat('  EEEE, d MMMM y').format(value),
-          textAlign: TextAlign.left,
-        ),
-      ),
-      itemBuilder: (context, item) => TransactionListItemWidget(
-        transaction: item,
-        onEditItem: widget.onShowEditDialog,
-      ),
+
+    return FutureBuilder(
+      future: provider.getAll(),
+      builder: (context, asyncSnapshot) {
+        return GroupedListView<Transaction, DateTime>(
+          shrinkWrap: true,
+          elements: provider.getSortedTransactions(asyncSnapshot.data ?? [], null),
+          groupBy: (Transaction element) => element.groupDate,
+          itemComparator: (Transaction element1, Transaction element2) =>
+              element1.date.compareTo(element2.date),
+          order: GroupedListOrder.DESC,
+          useStickyGroupSeparators: false,
+          groupSeparatorBuilder: (DateTime value) => Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+            child: Text(
+              DateFormat('  EEEE, d MMMM y').format(value),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          itemBuilder: (context, item) => TransactionListItemWidget(
+            transaction: item,
+            onEditItem: widget.onShowEditDialog,
+          ),
+        );
+      }
     );
   }
 }

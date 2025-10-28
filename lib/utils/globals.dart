@@ -2,8 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Tags {
-  static const loc = "loc";
+  static const geo = "geo";
   static const lookup = "lookup";
+  static const note = "note";
+  static const link = "link";
+}
+
+class Txt {
+  static const links = "Links";
+  static const notes = "Notes";
+  static const locations = "Locations";
+  static const expenses = "Expenses";
+  static const lookup = "Lookup";
+  static const todos = "To-Dos";
+  static const calculator = "Calculator";
+  static const appTitle = "Travel Assist";
+  static const currencyRates = "Currency rates";
+  static const storageDir = "Storage Dir";
+  static const importExport = "Import/Export";
 }
 
 class AppColors {

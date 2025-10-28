@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../currency/currency.dart';
 import '../currency/currency_provider.dart';
+import '../utils/globals.dart';
 import '../widgets/export_widget.dart';
 import 'transaction.dart';
 //import 'currency_rates_page.dart';
@@ -46,7 +47,7 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
     }));
   }*/
 
-  void showCurrencySettingsPage(BuildContext context, TransactionProvider tp) {
+  void showCurrencyImportExportPage(BuildContext context, TransactionProvider tp) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -54,7 +55,7 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
           return Scaffold(
             appBar: AppBar(
                 backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                title: const Text("Settings")),
+                title: const Text(Txt.importExport)),
             body: ExportWidget(
               name: 'transaction',
               toJson: tp.toJson,
@@ -84,17 +85,13 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
         actions: [
           PopupMenuButton<int>(
             itemBuilder: (context) => [
-              //const PopupMenuItem(value: 0, child: Text("Currency rates")),
-              const PopupMenuItem(value: 1, child: Text("Settings")),
+              const PopupMenuItem(value: 0, child: Text(Txt.importExport)),
             ],
             elevation: 1,
             onSelected: (value) {
               switch (value) {
-                //case 0:
-                //  showCurrenyRatesPage(context, cp);
-                //  break;
-                case 1:
-                  showCurrencySettingsPage(context, tp);
+                case 0:
+                  showCurrencyImportExportPage(context, tp);
                   break;
               }
             },
@@ -103,10 +100,7 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
       ),
       body: () {
         if (_selectedSubPageIndex == 1) {
-          return TransactionBalanceSubPage(
-            transactionProvider: tp,
-            currencyProvider: cp,
-          );
+          return TransactionBalanceSubPage();
         } else {
           return TransactionListSubpage(onShowEditDialog: _showEditDialog);
         }

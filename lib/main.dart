@@ -33,9 +33,9 @@ void main() async {
     MultiProvider(
       providers: [
         //Provider<IsarService>.value(value: isarService),
-        ChangeNotifierProvider(create: (context) => TodoProvider()),
-        ChangeNotifierProvider(create: (context) => CurrencyProvider()),
-        ChangeNotifierProvider(create: (context) => TransactionProvider()),
+        ChangeNotifierProvider(create: (context) => TodoProvider(isarService.isar)),
+        ChangeNotifierProvider(create: (context) => CurrencyProvider(isarService.isar)),
+        ChangeNotifierProvider(create: (context) => TransactionProvider(isarService.isar)),
         ChangeNotifierProvider(create: (context) => Calculator()),
         ChangeNotifierProvider(create: (context) => NoteProvider(isarService.isar)),
       ],
@@ -86,7 +86,7 @@ class _MainScreenState extends State<MainScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => NoteItemPage(item: Note(link: link, tags:["link"])),
+        builder: (context) => NoteItemPage(item: Note(link: link, tags:[Tags.link]), newItem: true, title:Txt.links),
       ),
     );
   }
@@ -136,11 +136,11 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Travel Assist"),
+        title: const Text(Txt.appTitle),
         actions: [
           PopupMenuButton<int>(
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 1, child: Text("Currency rates")),
+              const PopupMenuItem(value: 1, child: Text(Txt.currencyRates)),
             ],
             elevation: 1,
             onSelected: (value) {
@@ -163,15 +163,14 @@ class _MainScreenState extends State<MainScreen> {
         child: Column(
           children: [
             WidgetDualActionButton(
-              label: 'Calculator',
+              label: Txt.calculator,
               icon: Icons.calculate,
               onMainPressed: () => _onShowPage(context, const CalculatorPage()),
             ),
 
 
-            // --- To-Do ---
             WidgetDualActionButton(
-              label: 'To-Dos',
+              label: Txt.todos,
               icon: Icons.list,
               onMainPressed: () => _onShowPage(context, const TodoListPage()),
               onAddPressed: () async {
@@ -185,65 +184,82 @@ class _MainScreenState extends State<MainScreen> {
               },
             ),
 
-            // --- To-Do ---
             WidgetDualActionButton(
-              label: 'Lookup',
+              label: Txt.lookup,
               icon: Icons.flash_on_sharp,
-              onMainPressed: () => _onShowPage(context, NoteListPage(selectedTags:[Tags.lookup])),
+              onMainPressed: () => _onShowPage(context, NoteListPage(title:Txt.lookup, selectedTags:[Tags.lookup])),
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        NoteItemPage(item: Note(tags:[Tags.lookup]), newItem: true),
+                        NoteItemPage(item: Note(tags:[Tags.lookup]), newItem: true, title:Txt.lookup),
                   ),
                 );
                 if (result != null && context.mounted) {
-                  _onShowPage(context, NoteListPage(selectedTags:[Tags.lookup]));
+                  _onShowPage(context, NoteListPage(title:Txt.lookup, selectedTags:[Tags.lookup]));
                 }
               },
             ),
 
 
             WidgetDualActionButton(
-              label: 'Locations',
+              label: Txt.locations,
               icon: Icons.map,
               onMainPressed: () =>
-                  _onShowPage(context, NoteListPage(selectedTags:[Tags.loc])),
+                  _onShowPage(context, NoteListPage(title:Txt.locations, selectedTags:[Tags.geo])),
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        NoteItemPage(item: Note(tags:[Tags.loc]), newItem: true),
+                        NoteItemPage(item: Note(tags:[Tags.geo]), newItem: true, title:Txt.locations),
                   ),
                 );
                 if (result != null && context.mounted) {
-                  _onShowPage(context, NoteListPage(selectedTags:[Tags.loc]));
+                  _onShowPage(context, NoteListPage(title:Txt.locations,selectedTags:[Tags.geo]));
                 }
               },
             ),
             WidgetDualActionButton(
-              label: 'Notes',
+              label: Txt.links,
               icon: Icons.bookmark,
               onMainPressed: () =>
-                  _onShowPage(context, NoteListPage()),
+                  _onShowPage(context, NoteListPage(title:Txt.links, selectedTags:[Tags.link])),
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        NoteItemPage(item: Note(), newItem: true),
+                        NoteItemPage(item: Note(tags:[Tags.link]), newItem: true, title:Txt.links),
                   ),
                 );
                 if (result != null && context.mounted) {
-                  _onShowPage(context, NoteListPage());
+                  _onShowPage(context, NoteListPage(title:Txt.links, selectedTags:[Tags.link]));
+                }
+              },
+            ),
+            WidgetDualActionButton(
+              label: Txt.notes,
+              icon: Icons.notes,
+              onMainPressed: () =>
+                  _onShowPage(context, NoteListPage(title:Txt.notes, selectedTags:[Tags.note])),
+              onAddPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        NoteItemPage(item: Note(tags:[Tags.note]), newItem: true, title:Txt.notes),
+                  ),
+                );
+                if (result != null && context.mounted) {
+                  _onShowPage(context, NoteListPage(title:Txt.notes, selectedTags:[Tags.note]));
                 }
               },
             ),
 
             WidgetDualActionButton(
-              label: 'Expenses',
+              label: Txt.expenses,
               icon: Icons.euro,
               onMainPressed: () =>
                   _onShowPage(context, const TransactionMainPage()),

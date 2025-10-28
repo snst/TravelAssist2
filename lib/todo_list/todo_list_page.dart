@@ -67,7 +67,7 @@ class _PackingListPageState extends State<TodoListPage> {
 
   @override
   Widget build(BuildContext context) {
-    final todoProvider = context.watch<TodoProvider>();
+    final provider = context.watch<TodoProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -86,39 +86,44 @@ class _PackingListPageState extends State<TodoListPage> {
                   toggleEdit();
                   break;
                 case 2:
-                  showTodoSettingsPage(context, todoProvider);
+                  showTodoSettingsPage(context, provider);
                   break;
               }
             },
           ),
         ],
       ),
-      body: GroupedListView<TodoItem, String>(
-        elements: todoProvider.getFilteredItems(
+      body: FutureBuilder(
+        future: provider.getFilteredItems(
           bottomIndexToStateEnum(_selectedFilterIndex),
         ),
-        groupBy: (TodoItem element) => element.category,
-        groupComparator: (value1, value2) => value2.compareTo(value1),
-        itemComparator: (TodoItem element1, TodoItem element2) =>
-            element1.name.compareTo(element2.name),
-        order: GroupedListOrder.DESC,
-        useStickyGroupSeparators: false,
-        groupSeparatorBuilder: (String value) => Padding(
-          padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
-          child: Align(
-            alignment: Alignment.center,
-            child: Text(value, textAlign: TextAlign.center),
-          ),
-        ),
-        itemBuilder: (context, item) => TodoListWidget(
-          item: item,
-          onItemChanged: (item) {
-            setState(() {});
-          },
-          onEditItem: (item) => _showEditDialog(item),
-          editable: _listEditable,
-          filterIndex: bottomIndexToStateEnum(_selectedFilterIndex),
-        ),
+        builder: (context, asyncSnapshot) {
+          return GroupedListView<TodoItem, String>(
+            elements: asyncSnapshot.data ?? [],
+            groupBy: (TodoItem element) => element.category,
+            groupComparator: (value1, value2) => value2.compareTo(value1),
+            itemComparator: (TodoItem element1, TodoItem element2) =>
+                element1.name.compareTo(element2.name),
+            order: GroupedListOrder.DESC,
+            useStickyGroupSeparators: false,
+            groupSeparatorBuilder: (String value) => Padding(
+              padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
+              child: Align(
+                alignment: Alignment.center,
+                child: Text(value, textAlign: TextAlign.center),
+              ),
+            ),
+            itemBuilder: (context, item) => TodoListWidget(
+              item: item,
+              onItemChanged: (item) {
+                setState(() {});
+              },
+              onEditItem: (item) => _showEditDialog(item),
+              editable: _listEditable,
+              filterIndex: bottomIndexToStateEnum(_selectedFilterIndex),
+            ),
+          );
+        }
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

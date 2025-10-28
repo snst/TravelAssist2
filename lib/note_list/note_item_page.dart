@@ -12,7 +12,7 @@ import '../utils/globals.dart';
 import '../utils/travel_assist_utils.dart';
 import '../widgets/widget_comment.dart';
 import '../widgets/widget_confirm_dialog.dart';
-import '../widgets/widget_item_edit_actions.dart';
+import '../widgets/widget_formatted_text.dart';
 import '../widgets/widget_tags.dart';
 import '../widgets/widget_text_input.dart';
 import 'note_provider.dart';
@@ -34,12 +34,13 @@ Future<String> moveSharedImageToDataFolder(String srcPath) async {
 }
 
 class NoteItemPage extends StatefulWidget {
-  NoteItemPage({super.key, required this.item, this.newItem = false})
+  NoteItemPage({super.key, required this.item, this.newItem = false, this.title="Bookmark"})
     : modifiedItem = item.clone();
 
   final Note item;
   final Note modifiedItem;
   final bool newItem;
+  final String title;
   bool doEdit = false;
 
   @override
@@ -57,7 +58,7 @@ class _PackedItemPageState extends State<NoteItemPage> {
   void initState() {
     super.initState();
     _stringTagController = StringTagController();
-    if (widget.newItem && widget.modifiedItem.tags.contains(Tags.loc)) {
+    if (widget.newItem && widget.modifiedItem.tags.contains(Tags.geo)) {
       updatePosition(widget.modifiedItem);
     }
   }
@@ -91,7 +92,7 @@ class _PackedItemPageState extends State<NoteItemPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Bookmark'),
+        title: Text(widget.title),
         actions: [
           if (!widget.newItem)
             IconButton(
@@ -113,16 +114,22 @@ class _PackedItemPageState extends State<NoteItemPage> {
                   stringTagController: _stringTagController,
                 ),
                 SizedBox(height: 5),
+                WidgetComment(
+                  comment: widget.modifiedItem.comment,
+                  onChanged: (value) => widget.modifiedItem.comment = value,
+                ),
+                SizedBox(height: 5),
                 WidgetTextInput(
                   text: widget.modifiedItem.link,
                   hintText: 'Enter Link',
                   onChanged: (value) => widget.modifiedItem.link = value,
                   //autofocus: widget.item == null, // new item
                 ),
+
                 SizedBox(height: 5),
-                WidgetComment(
-                  comment: widget.modifiedItem.comment,
-                  onChanged: (value) => widget.modifiedItem.comment = value,
+                FormattedText(
+                  title: "Date",
+                  content: widget.modifiedItem.getDateTimeStr(),
                 ),
 
                 SizedBox(height: 5),
@@ -131,7 +138,7 @@ class _PackedItemPageState extends State<NoteItemPage> {
                   Row(
                     children: [
                       const Spacer(),
-                      if (widget.modifiedItem.tags.contains(Tags.loc))
+                      if (widget.modifiedItem.tags.contains(Tags.geo))
                         ElevatedButton(
                           child: const Text('GPS'),
                           onPressed: () {

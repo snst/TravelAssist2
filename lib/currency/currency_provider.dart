@@ -9,15 +9,13 @@ import '../transaction_list/transaction_value.dart';
 import '../utils/storage.dart';
 import 'currency.dart';
 
-class CurrencyProvider extends ChangeNotifier with Storage {
-  CurrencyProvider({this.useDb = true}) {
-    if (useDb) {
-      db = openDB();
-      init();
-    }
+class CurrencyProvider extends ChangeNotifier {
+  final Isar isar;
+
+  CurrencyProvider(this.isar) {
+    init();
   }
 
-  bool useDb;
   final HashMap<String, Currency> _currencyMap = HashMap();
 
   List<Currency> get allItems => _currencyMap.values.toList();
@@ -41,8 +39,7 @@ class CurrencyProvider extends ChangeNotifier with Storage {
   Currency? _homeCurrency;
 
   void init() async {
-    final isar = await db;
-    isar!.txn(() async {
+    isar.txn(() async {
       final currencyList = await isar.currencys.where().findAll();
       for (final currency in currencyList) {
         _currencyMap[currency.name] = currency;
@@ -74,36 +71,23 @@ class CurrencyProvider extends ChangeNotifier with Storage {
     _homeCurrency?.state = CurrencyStateEnum.home;
   }
 
-  void add(Currency item) async {
+  Future<void> add(Currency item) async {
     updateHomeCurrency(item);
-    if (useDb) {
-      final isar = await db;
-      await isar!.writeTxn(() async {
-        await isar.currencys.put(item);
-        _currencyMap.removeWhere((key, value) => value == item);
-        _currencyMap[item.name] = item;
-        notifyListeners();
-      });
-    } else {
+    await isar.writeTxn(() async {
+      await isar.currencys.put(item);
       _currencyMap.removeWhere((key, value) => value == item);
       _currencyMap[item.name] = item;
-      notifyListeners();
-    }
+    });
+    notifyListeners();
   }
 
-  void delete(Currency item) async {
-    updateHomeCurrency(item);
-    if (useDb) {
-      final isar = await db;
-      await isar!.writeTxn(() async {
-        await isar.currencys.delete(item.id);
-        _currencyMap.removeWhere((key, value) => value == item);
-        notifyListeners();
-      });
-    } else {
+
+  Future<void> delete(Currency item) async {
+    await isar.writeTxn(() async {
+      await isar.currencys.delete(item.id);
       _currencyMap.removeWhere((key, value) => value == item);
-      notifyListeners();
-    }
+    });
+    notifyListeners();
   }
 
   Currency? getHomeCurrency() {

@@ -4,32 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
 import 'package:provider/provider.dart';
 
-import '../utils/storage.dart';
 import 'todo_item.dart';
 
-class TodoProvider extends ChangeNotifier with Storage {
-  TodoProvider() {
-    db = openDB();
-    init();
-  }
+class TodoProvider extends ChangeNotifier {
+  final Isar isar;
 
-  List<TodoItem> _items = [];
-
-  List<TodoItem> get items => _items;
-
-  void init() async {
-    final isar = await db;
-    isar!.txn(() async {
-      _items = await isar.todoItems.where().findAll();
-      notifyListeners();
-    });
-  }
+  TodoProvider(this.isar);
 
   static TodoProvider getInstance(BuildContext context) {
     return Provider.of<TodoProvider>(context, listen: false);
   }
 
-  List<String> getCategories() {
+  Future<List<TodoItem>> getAll() async {
+    return await isar.todoItems.where().findAll();
+  }
+
+  Future<List<String>> getCategories() async {
+    final items = await getAll();
     List<String> ret = [];
     for (final item in items) {
       if (!ret.contains(item.category)) {
@@ -40,42 +31,36 @@ class TodoProvider extends ChangeNotifier with Storage {
     return ret;
   }
 
-  void add(TodoItem item) async {
-    addList([item]);
+  Future<void> add(TodoItem item, {bool notify = false}) async {
+    await isar.writeTxn(() async {
+      await isar.todoItems.put(item);
+    });
+    notifyListeners();
   }
 
   void addList(List<TodoItem> items) async {
-    final isar = await db;
-    await isar!.writeTxn(() async {
-      for (final item in items) {
-        await isar.todoItems.put(item);
-        if (!_items.contains(item)) {
-          _items.add(item);
-        }
-      }
-      notifyListeners();
-    });
+    for (final item in items) {
+      await add(item, notify: false);
+    }
+    notifyListeners();
   }
 
-  void delete(TodoItem item) async {
-    final isar = await db;
-    await isar!.writeTxn(() async {
+  Future<void> delete(TodoItem item) async {
+    await isar.writeTxn(() async {
       await isar.todoItems.delete(item.id);
-      _items.remove(item);
-      notifyListeners();
     });
+    notifyListeners();
   }
 
-  void clear() async {
-    final isar = await db;
-    await isar!.writeTxn(() async {
+  Future<void> clear() async {
+    await isar.writeTxn(() async {
       await isar.todoItems.clear();
-      _items.clear();
-      notifyListeners();
     });
+    notifyListeners();
   }
 
-  List<TodoItem> getFilteredItems(TodoItemStateEnum state) {
+  Future<List<TodoItem>> getFilteredItems(TodoItemStateEnum state) async {
+    final items = await getAll();
     switch (state) {
       case TodoItemStateEnum.done:
         return items.where((i) => i.state == TodoItemStateEnum.done).toList();
@@ -88,8 +73,9 @@ class TodoProvider extends ChangeNotifier with Storage {
     }
   }
 
-  String toJson() {
-    List<Map<String, dynamic>> jsonList = _items
+  Future<String> toJson() async {
+    final items = await getAll();
+    List<Map<String, dynamic>> jsonList = items
         .map((item) => item.toJson())
         .toList();
     return jsonEncode(jsonList);

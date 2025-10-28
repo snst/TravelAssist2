@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 
 import '../transaction_list/transaction.dart';
 import '../transaction_list/transaction_value.dart';
-import '../utils/storage.dart';
 import 'currency.dart';
 
 class CurrencyProvider extends ChangeNotifier {
@@ -98,11 +97,6 @@ class CurrencyProvider extends ChangeNotifier {
     return _currencyMap.containsKey(name) ? _currencyMap[name] : null;
   }
 
-  Currency getCurrencyById(int id) {
-    return allItems.firstWhere(
-      (element) => element.id == id,
-    ); //, orElse: () => Null);
-  }
 
   TransactionValue getTransactionValue(Transaction transaction) {
     var currency = getCurrencyByName(transaction.currency);

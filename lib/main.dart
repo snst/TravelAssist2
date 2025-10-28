@@ -7,37 +7,44 @@ import 'package:travelassist2/todo_list/todo_item_page.dart';
 import 'package:travelassist2/todo_list/todo_list_page.dart';
 import 'package:travelassist2/utils/globals.dart';
 
-import 'note_list/note.dart';
-import 'note_list/note_item_page.dart';
-import 'note_list/note_list_page.dart';
-import 'note_list/note_provider.dart';
 import 'calculator/calculator.dart';
 import 'calculator/calculator_page.dart';
 import 'currency/currency_list_page.dart';
 import 'currency/currency_provider.dart';
+import 'note_list/note.dart';
+import 'note_list/note_item_page.dart';
+import 'note_list/note_list_page.dart';
+import 'note_list/note_provider.dart';
+import 'providers/isar_service.dart';
 import 'todo_list/todo_provider.dart';
 import 'transaction_list/transaction_item_page.dart';
 import 'transaction_list/transaction_main_page.dart';
 import 'transaction_list/transaction_provider.dart';
 import 'widgets/widget_dual_action_button.dart';
-import 'providers/isar_service.dart';
-
 
 void main() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
-    final isarService = IsarService();
-    await isarService.init();
+  final isarService = IsarService();
+  await isarService.init();
 
   runApp(
     MultiProvider(
       providers: [
         //Provider<IsarService>.value(value: isarService),
-        ChangeNotifierProvider(create: (context) => TodoProvider(isarService.isar)),
-        ChangeNotifierProvider(create: (context) => CurrencyProvider(isarService.isar)),
-        ChangeNotifierProvider(create: (context) => TransactionProvider(isarService.isar)),
         ChangeNotifierProvider(create: (context) => Calculator()),
-        ChangeNotifierProvider(create: (context) => NoteProvider(isarService.isar)),
+        ChangeNotifierProvider(
+          create: (context) => TodoProvider(isarService.isar),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CurrencyProvider(isarService.isar),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => TransactionProvider(isarService.isar),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => NoteProvider(isarService.isar),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -47,11 +54,10 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'TravelAssist',
+      title: Txt.appTitle,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
@@ -65,7 +71,6 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       themeMode: ThemeMode.dark,
-      //home: const MyHomePage(title: 'TravelAssist'),
       home: const MainScreen(),
     );
   }
@@ -86,7 +91,11 @@ class _MainScreenState extends State<MainScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => NoteItemPage(item: Note(link: link, tags:[Tags.link]), newItem: true, title:Txt.links),
+        builder: (context) => NoteItemPage(
+          item: Note(link: link, tags: [Tags.link]),
+          newItem: true,
+          title: Txt.links,
+        ),
       ),
     );
   }
@@ -103,9 +112,6 @@ class _MainScreenState extends State<MainScreen> {
           handleSharedFile(value[0]);
         });
       },
-      onError: (err) {
-        //print("getIntentDataStream error: $err");
-      },
     );
 
     // Get the media sharing coming from outside the app while the app is closed.
@@ -113,7 +119,6 @@ class _MainScreenState extends State<MainScreen> {
       if (value.isNotEmpty) {
         setState(() {
           handleSharedFile(value[0]);
-
           // Tell the library that we are done processing the intent.
           ReceiveSharingIntent.instance.reset();
         });
@@ -168,7 +173,6 @@ class _MainScreenState extends State<MainScreen> {
               onMainPressed: () => _onShowPage(context, const CalculatorPage()),
             ),
 
-
             WidgetDualActionButton(
               label: Txt.todos,
               icon: Icons.list,
@@ -187,73 +191,111 @@ class _MainScreenState extends State<MainScreen> {
             WidgetDualActionButton(
               label: Txt.lookup,
               icon: Icons.flash_on_sharp,
-              onMainPressed: () => _onShowPage(context, NoteListPage(title:Txt.lookup, selectedTags:[Tags.lookup])),
+              onMainPressed: () => _onShowPage(
+                context,
+                NoteListPage(title: Txt.lookup, selectedTags: [Tags.lookup]),
+              ),
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        NoteItemPage(item: Note(tags:[Tags.lookup]), newItem: true, title:Txt.lookup),
+                    builder: (context) => NoteItemPage(
+                      item: Note(tags: [Tags.lookup]),
+                      newItem: true,
+                      title: Txt.lookup,
+                    ),
                   ),
                 );
                 if (result != null && context.mounted) {
-                  _onShowPage(context, NoteListPage(title:Txt.lookup, selectedTags:[Tags.lookup]));
+                  _onShowPage(
+                    context,
+                    NoteListPage(
+                      title: Txt.lookup,
+                      selectedTags: [Tags.lookup],
+                    ),
+                  );
                 }
               },
             ),
 
-
             WidgetDualActionButton(
               label: Txt.locations,
               icon: Icons.map,
-              onMainPressed: () =>
-                  _onShowPage(context, NoteListPage(title:Txt.locations, selectedTags:[Tags.geo])),
+              onMainPressed: () => _onShowPage(
+                context,
+                NoteListPage(title: Txt.locations, selectedTags: [Tags.geo]),
+              ),
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        NoteItemPage(item: Note(tags:[Tags.geo]), newItem: true, title:Txt.locations),
+                    builder: (context) => NoteItemPage(
+                      item: Note(tags: [Tags.geo]),
+                      newItem: true,
+                      title: Txt.locations,
+                    ),
                   ),
                 );
                 if (result != null && context.mounted) {
-                  _onShowPage(context, NoteListPage(title:Txt.locations,selectedTags:[Tags.geo]));
+                  _onShowPage(
+                    context,
+                    NoteListPage(
+                      title: Txt.locations,
+                      selectedTags: [Tags.geo],
+                    ),
+                  );
                 }
               },
             ),
             WidgetDualActionButton(
               label: Txt.links,
               icon: Icons.bookmark,
-              onMainPressed: () =>
-                  _onShowPage(context, NoteListPage(title:Txt.links, selectedTags:[Tags.link])),
+              onMainPressed: () => _onShowPage(
+                context,
+                NoteListPage(title: Txt.links, selectedTags: [Tags.link]),
+              ),
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        NoteItemPage(item: Note(tags:[Tags.link]), newItem: true, title:Txt.links),
+                    builder: (context) => NoteItemPage(
+                      item: Note(tags: [Tags.link]),
+                      newItem: true,
+                      title: Txt.links,
+                    ),
                   ),
                 );
                 if (result != null && context.mounted) {
-                  _onShowPage(context, NoteListPage(title:Txt.links, selectedTags:[Tags.link]));
+                  _onShowPage(
+                    context,
+                    NoteListPage(title: Txt.links, selectedTags: [Tags.link]),
+                  );
                 }
               },
             ),
             WidgetDualActionButton(
               label: Txt.notes,
               icon: Icons.notes,
-              onMainPressed: () =>
-                  _onShowPage(context, NoteListPage(title:Txt.notes, selectedTags:[Tags.note])),
+              onMainPressed: () => _onShowPage(
+                context,
+                NoteListPage(title: Txt.notes, selectedTags: [Tags.note]),
+              ),
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        NoteItemPage(item: Note(tags:[Tags.note]), newItem: true, title:Txt.notes),
+                    builder: (context) => NoteItemPage(
+                      item: Note(tags: [Tags.note]),
+                      newItem: true,
+                      title: Txt.notes,
+                    ),
                   ),
                 );
                 if (result != null && context.mounted) {
-                  _onShowPage(context, NoteListPage(title:Txt.notes, selectedTags:[Tags.note]));
+                  _onShowPage(
+                    context,
+                    NoteListPage(title: Txt.notes, selectedTags: [Tags.note]),
+                  );
                 }
               },
             ),
@@ -294,7 +336,6 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  /// Horizontally scrollable subfunction icons (below main button)
   Widget _buildScrollableSubfunctions({
     required double height,
     required List<Map<String, dynamic>> subIcons,

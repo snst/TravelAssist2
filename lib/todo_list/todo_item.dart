@@ -1,5 +1,7 @@
 import 'package:isar_community/isar.dart';
 import 'package:json_annotation/json_annotation.dart';
+
+import '../utils/storage_item.dart';
 part 'todo_item.g.dart';
 
 enum TodoItemStateEnum {
@@ -10,7 +12,7 @@ enum TodoItemStateEnum {
 
 @collection
 @JsonSerializable()
-class TodoItem {
+class TodoItem implements StorageItem {
   TodoItem(
       {this.name = "",
       this.quantity = 0,
@@ -28,7 +30,7 @@ class TodoItem {
   int used;
   @enumerated
   TodoItemStateEnum state;
-
+/*
   TodoItem.copy(TodoItem other)
       : id = other.id,
         name = other.name,
@@ -37,7 +39,7 @@ class TodoItem {
         used = other.used,
         category = other.category,
         comment = other.comment;
-
+*/
   void update(TodoItem other) {
     id = other.id;
     name = other.name;
@@ -58,4 +60,9 @@ class TodoItem {
       _$TodoItemFromJson(json);
 
   Map<String, dynamic> toJson() => _$TodoItemToJson(this);
+
+  @override
+  Id getId() {
+    return id;
+  }
 }

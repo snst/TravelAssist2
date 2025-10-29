@@ -7,61 +7,12 @@ import 'package:provider/provider.dart';
 import '../balance/balance.dart';
 import '../currency/currency.dart';
 import '../currency/currency_provider.dart';
+import '../utils/storage.dart';
 import 'transaction.dart';
 import 'transaction_value.dart';
 
-class TransactionProvider extends ChangeNotifier{
-  final Isar isar;
-  //List<Transaction> _items = [];
-
-  TransactionProvider(this.isar) {
-    init();
-  }
-
-
-
-  static TransactionProvider getInstance(BuildContext context) {
-    return Provider.of<TransactionProvider>(context, listen: false);
-  }
-
-  void add(Transaction item, {bool notify = true}) async {
-    await isar.writeTxn(() async {
-      await isar.transactions.put(item);
-    });
-    if (notify) {
-      notifyListeners();
-    }
-  }
-
-  void addList(List<Transaction> items) async {
-    for (final item in items) {
-      add(item, notify: false);
-    }
-    notifyListeners();
-  }
-
-  void delete(Transaction item) async {
-    await isar.writeTxn(() async {
-      await isar.transactions.delete(item.id);
-    });
-    notifyListeners();
-  }
-
-  void clear() async {
-    await isar.writeTxn(() async {
-      await isar.transactions.clear();
-    });
-    notifyListeners();
-  }
-
-  void init() async {
-    //items = await isar.transactions.where().findAll();
-    //notifyListeners();
-  }
-
-  Future<List<Transaction>> getAll() async {
-    return await isar.transactions.where().findAll();
-  }
+class TransactionProvider extends Storage<Transaction> {
+  TransactionProvider(Isar isar) : super(isar);
 
   List<String> getCategoryList(List<Transaction> items) {
     Map<String, int> occurrenceMap = {};
@@ -89,7 +40,10 @@ class TransactionProvider extends ChangeNotifier{
     return sortedUniqueStrings;
   }
 
-  List<Transaction> getSortedTransactions(List<Transaction> all, DateTime? until) {
+  List<Transaction> getSortedTransactions(
+    List<Transaction> all,
+    DateTime? until,
+  ) {
     List<Transaction> ret = all;
     if (until != null) {
       ret = all.where((element) => !element.date.isAfter(until)).toList();
@@ -115,7 +69,7 @@ class TransactionProvider extends ChangeNotifier{
   }
 
   TransactionValue calcCurrentCash(
-  List<Transaction> items,
+    List<Transaction> items,
     CurrencyProvider currencyProvider,
     Currency? currency,
   ) {
@@ -137,7 +91,10 @@ class TransactionProvider extends ChangeNotifier{
     return sum;
   }
 
-  Balance caluculateAll(List<Transaction> items, CurrencyProvider currencyProvider) {
+  Balance caluculateAll(
+    List<Transaction> items,
+    CurrencyProvider currencyProvider,
+  ) {
     var balance = Balance(currencyProvider: currencyProvider);
     for (final transaction in items) {
       balance.add(transaction);
@@ -145,7 +102,10 @@ class TransactionProvider extends ChangeNotifier{
     return balance;
   }
 
-  Balance caluculateExpensesPerDay(List<Transaction> items, CurrencyProvider currencyProvider) {
+  Balance caluculateExpensesPerDay(
+    List<Transaction> items,
+    CurrencyProvider currencyProvider,
+  ) {
     var balance = Balance(currencyProvider: currencyProvider);
     for (final transaction in items) {
       if (transaction.isExpense && transaction.averageDays > 0) {
@@ -194,12 +154,13 @@ class TransactionProvider extends ChangeNotifier{
 
   void fromJson(String? jsonString) {
     if (jsonString != null) {
-      List<dynamic> jsonList = jsonDecode(jsonString);
-      List<Transaction> newItems = jsonList
-          .map((json) => Transaction.fromJson(json))
-          .toList();
       clear();
-      addList(newItems);
+      final jsonList = jsonDecode(jsonString) as List;
+      for (var json in jsonList) {
+        add(Transaction.fromJson(json), notify: false);
+      }
+      notifyListeners();
     }
   }
+
 }

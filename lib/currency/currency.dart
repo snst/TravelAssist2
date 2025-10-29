@@ -3,6 +3,8 @@ import 'package:isar_community/isar.dart';
 
 // ignore: depend_on_referenced_packages
 import 'package:json_annotation/json_annotation.dart';
+
+import '../utils/storage_item.dart';
 part 'currency.g.dart';
 
 enum CurrencyStateEnum {
@@ -13,7 +15,7 @@ enum CurrencyStateEnum {
 
 @collection
 @JsonSerializable()
-class Currency {
+class Currency implements StorageItem {
   Currency(
       {this.name = "", this.value = 1.0, this.state = CurrencyStateEnum.show});
 
@@ -55,4 +57,9 @@ class Currency {
       _$CurrencyFromJson(json);
 
   Map<String, dynamic> toJson() => _$CurrencyToJson(this);
+
+  @override
+  Id getId() {
+    return id;
+  }
 }

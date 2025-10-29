@@ -1,29 +1,37 @@
+import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
-import 'package:path_provider/path_provider.dart';
 
-import '../currency/currency.dart';
-import '../todo_list/todo_item.dart';
-import '../transaction_list/transaction.dart';
-import '../note_list/note.dart';
+import '../utils/storage_item.dart';
 
-mixin Storage {
-  late Future<Isar?> db;
+class Storage<T extends StorageItem> extends ChangeNotifier {
+  final Isar isar;
 
-  Future<Isar?> openDB() async {
-    if (Isar.instanceNames.isEmpty) {
-      final dir = await getApplicationDocumentsDirectory();
-      return await Isar.open(
-        [
-          CurrencySchema,
-          TodoItemSchema,
-          TransactionSchema,
-          NoteSchema,
-        ],
-        directory: dir.path,
-        inspector: true,
-      );
+  Storage(this.isar);
+
+  Future<void> add(T item, {bool notify = true}) async {
+    await isar.writeTxn(() async {
+      await isar.collection<T>().put(item);
+    });
+    if (notify) {
+      notifyListeners();
     }
+  }
 
-    return Isar.getInstance();
+  Future<void> delete(T item) async {
+    await isar.writeTxn(() async {
+      await isar.collection<T>().delete(item.getId());
+    });
+    notifyListeners();
+  }
+
+  Future<void> clear() async {
+    await isar.writeTxn(() async {
+      await isar.collection<T>().clear();
+    });
+    notifyListeners();
+  }
+
+  Future<List<T>> getAll() async {
+    return await isar.collection<T>().where().findAll();
   }
 }

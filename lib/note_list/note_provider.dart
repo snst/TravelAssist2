@@ -4,48 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
 import 'package:provider/provider.dart';
 
+import '../utils/storage.dart';
 import 'note.dart';
 
-class NoteProvider extends ChangeNotifier {
-  final Isar isar;
 
-  NoteProvider(this.isar);
-
-  static NoteProvider getInstance(BuildContext context) {
-    return Provider.of<NoteProvider>(context, listen: false);
-  }
-
-  Future<void> add(Note item, {bool notify = false}) async {
-    await isar.writeTxn(() async {
-      await isar.notes.put(item);
-    });
-    notifyListeners();
-  }
-
-  void addList(List<Note> items) async {
-    for (final item in items) {
-      await add(item, notify: false);
-    }
-    notifyListeners();
-  }
-
-  Future<void> delete(Note item) async {
-    await isar.writeTxn(() async {
-      await isar.notes.delete(item.id);
-    });
-    notifyListeners();
-  }
-
-  Future<void> clear() async {
-    await isar.writeTxn(() async {
-      await isar.notes.clear();
-    });
-    notifyListeners();
-  }
-
-  Future<List<Note>> getAll() async {
-    return await isar.notes.where().findAll();
-  }
+class NoteProvider extends Storage<Note> {
+  NoteProvider(Isar isar) : super(isar);
 
   Future<List<Note>> getWithTag(List<String> tags) async {
     final all = await getAll(); // await the Future
@@ -75,12 +39,12 @@ class NoteProvider extends ChangeNotifier {
 
   void fromJson(String? jsonString) {
     if (jsonString != null) {
-      List<dynamic> jsonList = jsonDecode(jsonString);
-      List<Note> newItems = jsonList
-          .map((json) => Note.fromJson(json))
-          .toList();
       clear();
-      addList(newItems);
+      final jsonList = jsonDecode(jsonString) as List;
+      for (var json in jsonList) {
+        add(Note.fromJson(json), notify: false);
+      }
+      notifyListeners();
     }
   }
 }

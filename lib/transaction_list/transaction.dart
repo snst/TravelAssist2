@@ -4,6 +4,7 @@ import 'package:isar_community/isar.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../currency/currency.dart';
+import '../utils/storage_item.dart';
 
 part 'transaction.g.dart';
 
@@ -13,7 +14,7 @@ enum TransactionTypeEnum { expense, withdrawal, cashCorrection, deposit }
 
 @collection
 @JsonSerializable()
-class Transaction {
+class Transaction implements StorageItem {
   Transaction({
     this.name = "",
     this.value = 0.0,
@@ -115,6 +116,12 @@ class Transaction {
     var item = Transaction(date: date);
     item.update(this);
     return item;
+  }
+
+
+  @override
+  Id getId() {
+    return id;
   }
 
   factory Transaction.fromJson(Map<String, dynamic> json) =>

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travelassist2/widgets/widget_confirm_dialog.dart';
 
 import '../utils/travel_assist_utils.dart';
 
@@ -42,7 +43,15 @@ class ExportWidget extends StatelessWidget {
         ElevatedButton(
           child: const Text("Clear"),
           onPressed: () {
-            clearJson();
+            showConfirmationDialog(
+              context: context,
+              title: 'Confirm Delete',
+              text: 'Are you sure you want to delete these items?',
+              onConfirm: () {
+                clearJson();
+              },
+            );
+
           },
         ),
       ],

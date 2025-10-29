@@ -91,7 +91,6 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
   ) {
     switch (widget.modifiedItem.type) {
       case TransactionTypeEnum.cashCorrection:
-        CurrencyProvider cp = CurrencyProvider.getInstance(context);
         Currency? currency = currencyProvider.getCurrencyByName(
           widget.modifiedItem.currency,
         );
@@ -293,9 +292,7 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                           onDelete: (widget.newItem)
                               ? null
                               : () {
-                                  TransactionProvider.getInstance(
-                                    context,
-                                  ).delete(widget.item!);
+                                  tp.delete(widget.item!);
                                 },
                         ),
                       ],

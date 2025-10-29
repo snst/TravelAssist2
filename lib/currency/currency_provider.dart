@@ -6,12 +6,12 @@ import 'package:provider/provider.dart';
 
 import '../transaction_list/transaction.dart';
 import '../transaction_list/transaction_value.dart';
+import '../utils/storage.dart';
 import 'currency.dart';
 
-class CurrencyProvider extends ChangeNotifier {
-  final Isar isar;
+class CurrencyProvider extends Storage<Currency>  {
 
-  CurrencyProvider(this.isar) {
+  CurrencyProvider(Isar isar) : super(isar) {
     init();
   }
 
@@ -48,10 +48,6 @@ class CurrencyProvider extends ChangeNotifier {
     });
   }
 
-  static CurrencyProvider getInstance(BuildContext context) {
-    return Provider.of<CurrencyProvider>(context, listen: false);
-  }
-
   void updateHomeCurrency(Currency? currency) {
     if (currency?.state == CurrencyStateEnum.home) {
       for (var iter in _currencyMap.values) {
@@ -70,23 +66,18 @@ class CurrencyProvider extends ChangeNotifier {
     _homeCurrency?.state = CurrencyStateEnum.home;
   }
 
-  Future<void> add(Currency item) async {
+  @override
+  Future<void> add(Currency item, {bool notify = true}) async {
     updateHomeCurrency(item);
-    await isar.writeTxn(() async {
-      await isar.currencys.put(item);
-      _currencyMap.removeWhere((key, value) => value == item);
-      _currencyMap[item.name] = item;
-    });
-    notifyListeners();
+    _currencyMap[item.name] = item;
+    _currencyMap.removeWhere((key, value) => value == item);
+    super.add(item);
   }
 
-
+  @override
   Future<void> delete(Currency item) async {
-    await isar.writeTxn(() async {
-      await isar.currencys.delete(item.id);
-      _currencyMap.removeWhere((key, value) => value == item);
-    });
-    notifyListeners();
+    _currencyMap.removeWhere((key, value) => value == item);
+    super.delete(item);
   }
 
   Currency? getHomeCurrency() {

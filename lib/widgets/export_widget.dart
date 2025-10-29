@@ -15,12 +15,12 @@ class ExportWidget extends StatelessWidget {
   final String name;
 
   final Future<String> Function() toJson;
-  final void Function(String?) fromJson;
+  final void Function(String?, bool) fromJson;
   final void Function() clearJson;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
         ElevatedButton(
           child: const Text("Export"),
@@ -32,11 +32,20 @@ class ExportWidget extends StatelessWidget {
             }
         ),
         ElevatedButton(
-          child: const Text("Import"),
+          child: const Text("Import (Replace)"),
           onPressed: () {
             Future<String?> jsonData = loadJson();
             jsonData.then((jsonString) {
-              fromJson(jsonString);
+              fromJson(jsonString, false);
+            });
+          },
+        ),
+        ElevatedButton(
+          child: const Text("Import (Append)"),
+          onPressed: () {
+            Future<String?> jsonData = loadJson();
+            jsonData.then((jsonString) {
+              fromJson(jsonString, true);
             });
           },
         ),

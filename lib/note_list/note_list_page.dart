@@ -56,7 +56,9 @@ class _NoteListPageState extends State<NoteListPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text(widget.selectedTags.isEmpty
+            ? "All"
+            : widget.selectedTags.join(' ')),
         actions: [
           PopupMenuButton<int>(
             itemBuilder: (context) => [
@@ -143,7 +145,7 @@ class _NoteListPageState extends State<NoteListPage> {
                   return const SizedBox.shrink();
                 }
                 final tagCards = tags
-                    .map((tag) => MultiSelectCard(value: tag, label: tag))
+                    .map((tag) => MultiSelectCard(value: tag, label: tag, selected: widget.selectedTags.contains(tag)))
                     .toList();
                 return MultiSelectContainer(
                   showInListView: true,
@@ -161,16 +163,19 @@ class _NoteListPageState extends State<NoteListPage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => NoteItemPage(item: Note(tags:widget.selectedTags), newItem: true, title:widget.title),
-            ),
-          );
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom:56.0),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NoteItemPage(item: Note(tags:widget.selectedTags), newItem: true, title:widget.title),
+              ),
+            );
+          },
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

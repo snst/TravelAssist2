@@ -44,9 +44,10 @@ class TodoProvider  extends Storage<TodoItem> {
     return jsonEncode(jsonList);
   }
 
-  void fromJson(String? jsonString) {
+  void fromJson(String? jsonString, bool append) {
     if (jsonString != null) {
-      clear();
+      if(!append)
+        clear();
       final jsonList = jsonDecode(jsonString) as List;
       for (var json in jsonList) {
         add(TodoItem.fromJson(json), notify: false);

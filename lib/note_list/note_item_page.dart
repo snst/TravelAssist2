@@ -186,12 +186,14 @@ class _PackedItemPageState extends State<NoteItemPage> {
           }
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          openExternally(context, widget.modifiedItem.link);
-        },
-        child: const Icon(Icons.open_in_new),
-      ),
+      floatingActionButton: (!widget.doEdit && !widget.newItem)
+          ? FloatingActionButton(
+              onPressed: () async {
+                openExternally(context, widget.modifiedItem.link);
+              },
+              child: const Icon(Icons.open_in_new),
+            )
+          : null,
     );
   }
 }

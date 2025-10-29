@@ -37,9 +37,10 @@ class NoteProvider extends Storage<Note> {
     return jsonEncode(jsonList);
   }
 
-  void fromJson(String? jsonString) {
+  void fromJson(String? jsonString, bool append) {
     if (jsonString != null) {
-      clear();
+      if(!append)
+        clear();
       final jsonList = jsonDecode(jsonString) as List;
       for (var json in jsonList) {
         add(Note.fromJson(json), notify: false);

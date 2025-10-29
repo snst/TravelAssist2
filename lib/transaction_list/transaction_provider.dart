@@ -1,8 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
-import 'package:provider/provider.dart';
 
 import '../balance/balance.dart';
 import '../currency/currency.dart';
@@ -152,9 +150,9 @@ class TransactionProvider extends Storage<Transaction> {
     return jsonEncode(jsonList);
   }
 
-  void fromJson(String? jsonString) {
+  void fromJson(String? jsonString, bool append) {
     if (jsonString != null) {
-      clear();
+      if (!append) clear();
       final jsonList = jsonDecode(jsonString) as List;
       for (var json in jsonList) {
         add(Transaction.fromJson(json), notify: false);
@@ -162,5 +160,4 @@ class TransactionProvider extends Storage<Transaction> {
       notifyListeners();
     }
   }
-
 }

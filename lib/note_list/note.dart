@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:isar_community/isar.dart';
 // ignore: depend_on_referenced_packages
 import 'package:json_annotation/json_annotation.dart';
 
+import '../utils/globals.dart';
 import '../utils/storage_item.dart';
 
 part 'note.g.dart';
@@ -30,6 +32,18 @@ class Note implements StorageItem {
       return link.substring(7);
     }
     return link;
+  }
+
+  Icon getIcon() {
+    if (tags.contains(Tag.map)) {
+      return MyIcon.map;
+    } else if (link.startsWith("geo:")) {
+      return MyIcon.gps;
+    } else if (link.startsWith("http")) {
+      return MyIcon.link;
+    } else  {
+      return MyIcon.copy;
+    }
   }
 
   Note clone() {

@@ -10,11 +10,10 @@ import 'note_item_page.dart';
 import 'note_provider.dart';
 
 class NoteListPage extends StatefulWidget {
-  NoteListPage({super.key, required this.title, this.selectedTags = const []});
+  NoteListPage({super.key, this.selectedTags = const []});
 
   @override
   State<NoteListPage> createState() => _NoteListPageState();
-  final String title;
   List<String> selectedTags;
 }
 
@@ -114,7 +113,7 @@ class _NoteListPageState extends State<NoteListPage> {
                           bookmark: items[reverseIndex],
                         ),
                         trailing: IconButton(
-                          icon: const Icon(Icons.open_in_browser),
+                          icon: items[reverseIndex].getIcon(),
                           // The icon on the right
                           onPressed: () {
                             openExternally(context, items[reverseIndex].link);
@@ -170,7 +169,7 @@ class _NoteListPageState extends State<NoteListPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => NoteItemPage(item: Note(tags:widget.selectedTags), newItem: true, title:widget.title),
+                builder: (context) => NoteItemPage(item: Note(tags:widget.selectedTags), newItem: true, title:widget.selectedTags.join(' ')),
               ),
             );
           },

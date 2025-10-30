@@ -58,7 +58,7 @@ class _PackedItemPageState extends State<NoteItemPage> {
   void initState() {
     super.initState();
     _stringTagController = StringTagController();
-    if (widget.newItem && widget.modifiedItem.tags.contains(Tags.geo)) {
+    if (widget.newItem && widget.modifiedItem.tags.contains(Tag.gps)) {
       updatePosition(widget.modifiedItem);
     }
   }
@@ -138,14 +138,13 @@ class _PackedItemPageState extends State<NoteItemPage> {
                   Row(
                     children: [
                       const Spacer(),
-                      if (widget.modifiedItem.tags.contains(Tags.geo))
-                        ElevatedButton(
-                          child: const Text('GPS'),
-                          onPressed: () {
-                            updatePosition(widget.modifiedItem);
-                            //Navigator.of(context).pop();
-                          },
-                        ),
+                      ElevatedButton(
+                        child: const Text('GPS'),
+                        onPressed: () {
+                          updatePosition(widget.modifiedItem);
+                          //Navigator.of(context).pop();
+                        },
+                      ),
                       ElevatedButton(
                           child: const Text('Cancel'),
                           onPressed: () {

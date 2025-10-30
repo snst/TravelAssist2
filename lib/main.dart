@@ -88,13 +88,16 @@ class _MainScreenState extends State<MainScreen> {
 
   void handleSharedFile(SharedMediaFile file) async {
     final link = await moveSharedImageToDataFolder(file.path);
+    String tag = Tag.link;
+    if (link.startsWith("https://maps.app.goo.gl"))
+      tag = Tag.map;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => NoteItemPage(
-          item: Note(link: link, tags: [Tags.link]),
+          item: Note(link: link, tags: [tag]),
           newItem: true,
-          title: Txt.links,
+          title: tag,
         ),
       ),
     );
@@ -189,116 +192,36 @@ class _MainScreenState extends State<MainScreen> {
             ),
 
             WidgetDualActionButton(
-              label: Txt.lookup,
-              icon: Icons.flash_on_sharp,
-              onMainPressed: () => _onShowPage(
-                context,
-                NoteListPage(title: Txt.lookup, selectedTags: [Tags.lookup]),
-              ),
-              onAddPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NoteItemPage(
-                      item: Note(tags: [Tags.lookup]),
-                      newItem: true,
-                      title: Txt.lookup,
-                    ),
-                  ),
-                );
-                if (result != null && context.mounted) {
-                  _onShowPage(
-                    context,
-                    NoteListPage(
-                      title: Txt.lookup,
-                      selectedTags: [Tags.lookup],
-                    ),
-                  );
-                }
-              },
-            ),
-
-            WidgetDualActionButton(
-              label: Txt.locations,
-              icon: Icons.map,
-              onMainPressed: () => _onShowPage(
-                context,
-                NoteListPage(title: Txt.locations, selectedTags: [Tags.geo]),
-              ),
-              onAddPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NoteItemPage(
-                      item: Note(tags: [Tags.geo]),
-                      newItem: true,
-                      title: Txt.locations,
-                    ),
-                  ),
-                );
-                if (result != null && context.mounted) {
-                  _onShowPage(
-                    context,
-                    NoteListPage(
-                      title: Txt.locations,
-                      selectedTags: [Tags.geo],
-                    ),
-                  );
-                }
-              },
-            ),
-            WidgetDualActionButton(
-              label: Txt.links,
-              icon: Icons.bookmark,
-              onMainPressed: () => _onShowPage(
-                context,
-                NoteListPage(title: Txt.links, selectedTags: [Tags.link]),
-              ),
-              onAddPressed: () async {
-                final result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NoteItemPage(
-                      item: Note(tags: [Tags.link]),
-                      newItem: true,
-                      title: Txt.links,
-                    ),
-                  ),
-                );
-                if (result != null && context.mounted) {
-                  _onShowPage(
-                    context,
-                    NoteListPage(title: Txt.links, selectedTags: [Tags.link]),
-                  );
-                }
-              },
-            ),
-            WidgetDualActionButton(
-              label: Txt.notes,
+              label: Txt.allNotes,
               icon: Icons.notes,
               onMainPressed: () => _onShowPage(
                 context,
-                NoteListPage(title: Txt.notes, selectedTags: [Tags.note]),
+                NoteListPage(selectedTags: []),
               ),
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => NoteItemPage(
-                      item: Note(tags: [Tags.note]),
+                      item: Note(tags: []),
                       newItem: true,
-                      title: Txt.notes,
+                      title: Txt.note,
                     ),
                   ),
                 );
                 if (result != null && context.mounted) {
                   _onShowPage(
                     context,
-                    NoteListPage(title: Txt.notes, selectedTags: [Tags.note]),
+                    NoteListPage(selectedTags: [Tag.note]),
                   );
                 }
               },
             ),
+            _buildScrollableNotes(
+              height: 60,
+              tagIcons: [ TagIcon.star, TagIcon.gps, TagIcon.map, TagIcon.link, TagIcon.note ],
+            ),
+
 
             WidgetDualActionButton(
               label: Txt.expenses,
@@ -317,7 +240,7 @@ class _MainScreenState extends State<MainScreen> {
                 }
               },
             ),
-            _buildScrollableSubfunctions(
+            _buildScrollableExpense(
               height: 60,
               subIcons: [
                 {'icon': Icons.coffee_outlined, 'name': 'Cafe Essen'},
@@ -336,7 +259,7 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget _buildScrollableSubfunctions({
+  Widget _buildScrollableExpense({
     required double height,
     required List<Map<String, dynamic>> subIcons,
   }) {
@@ -364,6 +287,33 @@ class _MainScreenState extends State<MainScreen> {
                 if (result != null && context.mounted) {
                   _onShowPage(context, const TransactionMainPage());
                 }
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildScrollableNotes({
+    required double height,
+    required List<TagIcon2> tagIcons,
+  }) {
+    return SizedBox(
+      height: height,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: tagIcons.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (context, index) {
+          return SizedBox(
+            width: height, // square buttons
+            height: height,
+            child: IconButton(
+              //icon: Icon(sub['icon'], size: 28),
+              icon: tagIcons[index].icon,
+              onPressed: () {
+                _onShowPage(context, NoteListPage(selectedTags: [tagIcons[index].tag]),);
               },
             ),
           );

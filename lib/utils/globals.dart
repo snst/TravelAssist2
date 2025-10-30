@@ -1,19 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class Tags {
-  static const geo = "geo";
-  static const lookup = "lookup";
+class Tag {
+  static const gps = "gps";
+  static const map = "map";
+  static const star = "star";
   static const note = "note";
   static const link = "link";
 }
 
+class MyIcon {
+  static const gps = Icon(Icons.gps_fixed);
+  static const map = Icon(Icons.map);
+  static const link = Icon(Icons.link);
+  static const copy = Icon(Icons.copy);
+  static const star = Icon(Icons.star);
+  static const note = Icon(Icons.note);
+}
+
+class TagIcon2 {
+  final String tag;
+  final Icon icon;
+  const TagIcon2({required this.tag, required this.icon});
+}
+
+class TagIcon {
+  static const gps = TagIcon2(tag: Tag.gps, icon: MyIcon.gps);
+  static const map = TagIcon2(tag: Tag.map, icon: MyIcon.map);
+  static const link = TagIcon2(tag: Tag.link, icon: MyIcon.link);
+  static const star = TagIcon2(tag: Tag.star, icon: MyIcon.star);
+  static const note = TagIcon2(tag: Tag.note, icon: MyIcon.note);
+}
+
 class Txt {
   static const links = "Links";
-  static const notes = "Notes";
+  static const note = "Note";
+  static const allNotes = "Notes";
   static const locations = "Locations";
   static const expenses = "Expenses";
-  static const lookup = "Lookup";
   static const todos = "To-Dos";
   static const calculator = "Calculator";
   static const appTitle = "Travel Assist";

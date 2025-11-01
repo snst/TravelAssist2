@@ -35,18 +35,6 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
     );
   }
 
-  /*
-  void showCurrenyRatesPage(
-      BuildContext context, CurrencyProvider currencyProvider) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return Scaffold(
-          appBar: AppBar(
-            title: const Text("Currency rates"),
-          ),
-          body: CurrencyRatesPage(currencyProvider: currencyProvider));
-    }));
-  }*/
-
   void showCurrencyImportExportPage(BuildContext context, TransactionProvider tp) {
     Navigator.push(
       context,

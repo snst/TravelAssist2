@@ -11,7 +11,7 @@ class BalanceRowWidget extends StatelessWidget {
   final TransactionValue? tv2;
   final TextStyle style;
 
-  BalanceRowWidget({
+  const BalanceRowWidget({
     super.key,
     required this.text1,
     required this.tv1,

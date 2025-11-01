@@ -1,8 +1,6 @@
 import 'dart:collection';
 
-import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
-import 'package:provider/provider.dart';
 
 import '../transaction_list/transaction.dart';
 import '../transaction_list/transaction_value.dart';

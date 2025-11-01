@@ -7,18 +7,9 @@ class WidgetTags extends StatelessWidget {
   List<String> allTags;
   List<String> tags;
   StringTagController stringTagController;
-/*
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _distanceToField = MediaQuery.of(context).size.width;
-  }
-*/
+
   @override
   Widget build(BuildContext context) {
-    /*if (_initialTags.isEmpty) {
-      _initialTags = getProvider(context).getTags();
-    }*/
     return  Autocomplete<String>(
               optionsViewBuilder: (context, onSelected, options) {
                 return Container(

@@ -59,15 +59,14 @@ class BalanceRowHeader extends StatelessWidget {
   final IconData icon;
   final TransactionValue tv;
   final Color color;
-  late TextStyle style;
+  final TextStyle style;
 
-  BalanceRowHeader(this.icon, this.title, this.tv, this.color, {super.key}) {
-    style = TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: AppFonstSize.balanceMainHeader,
-      color: color,
-    );
-  }
+  BalanceRowHeader(this.icon, this.title, this.tv, this.color, {super.key})
+      : style = TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: AppFonstSize.balanceMainHeader,
+          color: color,
+        );
 
   @override
   Widget build(BuildContext context) {

@@ -217,14 +217,14 @@ class WidgetBookmark extends StatelessWidget {
             ],
             if (bookmark.comment.isNotEmpty) ...[
               const SizedBox(height: 2),
-              Text(bookmark.comment, style: const TextStyle(fontSize: 14)),
+              Text(bookmark.comment, style: const TextStyle(fontSize: 16)),
             ],
             if (bookmark.link.isNotEmpty) ...[
               const SizedBox(height: 2),
               Text(
                 bookmark.shortLink(),
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 16,
                   color: Theme.of(context).colorScheme.secondaryFixed,
                 ),
               ),

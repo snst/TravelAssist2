@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../utils/globals.dart';
 import '../widgets/widget_combobox.dart';
+import '../widgets/widget_layout.dart';
 import '../widgets/widget_multi_line_input.dart';
 import '../widgets/widget_text_input.dart';
 import 'todo_item.dart';
@@ -67,7 +68,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
               onChanged: (value) => widget.modifiedItem.name = value,
               autofocus: widget.item == null, // new item
             ),
-            SizedBox(height: 8),
+            VSpace(),
             FutureBuilder(
               future: provider.getCategories(),
               builder: (context, asyncSnapshot) {
@@ -85,20 +86,18 @@ class _PackedItemPageState extends State<TodoItemPage> {
                 );
               }
             ),
+            VSpace(),
             Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
-                  child: SpinBox(
-                    value: widget.modifiedItem.quantity.toDouble(),
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      constraints: BoxConstraints.tightFor(width: 150),
-                      labelText: 'Quantity',
-                    ),
-                    onChanged: (value) =>
-                        widget.modifiedItem.quantity = value.toInt(),
+                SpinBox(
+                  value: widget.modifiedItem.quantity.toDouble(),
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    constraints: BoxConstraints.tightFor(width: 150),
+                    labelText: 'Quantity',
                   ),
+                  onChanged: (value) =>
+                      widget.modifiedItem.quantity = value.toInt(),
                 ),
                 const Spacer(),
                 Padding(
@@ -116,39 +115,38 @@ class _PackedItemPageState extends State<TodoItemPage> {
                 ),
               ],
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 9, 0, 5),
-              child: SegmentedButton<TodoItemStateEnum>(
-                showSelectedIcon: false,
-                segments: const <ButtonSegment<TodoItemStateEnum>>[
-                  ButtonSegment<TodoItemStateEnum>(
-                    value: TodoItemStateEnum.skipped,
-                    label: Text('skipped'),
-                    //  icon: Icon(Icons.calendar_view_week)
-                  ),
-                  ButtonSegment<TodoItemStateEnum>(
-                    value: TodoItemStateEnum.open,
-                    label: Text('open'),
-                    // icon: Icon(Icons.calendar_view_day)
-                  ),
-                  ButtonSegment<TodoItemStateEnum>(
-                    value: TodoItemStateEnum.done,
-                    label: Text('done'),
-                    //  icon: Icon(Icons.calendar_view_month)
-                  ),
-                ],
-                selected: <TodoItemStateEnum>{widget.modifiedItem.state},
-                onSelectionChanged: (Set<TodoItemStateEnum> newSelection) {
-                  setState(() {
-                    widget.modifiedItem.state = newSelection.first;
-                  });
-                  if (widget.item != null) {
-                    saveAndClose(context, provider);
-                  }
-                },
-              ),
+            VSpace(),
+            SegmentedButton<TodoItemStateEnum>(
+              showSelectedIcon: false,
+              segments: const <ButtonSegment<TodoItemStateEnum>>[
+                ButtonSegment<TodoItemStateEnum>(
+                  value: TodoItemStateEnum.skipped,
+                  label: Text('skipped'),
+                  //  icon: Icon(Icons.calendar_view_week)
+                ),
+                ButtonSegment<TodoItemStateEnum>(
+                  value: TodoItemStateEnum.open,
+                  label: Text('open'),
+                  // icon: Icon(Icons.calendar_view_day)
+                ),
+                ButtonSegment<TodoItemStateEnum>(
+                  value: TodoItemStateEnum.done,
+                  label: Text('done'),
+                  //  icon: Icon(Icons.calendar_view_month)
+                ),
+              ],
+              selected: <TodoItemStateEnum>{widget.modifiedItem.state},
+              onSelectionChanged: (Set<TodoItemStateEnum> newSelection) {
+                setState(() {
+                  widget.modifiedItem.state = newSelection.first;
+                });
+                if (widget.item != null) {
+                  saveAndClose(context, provider);
+                }
+              },
             ),
-            WidgetMultiLineInput(hintText: Txt.comment, lines: 3, initalText: widget.modifiedItem.comment, onChanged: (value) => widget.modifiedItem.comment = value),
+            VSpace(),
+            WidgetMultiLineInput(hintText: Txt.comment, lines: 2, initalText: widget.modifiedItem.comment, onChanged: (value) => widget.modifiedItem.comment = value),
             WidgetItemEditActions(
               onSave: () { return save(provider); },
               onDelete: (widget.item == null) ? null : () {

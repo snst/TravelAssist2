@@ -1,9 +1,10 @@
 import 'dart:convert';
 
+import '../utils/json_export.dart';
 import '../utils/storage.dart';
 import 'todo_item.dart';
 
-class TodoProvider  extends Storage<TodoItem> {
+class TodoProvider  extends Storage<TodoItem> implements JsonExport {
   TodoProvider(super.isar);
 
   Future<List<String>> getCategories() async {
@@ -32,6 +33,7 @@ class TodoProvider  extends Storage<TodoItem> {
     }
   }
 
+  @override
   Future<String> toJson() async {
     final items = await getAll();
     List<Map<String, dynamic>> jsonList = items
@@ -40,6 +42,7 @@ class TodoProvider  extends Storage<TodoItem> {
     return jsonEncode(jsonList);
   }
 
+  @override
   void fromJson(String? jsonString, bool append) {
     if (jsonString != null) {
       if(!append) {

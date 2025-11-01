@@ -12,6 +12,7 @@ import '../utils/globals.dart';
 import '../utils/map.dart';
 import '../utils/travel_assist_utils.dart';
 import '../widgets/widget_confirm_dialog.dart';
+import '../widgets/widget_layout.dart';
 import '../widgets/widget_tags.dart';
 import '../widgets/widget_text_input.dart';
 import 'note_provider.dart';
@@ -118,29 +119,26 @@ class _NoteItemPageState extends State<NoteItemPage> {
                   tags: widget.modifiedItem.tags,
                   stringTagController: _stringTagController,
                 ),
-                SizedBox(height: 5),
+                VSpace(),
                 WidgetMultiLineInput(
                   hintText: Txt.comment,
                   initalText: widget.modifiedItem.comment,
                   onChanged: (value) => widget.modifiedItem.comment = value,
                   lines: 5,
                 ),
-                SizedBox(height: 5),
+                VSpace(),
                 WidgetTextInput(
                   text: widget.modifiedItem.link,
                   hintText: 'Enter Link',
                   onChanged: (value) => widget.modifiedItem.link = value,
                   //autofocus: widget.item == null, // new item
                 ),
-
-                SizedBox(height: 5),
+                VSpace(),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(widget.modifiedItem.getDateTimeStr()),
                 ),
-
-                SizedBox(height: 5),
-
+                VSpace(),
                 if (_doEdit || widget.newItem)
                   Row(
                     children: [

@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../currency/currency.dart';
 import '../currency/currency_provider.dart';
 import '../utils/globals.dart';
-import '../widgets/export_widget.dart';
+import '../widgets/widget_export.dart';
 import 'transaction.dart';
 //import 'currency_rates_page.dart';
 //import '../widgets/drawer_widget.dart';
@@ -35,27 +35,6 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
     );
   }
 
-  void showCurrencyImportExportPage(BuildContext context, TransactionProvider tp) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return Scaffold(
-            appBar: AppBar(
-                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                title: const Text(Txt.importExport)),
-            body: ExportWidget(
-              name: 'transaction',
-              toJson: tp.toJson,
-              fromJson: tp.fromJson,
-              clearJson: tp.clear,
-            ),
-          );
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final cp = context.watch<CurrencyProvider>();
@@ -70,21 +49,6 @@ class _TransactionMainPageState extends State<TransactionMainPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text("Expenses"),
-        actions: [
-          PopupMenuButton<int>(
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 0, child: Text(Txt.importExport)),
-            ],
-            elevation: 1,
-            onSelected: (value) {
-              switch (value) {
-                case 0:
-                  showCurrencyImportExportPage(context, tp);
-                  break;
-              }
-            },
-          ),
-        ],
       ),
       body: () {
         if (_selectedSubPageIndex == 1) {

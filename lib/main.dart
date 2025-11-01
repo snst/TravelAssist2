@@ -6,6 +6,9 @@ import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:travelassist2/todo_list/todo_item_page.dart';
 import 'package:travelassist2/todo_list/todo_list_page.dart';
 import 'package:travelassist2/utils/globals.dart';
+import 'package:travelassist2/utils/json_export.dart';
+import 'package:travelassist2/utils/travel_assist_utils.dart';
+import 'package:travelassist2/widgets/widget_export.dart';
 
 import 'calculator/calculator.dart';
 import 'calculator/calculator_page.dart';
@@ -148,6 +151,10 @@ class _MainScreenState extends State<MainScreen> {
           PopupMenuButton<int>(
             itemBuilder: (context) => [
               const PopupMenuItem(value: 1, child: Text(Txt.currencyRates)),
+              const PopupMenuItem(value: 5, child: Text(Txt.notesStorageDir)),
+              const PopupMenuItem(value: 2, child: Text(Txt.checklist)),
+              const PopupMenuItem(value: 3, child: Text(Txt.allNotes)),
+              const PopupMenuItem(value: 4, child: Text(Txt.expenses)),
             ],
             elevation: 1,
             onSelected: (value) {
@@ -159,6 +166,30 @@ class _MainScreenState extends State<MainScreen> {
                       builder: (context) => const CurrencyListPage(),
                     ),
                   );
+                  break;
+                case 2:
+                  showImportExportPage(
+                    context,
+                    Txt.checklist,
+                    Provider.of<TodoProvider>(context, listen: false),
+                  );
+                  break;
+                case 3:
+                  showImportExportPage(
+                    context,
+                    Txt.allNotes,
+                    Provider.of<NoteProvider>(context, listen: false),
+                  );
+                  break;
+                case 4:
+                  showImportExportPage(
+                    context,
+                    Txt.expenses,
+                    Provider.of<TransactionProvider>(context, listen: false),
+                  );
+                  break;
+                case 5:
+                  selectBookmarkFolder();
                   break;
               }
             },
@@ -323,4 +354,26 @@ class _MainScreenState extends State<MainScreen> {
       ),
     );
   }
+}
+
+void showImportExportPage(BuildContext context, String title, JsonExport je) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            title: Text(title),
+          ),
+          body: WidgetExport(
+            fileName: title,
+            toJson: je.toJson,
+            fromJson: je.fromJson,
+            clearJson: je.clear,
+          ),
+        );
+      },
+    ),
+  );
 }

@@ -4,7 +4,7 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/globals.dart';
-import '../widgets/export_widget.dart';
+import '../widgets/widget_export.dart';
 import 'todo_item.dart';
 import 'todo_item_page.dart';
 import 'todo_list_widget.dart';
@@ -45,27 +45,6 @@ class _PackingListPageState extends State<TodoListPage> {
     );
   }
 
-  void showTodoSettingsPage(BuildContext context, TodoProvider todoProvider) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              title: const Text("Settings"),
-            ),
-            body: ExportWidget(
-              name: 'todo',
-              toJson: todoProvider.toJson,
-              fromJson: todoProvider.fromJson,
-              clearJson: todoProvider.clear,
-            ),
-          );
-        },
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,22 +55,9 @@ class _PackingListPageState extends State<TodoListPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text(Txt.checklist),
         actions: [
-          PopupMenuButton<int>(
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 1, child: Text(Txt.quickEdit)),
-              const PopupMenuItem(value: 2, child: Text(Txt.importExport)),
-            ],
-            elevation: 2,
-            onSelected: (value) {
-              switch (value) {
-                case 1:
-                  toggleEdit();
-                  break;
-                case 2:
-                  showTodoSettingsPage(context, provider);
-                  break;
-              }
-            },
+          IconButton(
+            icon: const Icon(Icons.checklist),
+            onPressed: () => toggleEdit()
           ),
         ],
       ),

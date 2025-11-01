@@ -3,16 +3,16 @@ import 'package:travelassist2/widgets/widget_confirm_dialog.dart';
 
 import '../utils/travel_assist_utils.dart';
 
-class ExportWidget extends StatelessWidget {
-  const ExportWidget({
+class WidgetExport extends StatelessWidget {
+  const WidgetExport({
     super.key,
-    required this.name,
+    required this.fileName,
     required this.toJson,
     required this.fromJson,
     required this.clearJson,
   });
 
-  final String name;
+  final String fileName;
 
   final Future<String> Function() toJson;
   final void Function(String?, bool) fromJson;
@@ -28,7 +28,7 @@ class ExportWidget extends StatelessWidget {
             Future<String> data = toJson();
             data.then((jsonString) {
               if (context.mounted) {
-                saveJson(context, name, jsonString);
+                saveJson(context, fileName, jsonString);
               }
             });
             }

@@ -41,13 +41,14 @@ class Txt {
   static const checklist = "Check List";
   static const calculator = "Calculator";
   static const appTitle = "Travel Assist";
-  static const currencyRates = "Currency rates";
+  static const currencyRates = "Currency Rates";
   static const storageDir = "Storage Dir";
   static const importExport = "Import/Export";
   static const quickEdit = "Quick Edit";
   static const comment = "Comment";
   static const category = "Category";
   static const transaction = "Transaction";
+  static const notesStorageDir = "Notes Storage Folder";
 }
 
 class AppColors {

@@ -5,11 +5,12 @@ import 'package:isar_community/isar.dart';
 import '../balance/balance.dart';
 import '../currency/currency.dart';
 import '../currency/currency_provider.dart';
+import '../utils/json_export.dart';
 import '../utils/storage.dart';
 import 'transaction.dart';
 import 'transaction_value.dart';
 
-class TransactionProvider extends Storage<Transaction> {
+class TransactionProvider extends Storage<Transaction> implements JsonExport {
   TransactionProvider(super.isar);
 
   List<String> getCategoryList(List<Transaction> items) {
@@ -142,6 +143,7 @@ class TransactionProvider extends Storage<Transaction> {
     return balance;
   }
 
+  @override
   Future<String> toJson() async {
     List<Transaction> all = await isar.transactions.where().findAll();
     List<Map<String, dynamic>> jsonList = all
@@ -150,6 +152,7 @@ class TransactionProvider extends Storage<Transaction> {
     return jsonEncode(jsonList);
   }
 
+  @override
   void fromJson(String? jsonString, bool append) {
     if (jsonString != null) {
       if (!append) clear();

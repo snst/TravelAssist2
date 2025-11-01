@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../utils/globals.dart';
 import '../utils/travel_assist_utils.dart';
-import '../widgets/export_widget.dart';
+import '../widgets/widget_export.dart';
 import 'note.dart';
 import 'note_item_page.dart';
 import 'note_provider.dart';
@@ -20,28 +20,6 @@ class NoteListPage extends StatefulWidget {
 
 class _NoteListPageState extends State<NoteListPage> {
   late List<String> selectedTags;
-
-  void showSettingsPage(BuildContext context, NoteProvider provider) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) {
-          return Scaffold(
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-              title: const Text(Txt.importExport),
-            ),
-            body: ExportWidget(
-              name: 'note_list',
-              toJson: provider.toJson,
-              fromJson: provider.fromJson,
-              clearJson: provider.clear,
-            ),
-          );
-        },
-      ),
-    );
-  }
 
   @override
   void initState() {
@@ -62,25 +40,6 @@ class _NoteListPageState extends State<NoteListPage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(selectedTags.isEmpty ? "All" : selectedTags.join(' ')),
-        actions: [
-          PopupMenuButton<int>(
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: 1, child: Text(Txt.importExport)),
-              const PopupMenuItem(value: 2, child: Text(Txt.storageDir)),
-            ],
-            elevation: 1,
-            onSelected: (value) {
-              switch (value) {
-                case 1:
-                  showSettingsPage(context, provider);
-                  break;
-                case 2:
-                  selectBookmarkFolder();
-                  break;
-              }
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [

@@ -1,10 +1,11 @@
 import 'dart:convert';
 
+import '../utils/json_export.dart';
 import '../utils/storage.dart';
 import 'note.dart';
 
 
-class NoteProvider extends Storage<Note> {
+class NoteProvider extends Storage<Note> implements JsonExport {
   NoteProvider(super.isar);
 
   Future<List<Note>> getWithTag(List<String> tags) async {
@@ -27,6 +28,7 @@ class NoteProvider extends Storage<Note> {
     return tagList;
   }
 
+  @override
   Future<String> toJson() async {
     final all = await getAll();
     List<Map<String, dynamic>> jsonList = all
@@ -35,6 +37,7 @@ class NoteProvider extends Storage<Note> {
     return jsonEncode(jsonList);
   }
 
+  @override
   void fromJson(String? jsonString, bool append) {
     if (jsonString != null) {
       if(!append) {

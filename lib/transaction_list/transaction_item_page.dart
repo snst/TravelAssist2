@@ -15,6 +15,7 @@ import '../utils/travel_assist_utils.dart';
 import '../widgets/widget_combobox.dart';
 import '../widgets/widget_date_chooser.dart';
 import '../widgets/widget_item_edit_actions.dart';
+import '../widgets/widget_layout.dart';
 import 'transaction.dart';
 import 'transaction_provider.dart';
 import 'transaction_value.dart';
@@ -149,8 +150,7 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
               child: Column(
                 children: <Widget>[
                   widgetAmountInput(cp),
-                  const SizedBox(height: 5),
-
+                  VSpace(),
                   if (widget.modifiedItem.type ==
                       TransactionTypeEnum.expense) ...[
                     WidgetComboBox(
@@ -165,7 +165,7 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                       },
                       items: tp.getCategoryList(items),
                     ),
-                    const SizedBox(height: 5),
+                    VSpace(),
                   ],
                   Row(
                     children: [
@@ -232,24 +232,22 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                       ],
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-                    child: WidgetMultiLineInput(
-                      onChanged: (value) {
-                        setState(() {
-                          widget.modifiedItem.name = value;
-                        });
-                      },
-                      initalText: widget.modifiedItem.name,
-                      hintText: Txt.comment,
-                      lines: 2,
-                    ),
+                  VSpace(),
+                  WidgetMultiLineInput(
+                    onChanged: (value) {
+                      setState(() {
+                        widget.modifiedItem.name = value;
+                      });
+                    },
+                    initalText: widget.modifiedItem.name,
+                    hintText: Txt.comment,
+                    lines: 2,
                   ),
 
                   if (widget.modifiedItem.type ==
                       TransactionTypeEnum.expense) ...[
                     Padding(
-                      padding: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.only(top: 12),
                       child: Row(
                         children: [
                           ElevatedButton(
@@ -285,7 +283,7 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 5),
+                    VSpace(),
                   ],
                   //widgetButtons(transactionProvider, currencyProvider),
                   WidgetItemEditActions(

@@ -13,7 +13,7 @@ class WidgetItemEditActions extends StatelessWidget {
     return Row(
       children: [
 
-//        const Spacer(),
+        const Spacer(),
         ElevatedButton(
           child: const Text('Cancel'),
           onPressed: () {

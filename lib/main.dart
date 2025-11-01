@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blue,
+          seedColor: Colors.cyan,
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
@@ -89,8 +89,7 @@ class _MainScreenState extends State<MainScreen> {
   void handleSharedFile(SharedMediaFile file) async {
     final link = await moveSharedImageToDataFolder(file.path);
     String tag = Tag.link;
-    if (link.startsWith("https://maps.app.goo.gl"))
-      tag = Tag.map;
+    if (link.startsWith("https://maps.app.goo.gl")) tag = Tag.map;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -109,13 +108,11 @@ class _MainScreenState extends State<MainScreen> {
     // Access the provider here using `context.read` as the context is available.
     // We use `read` because we don't need to rebuild the widget when the provider changes.
     // Listen to media sharing coming from outside the app while the app is in the memory.
-    _intentSub = ReceiveSharingIntent.instance.getMediaStream().listen(
-      (value) {
-        setState(() {
-          handleSharedFile(value[0]);
-        });
-      },
-    );
+    _intentSub = ReceiveSharingIntent.instance.getMediaStream().listen((value) {
+      setState(() {
+        handleSharedFile(value[0]);
+      });
+    });
 
     // Get the media sharing coming from outside the app while the app is closed.
     ReceiveSharingIntent.instance.getInitialMedia().then((value) {
@@ -177,8 +174,8 @@ class _MainScreenState extends State<MainScreen> {
             ),
 
             WidgetDualActionButton(
-              label: Txt.todos,
-              icon: Icons.list,
+              label: Txt.checklist,
+              icon: Icons.checklist,
               onMainPressed: () => _onShowPage(context, const TodoListPage()),
               onAddPressed: () async {
                 final result = await Navigator.push(
@@ -194,10 +191,8 @@ class _MainScreenState extends State<MainScreen> {
             WidgetDualActionButton(
               label: Txt.allNotes,
               icon: Icons.notes,
-              onMainPressed: () => _onShowPage(
-                context,
-                NoteListPage(selectedTags: []),
-              ),
+              onMainPressed: () =>
+                  _onShowPage(context, NoteListPage(selectedTags: [])),
               onAddPressed: () async {
                 final result = await Navigator.push(
                   context,
@@ -210,18 +205,20 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 );
                 if (result != null && context.mounted) {
-                  _onShowPage(
-                    context,
-                    NoteListPage(selectedTags: [Tag.note]),
-                  );
+                  _onShowPage(context, NoteListPage(selectedTags: [Tag.note]));
                 }
               },
             ),
             _buildScrollableNotes(
               height: 60,
-              tagIcons: [ TagIcon.star, TagIcon.gps, TagIcon.map, TagIcon.link, TagIcon.note ],
+              tagIcons: [
+                TagIcon.star,
+                TagIcon.gps,
+                TagIcon.map,
+                TagIcon.link,
+                TagIcon.note,
+              ],
             ),
-
 
             WidgetDualActionButton(
               label: Txt.expenses,
@@ -313,7 +310,10 @@ class _MainScreenState extends State<MainScreen> {
               //icon: Icon(sub['icon'], size: 28),
               icon: tagIcons[index].icon,
               onPressed: () {
-                _onShowPage(context, NoteListPage(selectedTags: [tagIcons[index].tag]),);
+                _onShowPage(
+                  context,
+                  NoteListPage(selectedTags: [tagIcons[index].tag]),
+                );
               },
             ),
           );

@@ -53,7 +53,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text("To-Do")),
+          title: Text("Check Item")),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
         child: Column(
@@ -91,6 +91,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
                   child: SpinBox(
                     value: widget.modifiedItem.quantity.toDouble(),
                     decoration: const InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       constraints: BoxConstraints.tightFor(width: 150),
                       labelText: 'Quantity',
                     ),
@@ -104,6 +105,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
                   child: SpinBox(
                     value: widget.modifiedItem.used.toDouble(),
                     decoration: const InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       constraints: BoxConstraints.tightFor(width: 150),
                       labelText: 'Used',
                     ),
@@ -114,7 +116,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 9, 0, 12),
+              padding: const EdgeInsets.fromLTRB(0, 9, 0, 0),
               child: SegmentedButton<TodoItemStateEnum>(
                 showSelectedIcon: false,
                 segments: const <ButtonSegment<TodoItemStateEnum>>[
@@ -145,13 +147,13 @@ class _PackedItemPageState extends State<TodoItemPage> {
                 },
               ),
             ),
+            WidgetComment(comment: widget.modifiedItem.comment, onChanged: (value) => widget.modifiedItem.comment = value),
             WidgetItemEditActions(
               onSave: () { return save(provider); },
               onDelete: (widget.item == null) ? null : () {
                 provider.delete(widget.item!);
               }
             ),
-            WidgetComment(comment: widget.modifiedItem.comment, onChanged: (value) => widget.modifiedItem.comment = value),
 
           ],
         ),

@@ -27,6 +27,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
 
   Calculator? calculator;
 
+  final ScrollController _scrollController = ScrollController();
+
   void onChanged(int index, String text, CurrencyProvider cp) {
     if (controllers != null) {
       double val = safeConvertToDouble(text);
@@ -59,6 +61,18 @@ class _CalculatorPageState extends State<CalculatorPage> {
     _currentCurrency = null;
   }
 
+  void _scrollToEnd() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
+  void _onCalculatorUpdate() {
+    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToEnd());
+  }
+
   @override
   Widget build(BuildContext context) {
     final currencyProvider = context.watch<CurrencyProvider>();
@@ -89,8 +103,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: const Text("Currency Converter")),
-      //        drawer: widget.drawer,
+          title: const Text(Txt.calculator)),
       body: Column(
         children: [
           ListView.builder(
@@ -98,7 +111,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
             itemCount: currencyProvider.visibleItems.length,
             itemBuilder: (context, index) {
               return Padding(
-                padding: const EdgeInsets.fromLTRB(30, 5, 30, 5),
+                padding: const EdgeInsets.fromLTRB(30, 13, 30, 2),
                 child: TextFormField(
                   controller: controllers![index],
                   focusNode: focusNodes![index],
@@ -106,7 +119,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     onChanged(index, text, currencyProvider);
                   },
                   style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 18,
                     //color: Colors.blue.shade700,
                     fontWeight: FontWeight.w600,
                   ),
@@ -119,8 +132,9 @@ class _CalculatorPageState extends State<CalculatorPage> {
                   ],
                   decoration: InputDecoration(
                     border: BorderStyles.input,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     labelText: currencyProvider.visibleItems[index].name,
-                    labelStyle: const TextStyle(fontSize: 25),
+                    labelStyle: const TextStyle(fontSize: 26),
                     suffixIcon: IconButton(
                       onPressed: () {
                         controllers![index].clear();
@@ -134,22 +148,27 @@ class _CalculatorPageState extends State<CalculatorPage> {
             },
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+            padding: const EdgeInsets.fromLTRB(30, 10, 30, 0),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                calculator!.inputString,
-                style: const TextStyle(fontSize: 20),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                controller: _scrollController,
+                child: Text(
+                  calculator!.inputString,
+                  style: const TextStyle(fontSize: 20),
+                  maxLines: 1,
+                ),
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+            padding: const EdgeInsets.fromLTRB(30, 0, 30, 10),
             child: Align(
               alignment: Alignment.centerRight,
               child: Text(
                 calculator!.sum.toString(),
-                style: const TextStyle(fontSize: 20),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
           ),
@@ -163,26 +182,31 @@ class _CalculatorPageState extends State<CalculatorPage> {
                     clearAllInputs();
                   },
                   onPressed: () {
+                    _onCalculatorUpdate();
                     calculator?.back();
                     clearAllInputs();
                   },
-                  child: const Text("C", style: buttonStyle),
+                  child: const Icon(Icons.backspace,
+                      size: 30),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
                 child: ElevatedButton(
                   onPressed: () {
+                    _onCalculatorUpdate();
                     pushValue();
                     calculator?.add();
                   },
-                  child: const Text("+", style: buttonStyle),
+                  child: const Text(
+                      "+", style: buttonStyle),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
                 child: ElevatedButton(
                   onPressed: () {
+                    _onCalculatorUpdate();
                     pushValue();
                     calculator?.subtract();
                   },
@@ -193,6 +217,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
                 padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
                 child: ElevatedButton(
                   onPressed: () {
+                    _onCalculatorUpdate();
                     pushValue();
                     calculator?.calculate();
                   },

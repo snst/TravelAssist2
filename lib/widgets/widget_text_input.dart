@@ -26,6 +26,7 @@ class WidgetTextInput extends StatelessWidget {
       return TextField(
         controller: controller,
         decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           border: BorderStyles.input,
           hintText: hintText,
           suffixIcon: IconButton(
@@ -40,6 +41,7 @@ class WidgetTextInput extends StatelessWidget {
       return TextField(
         controller: controller,
         decoration: InputDecoration(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           border: BorderStyles.input,
           hintText: hintText,
           suffixIcon: IconButton(

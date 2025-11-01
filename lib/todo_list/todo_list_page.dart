@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
 
+import '../utils/globals.dart';
 import '../widgets/export_widget.dart';
 import 'todo_item.dart';
 import 'todo_item_page.dart';
@@ -51,8 +52,9 @@ class _PackingListPageState extends State<TodoListPage> {
         builder: (context) {
           return Scaffold(
             appBar: AppBar(
-                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                title: const Text("Settings")),
+              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+              title: const Text("Settings"),
+            ),
             body: ExportWidget(
               name: 'todo',
               toJson: todoProvider.toJson,
@@ -72,12 +74,12 @@ class _PackingListPageState extends State<TodoListPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("To-Do List"),
+        title: const Text(Txt.checklist),
         actions: [
           PopupMenuButton<int>(
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 1, child: Text("Quick edit")),
-              const PopupMenuItem(value: 2, child: Text("Settings")),
+              const PopupMenuItem(value: 1, child: Text(Txt.quickEdit)),
+              const PopupMenuItem(value: 2, child: Text(Txt.importExport)),
             ],
             elevation: 2,
             onSelected: (value) {
@@ -116,14 +118,14 @@ class _PackingListPageState extends State<TodoListPage> {
             itemBuilder: (context, item) => TodoListWidget(
               item: item,
               onItemChanged: (item) {
-                setState(() {});
+                provider.add(item, notify: true);
               },
               onEditItem: (item) => _showEditDialog(item),
               editable: _listEditable,
               filterIndex: bottomIndexToStateEnum(_selectedFilterIndex),
             ),
           );
-        }
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[

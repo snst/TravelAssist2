@@ -34,7 +34,6 @@ class TodoListWidget extends StatelessWidget {
         minVerticalPadding: 0,
         visualDensity: const VisualDensity(vertical: -4),
         title: Row(
-          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Expanded(child: Text(item.name)),
             Text('${item.quantity} / ${item.used}'),

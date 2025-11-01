@@ -36,6 +36,7 @@ class WidgetComboBox extends StatelessWidget {
           focusNode: focusNode,
           autofocus: false,
           decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
             border: BorderStyles.input,
             hintText: hintText,
             suffixIcon: IconButton(

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../utils/globals.dart';
 import '../utils/travel_assist_utils.dart';
-import '../widgets/widget_export.dart';
 import 'note.dart';
 import 'note_item_page.dart';
 import 'note_provider.dart';

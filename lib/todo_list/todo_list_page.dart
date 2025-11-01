@@ -4,7 +4,6 @@ import 'package:grouped_list/grouped_list.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/globals.dart';
-import '../widgets/widget_export.dart';
 import 'todo_item.dart';
 import 'todo_item_page.dart';
 import 'todo_list_widget.dart';

@@ -1,4 +1,5 @@
 import 'package:isar_community/isar.dart';
+// ignore: depend_on_referenced_packages
 import 'package:json_annotation/json_annotation.dart';
 
 import '../utils/storage_item.dart';

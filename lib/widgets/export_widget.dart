@@ -27,7 +27,9 @@ class ExportWidget extends StatelessWidget {
           onPressed: () {
             Future<String> data = toJson();
             data.then((jsonString) {
-              saveJson(context, name, jsonString);
+              if (context.mounted) {
+                saveJson(context, name, jsonString);
+              }
             });
             }
         ),

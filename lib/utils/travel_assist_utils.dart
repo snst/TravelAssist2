@@ -116,10 +116,12 @@ void saveJson(BuildContext context, String filename, String jsonString) async {
   String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
 
   if (selectedDirectory != null) {
-    showInputDialog(context, filename, (name) {
-      String filePath = path.join(selectedDirectory, "$name.json");
-      File(filePath).writeAsStringSync(jsonString);
-    });
+    if (context.mounted) {
+      showInputDialog(context, filename, (name) {
+        String filePath = path.join(selectedDirectory, "$name.json");
+        File(filePath).writeAsStringSync(jsonString);
+      });
+    }
   }
 }
 

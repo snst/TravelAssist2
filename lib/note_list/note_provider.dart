@@ -19,7 +19,9 @@ class NoteProvider extends Storage<Note> {
   Future<List<String>> getTags() async {
     final tags = <String>{};
     final all = await getAll();
-    all.forEach((item) => tags.addAll(item.tags));
+    for (var item in all) {
+      tags.addAll(item.tags);
+    }
     final tagList = tags.toList();
     tagList.sort();
     return tagList;

@@ -4,7 +4,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../utils/globals.dart';
 
 class WidgetComboBox extends StatelessWidget {
-  WidgetComboBox({
+  const WidgetComboBox({
     super.key,
     required this.controller,
     required this.selectedText,

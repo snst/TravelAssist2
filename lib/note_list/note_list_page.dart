@@ -10,14 +10,16 @@ import 'note_item_page.dart';
 import 'note_provider.dart';
 
 class NoteListPage extends StatefulWidget {
-  NoteListPage({super.key, this.selectedTags = const []});
+  final List<String> selectedTags;
+
+  const NoteListPage({super.key, this.selectedTags = const []});
 
   @override
   State<NoteListPage> createState() => _NoteListPageState();
-  List<String> selectedTags;
 }
 
 class _NoteListPageState extends State<NoteListPage> {
+  late List<String> selectedTags;
 
   void showSettingsPage(BuildContext context, NoteProvider provider) {
     Navigator.push(
@@ -26,8 +28,9 @@ class _NoteListPageState extends State<NoteListPage> {
         builder: (context) {
           return Scaffold(
             appBar: AppBar(
-                backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-                title: const Text(Txt.importExport)),
+              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+              title: const Text(Txt.importExport),
+            ),
             body: ExportWidget(
               name: 'note_list',
               toJson: provider.toJson,
@@ -40,22 +43,25 @@ class _NoteListPageState extends State<NoteListPage> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+    selectedTags = widget.selectedTags;
+  }
+
   void selectTags(List<String> selectedItems) {
     setState(() {
-      widget.selectedTags = selectedItems.cast<String>();
+      selectedTags = selectedItems.cast<String>();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<NoteProvider>();
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.selectedTags.isEmpty
-            ? "All"
-            : widget.selectedTags.join(' ')),
+        title: Text(selectedTags.isEmpty ? "All" : selectedTags.join(' ')),
         actions: [
           PopupMenuButton<int>(
             itemBuilder: (context) => [
@@ -80,7 +86,7 @@ class _NoteListPageState extends State<NoteListPage> {
         children: [
           Expanded(
             child: FutureBuilder<List<Note>>(
-              future: provider.getWithTag(widget.selectedTags),
+              future: provider.getWithTag(selectedTags),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -107,9 +113,7 @@ class _NoteListPageState extends State<NoteListPage> {
                             ),
                           );
                         },
-                        title: WidgetBookmark(
-                          bookmark: items[reverseIndex],
-                        ),
+                        title: WidgetBookmark(bookmark: items[reverseIndex]),
                         trailing: IconButton(
                           icon: items[reverseIndex].getIcon(),
                           // The icon on the right
@@ -142,7 +146,13 @@ class _NoteListPageState extends State<NoteListPage> {
                   return const SizedBox.shrink();
                 }
                 final tagCards = tags
-                    .map((tag) => MultiSelectCard(value: tag, label: tag, selected: widget.selectedTags.contains(tag)))
+                    .map(
+                      (tag) => MultiSelectCard(
+                        value: tag,
+                        label: tag,
+                        selected: widget.selectedTags.contains(tag),
+                      ),
+                    )
                     .toList();
                 return MultiSelectContainer(
                   showInListView: true,
@@ -161,13 +171,17 @@ class _NoteListPageState extends State<NoteListPage> {
         ],
       ),
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom:56.0),
+        padding: const EdgeInsets.only(bottom: 56.0),
         child: FloatingActionButton(
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => NoteItemPage(item: Note(tags:widget.selectedTags), newItem: true, title:widget.selectedTags.join(' ')),
+                builder: (context) => NoteItemPage(
+                  item: Note(tags: selectedTags),
+                  newItem: true,
+                  title: selectedTags.join(' '),
+                ),
               ),
             );
           },

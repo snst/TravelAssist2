@@ -90,16 +90,18 @@ class _MainScreenState extends State<MainScreen> {
     final link = await moveSharedImageToDataFolder(file.path);
     String tag = Tag.link;
     if (link.startsWith("https://maps.app.goo.gl")) tag = Tag.map;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => NoteItemPage(
-          item: Note(link: link, tags: [tag]),
-          newItem: true,
-          title: tag,
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NoteItemPage(
+            item: Note(link: link, tags: [tag]),
+            newItem: true,
+            title: tag,
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override

@@ -82,9 +82,7 @@ class WidgetTags extends StatelessWidget {
                     isDense: true,
                     border: const OutlineInputBorder(
                       borderSide: BorderSide(width: 3.0),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(10.0),
-                      ),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     hintText: inputFieldValues.tags.isNotEmpty
                         ? ''
@@ -98,9 +96,7 @@ class WidgetTags extends StatelessWidget {
                             controller: inputFieldValues.tagScrollController,
                             scrollDirection: Axis.horizontal,
                             child: Row(
-                              children: inputFieldValues.tags.map((
-                                String tag,
-                              ) {
+                              children: inputFieldValues.tags.map((String tag) {
                                 return Container(
                                   decoration: const BoxDecoration(
                                     borderRadius: BorderRadius.all(

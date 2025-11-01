@@ -45,7 +45,9 @@ class Txt {
   static const storageDir = "Storage Dir";
   static const importExport = "Import/Export";
   static const quickEdit = "Quick Edit";
-  static const bookmark = "Bookmark";
+  static const comment = "Comment";
+  static const category = "Category";
+  static const transaction = "Transaction";
 }
 
 class AppColors {

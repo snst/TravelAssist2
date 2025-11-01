@@ -72,83 +72,80 @@ class WidgetTags extends StatelessWidget {
                 return null;
               },
               inputFieldBuilder: (context, inputFieldValues) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: TextField(
-                    autofocus: true,
-                    controller: inputFieldValues.textEditingController,
-                    focusNode: inputFieldValues.focusNode,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      border: const OutlineInputBorder(
-                        borderSide: BorderSide(width: 3.0),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(width: 3.0),
-                      ),
-                      hintText: inputFieldValues.tags.isNotEmpty
-                          ? ''
-                          : "Enter tag...",
-                      errorText: inputFieldValues.error,
-                      prefixIconConstraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.74,
-                      ),
-                      prefixIcon: inputFieldValues.tags.isNotEmpty
-                          ? SingleChildScrollView(
-                              controller: inputFieldValues.tagScrollController,
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: inputFieldValues.tags.map((
-                                  String tag,
-                                ) {
-                                  return Container(
-                                    decoration: const BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(20.0),
-                                      ),
-                                      color: Color.fromARGB(255, 74, 137, 92),
-                                    ),
-                                    margin: const EdgeInsets.only(right: 10.0),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0,
-                                      vertical: 4.0,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        InkWell(
-                                          child: Text(
-                                            '#$tag',
-                                            style: const TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          onTap: () {
-                                            //print("$tag selected");
-                                          },
-                                        ),
-                                        const SizedBox(width: 4.0),
-                                        InkWell(
-                                          child: const Icon(
-                                            Icons.cancel,
-                                            size: 14.0,
-                                          ),
-                                          onTap: () {
-                                            inputFieldValues.onTagRemoved(tag);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                            )
-                          : null,
+                return TextField(
+                  autofocus: true,
+                  controller: inputFieldValues.textEditingController,
+                  focusNode: inputFieldValues.focusNode,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    border: const OutlineInputBorder(
+                      borderSide: BorderSide(width: 3.0),
                     ),
-                    onChanged: inputFieldValues.onTagChanged,
-                    onSubmitted: inputFieldValues.onTagSubmitted,
+                    focusedBorder: const OutlineInputBorder(
+                      borderSide: BorderSide(width: 3.0),
+                    ),
+                    hintText: inputFieldValues.tags.isNotEmpty
+                        ? ''
+                        : "Enter tag...",
+                    errorText: inputFieldValues.error,
+                    prefixIconConstraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.74,
+                    ),
+                    prefixIcon: inputFieldValues.tags.isNotEmpty
+                        ? SingleChildScrollView(
+                            controller: inputFieldValues.tagScrollController,
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: inputFieldValues.tags.map((
+                                String tag,
+                              ) {
+                                return Container(
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(20.0),
+                                    ),
+                                    color: Color.fromARGB(255, 74, 137, 92),
+                                  ),
+                                  margin: const EdgeInsets.only(right: 10.0),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10.0,
+                                    vertical: 4.0,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      InkWell(
+                                        child: Text(
+                                          '#$tag',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          //print("$tag selected");
+                                        },
+                                      ),
+                                      const SizedBox(width: 4.0),
+                                      InkWell(
+                                        child: const Icon(
+                                          Icons.cancel,
+                                          size: 14.0,
+                                        ),
+                                        onTap: () {
+                                          inputFieldValues.onTagRemoved(tag);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                          )
+                        : null,
                   ),
+                  onChanged: inputFieldValues.onTagChanged,
+                  onSubmitted: inputFieldValues.onTagSubmitted,
                 );
               },
             );

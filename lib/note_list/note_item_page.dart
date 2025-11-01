@@ -6,17 +6,15 @@ import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:travelassist2/note_list/note.dart';
+import 'package:travelassist2/widgets/widget_multi_line_input.dart';
 
 import '../utils/globals.dart';
+import '../utils/map.dart';
 import '../utils/travel_assist_utils.dart';
-import '../widgets/widget_comment.dart';
 import '../widgets/widget_confirm_dialog.dart';
-import '../widgets/widget_formatted_text.dart';
 import '../widgets/widget_tags.dart';
 import '../widgets/widget_text_input.dart';
 import 'note_provider.dart';
-import '../utils/map.dart';
-
 
 Future<String> moveSharedImageToDataFolder(String srcPath) async {
   final file = File(srcPath);
@@ -33,8 +31,12 @@ Future<String> moveSharedImageToDataFolder(String srcPath) async {
 }
 
 class NoteItemPage extends StatefulWidget {
-  NoteItemPage({super.key, required this.item, this.newItem = false, this.title=Txt.bookmark})
-    : modifiedItem = item.clone();
+  NoteItemPage({
+    super.key,
+    required this.item,
+    this.newItem = false,
+    this.title = Txt.note,
+  }) : modifiedItem = item.clone();
 
   final Note item;
   final Note modifiedItem;
@@ -93,16 +95,19 @@ class _NoteItemPageState extends State<NoteItemPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           if (!widget.newItem)
             IconButton(
               icon: const Icon(Icons.edit),
-              onPressed: () => setState(() {_doEdit = true;} )  ,
+              onPressed: () => setState(() {
+                _doEdit = true;
+              }),
             ),
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
         child: FutureBuilder<List<String>>(
           future: provider.getTags(),
           builder: (context, asyncSnapshot) {
@@ -114,9 +119,11 @@ class _NoteItemPageState extends State<NoteItemPage> {
                   stringTagController: _stringTagController,
                 ),
                 SizedBox(height: 5),
-                WidgetComment(
-                  comment: widget.modifiedItem.comment,
+                WidgetMultiLineInput(
+                  hintText: Txt.comment,
+                  initalText: widget.modifiedItem.comment,
                   onChanged: (value) => widget.modifiedItem.comment = value,
+                  lines: 5,
                 ),
                 SizedBox(height: 5),
                 WidgetTextInput(
@@ -127,9 +134,9 @@ class _NoteItemPageState extends State<NoteItemPage> {
                 ),
 
                 SizedBox(height: 5),
-                FormattedText(
-                  title: "Date",
-                  content: widget.modifiedItem.getDateTimeStr(),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(widget.modifiedItem.getDateTimeStr()),
                 ),
 
                 SizedBox(height: 5),
@@ -146,11 +153,11 @@ class _NoteItemPageState extends State<NoteItemPage> {
                         },
                       ),
                       ElevatedButton(
-                          child: const Text('Cancel'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
+                        child: const Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
 
                       if (!widget.newItem)
                         ElevatedButton(
@@ -159,7 +166,8 @@ class _NoteItemPageState extends State<NoteItemPage> {
                             showConfirmationDialog(
                               context: context,
                               title: 'Confirm Delete',
-                              text: 'Are you sure you want to delete this item?',
+                              text:
+                                  'Are you sure you want to delete this item?',
                               onConfirm: () {
                                 getProvider(context).delete(widget.item);
                                 //getPackingList(context).delete(widget.item!);
@@ -179,10 +187,10 @@ class _NoteItemPageState extends State<NoteItemPage> {
                         },
                       ),
                     ],
-                  )
+                  ),
               ],
             );
-          }
+          },
         ),
       ),
       floatingActionButton: (!_doEdit && !widget.newItem)

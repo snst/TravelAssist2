@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinbox/material.dart';
 import 'package:provider/provider.dart';
 
+import '../utils/globals.dart';
 import '../widgets/widget_combobox.dart';
+import '../widgets/widget_multi_line_input.dart';
 import '../widgets/widget_text_input.dart';
 import 'todo_item.dart';
 import 'todo_provider.dart';
 import '../widgets/widget_item_edit_actions.dart';
-import '../widgets/widget_comment.dart';
 
 class TodoItemPage extends StatefulWidget {
   TodoItemPage({super.key, this.item})
@@ -66,7 +67,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
               onChanged: (value) => widget.modifiedItem.name = value,
               autofocus: widget.item == null, // new item
             ),
-            SizedBox(height: 5),
+            SizedBox(height: 8),
             FutureBuilder(
               future: provider.getCategories(),
               builder: (context, asyncSnapshot) {
@@ -105,7 +106,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
                   child: SpinBox(
                     value: widget.modifiedItem.used.toDouble(),
                     decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 11),
                       constraints: BoxConstraints.tightFor(width: 150),
                       labelText: 'Used',
                     ),
@@ -116,7 +117,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(0, 9, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 9, 0, 5),
               child: SegmentedButton<TodoItemStateEnum>(
                 showSelectedIcon: false,
                 segments: const <ButtonSegment<TodoItemStateEnum>>[
@@ -147,7 +148,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
                 },
               ),
             ),
-            WidgetComment(comment: widget.modifiedItem.comment, onChanged: (value) => widget.modifiedItem.comment = value),
+            WidgetMultiLineInput(hintText: Txt.comment, lines: 3, initalText: widget.modifiedItem.comment, onChanged: (value) => widget.modifiedItem.comment = value),
             WidgetItemEditActions(
               onSave: () { return save(provider); },
               onDelete: (widget.item == null) ? null : () {

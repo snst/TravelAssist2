@@ -21,9 +21,6 @@ class WidgetComboBox extends StatelessWidget {
   final List<String> items;
   final bool filter;
 
-  //final FocusNode _focusNode = FocusNode();
-  //  final SuggestionsController _suggestionsController();
-
   @override
   Widget build(BuildContext context) {
     controller.text = selectedText;
@@ -36,7 +33,10 @@ class WidgetComboBox extends StatelessWidget {
           focusNode: focusNode,
           autofocus: false,
           decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 11,
+            ),
             border: BorderStyles.input,
             hintText: hintText,
             suffixIcon: IconButton(
@@ -47,9 +47,6 @@ class WidgetComboBox extends StatelessWidget {
         );
       },
       suggestionsCallback: (pattern) {
-        //widget.modifiedItem.category = pattern;
-        //onChanged(pattern);
-
         List<String> strlist;
         if (filter) {
           strlist = items

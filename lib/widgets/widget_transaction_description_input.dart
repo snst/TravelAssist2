@@ -20,6 +20,10 @@ class WidgetTransactionDescriptionInput extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         border: BorderStyles.input,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 10,
+            vertical: 10,
+        ),
       ),
       onChanged: (value) => widget.modifiedItem.name = value,
       autofocus: false,

@@ -180,7 +180,7 @@ class _NoteListPageState extends State<NoteListPage> {
                 builder: (context) => NoteItemPage(
                   item: Note(tags: selectedTags),
                   newItem: true,
-                  title: selectedTags.join(' '),
+                  title: Txt.note, //selectedTags.join(' '),
                 ),
               ),
             );
@@ -217,7 +217,12 @@ class WidgetBookmark extends StatelessWidget {
             ],
             if (bookmark.comment.isNotEmpty) ...[
               const SizedBox(height: 2),
-              Text(bookmark.comment, style: const TextStyle(fontSize: 16)),
+              Text(
+                bookmark.comment,
+                style: const TextStyle(fontSize: 16),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
             if (bookmark.link.isNotEmpty) ...[
               const SizedBox(height: 2),
@@ -227,6 +232,8 @@ class WidgetBookmark extends StatelessWidget {
                   fontSize: 16,
                   color: Theme.of(context).colorScheme.secondaryFixed,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ],

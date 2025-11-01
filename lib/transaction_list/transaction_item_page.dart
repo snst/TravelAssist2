@@ -4,6 +4,7 @@ import 'package:flutter_spinbox/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:travelassist2/widgets/widget_multi_line_input.dart';
 
 import '../currency/currency.dart';
 import '../currency/currency_chooser_widget.dart';
@@ -14,7 +15,6 @@ import '../utils/travel_assist_utils.dart';
 import '../widgets/widget_combobox.dart';
 import '../widgets/widget_date_chooser.dart';
 import '../widgets/widget_item_edit_actions.dart';
-import '../widgets/widget_transaction_description_input.dart';
 import 'transaction.dart';
 import 'transaction_provider.dart';
 import 'transaction_value.dart';
@@ -139,10 +139,8 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
 
         return Scaffold(
           appBar: AppBar(
-            //automaticallyImplyLeading: false,
             backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-            title: widgetAmountInput(cp),
+            title: Text(Txt.transaction),
           ),
           body: Padding(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
@@ -150,13 +148,15 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
               reverse: true,
               child: Column(
                 children: <Widget>[
+                  widgetAmountInput(cp),
+                  const SizedBox(height: 5),
+
                   if (widget.modifiedItem.type ==
                       TransactionTypeEnum.expense) ...[
-                    // CATEGORY
                     WidgetComboBox(
                       controller: categoryController,
                       selectedText: widget.modifiedItem.category,
-                      hintText: 'Category',
+                      hintText: Txt.category,
                       filter: true,
                       onChanged: (p0) {
                         setState(() {
@@ -165,17 +165,8 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                       },
                       items: tp.getCategoryList(items),
                     ),
+                    const SizedBox(height: 5),
                   ],
-                  // DESCRIPTION
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-                    child: WidgetTransactionDescriptionInput(
-                      widget: widget,
-                      hintText: "Description",
-                    ),
-                  ),
-                  if (widget.modifiedItem.type == TransactionTypeEnum.expense)
-                    ...[],
                   Row(
                     children: [
                       SizedBox(
@@ -183,12 +174,11 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                         child: Container(
                           decoration: BorderStyles.box,
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 3, 1, 3),
+                            padding: const EdgeInsets.only(left: 10.0),
                             child: DropdownButton(
                               value: widget.modifiedItem.type,
                               isExpanded: true,
                               underline: SizedBox(),
-                              // decoration: ,
                               items: const [
                                 DropdownMenuItem(
                                   value: TransactionTypeEnum.expense,
@@ -242,11 +232,24 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                       ],
                     ],
                   ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                    child: WidgetMultiLineInput(
+                      onChanged: (value) {
+                        setState(() {
+                          widget.modifiedItem.name = value;
+                        });
+                      },
+                      initalText: widget.modifiedItem.name,
+                      hintText: Txt.comment,
+                      lines: 2,
+                    ),
+                  ),
 
                   if (widget.modifiedItem.type ==
                       TransactionTypeEnum.expense) ...[
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                      padding: const EdgeInsets.only(top: 8),
                       child: Row(
                         children: [
                           ElevatedButton(
@@ -270,6 +273,10 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                             value: widget.modifiedItem.averageDays.toDouble(),
                             decoration: const InputDecoration(
                               constraints: BoxConstraints.tightFor(width: 170),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 11,
+                              ),
                               labelText: 'Average Days',
                             ),
                             onChanged: (value) =>
@@ -278,25 +285,18 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                         ],
                       ),
                     ),
+                    const SizedBox(height: 5),
                   ],
                   //widgetButtons(transactionProvider, currencyProvider),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                    child: Row(
-                      children: [
-                        const Spacer(),
-                        WidgetItemEditActions(
-                          onSave: () {
-                            return save(items, tp, cp);
+                  WidgetItemEditActions(
+                    onSave: () {
+                      return save(items, tp, cp);
+                    },
+                    onDelete: (widget.newItem)
+                        ? null
+                        : () {
+                            tp.delete(widget.item!);
                           },
-                          onDelete: (widget.newItem)
-                              ? null
-                              : () {
-                                  tp.delete(widget.item!);
-                                },
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),
@@ -314,13 +314,19 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
           child: TextField(
             textAlign: TextAlign.right,
             controller: _amountController,
-            decoration: const InputDecoration(hintText: 'Amount'),
+            decoration: InputDecoration(
+              hintText: "Amount",
+              border: BorderStyles.input,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 6,
+              ),
+            ),
             onChanged: (value) {
-              //modified = true;
               widget.modifiedItem.value = safeConvertToDouble(value);
             },
             autofocus: widget.newItem,
-            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w400),
             autocorrect: false,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: [
@@ -328,6 +334,7 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
             ],
           ),
         ),
+        const SizedBox(width: 8,),
         CurrencyChooserWidget(
           currencies: currencyProvider.getVisibleItemsWith(
             currencyProvider.getCurrencyFromTransaction(widget.modifiedItem),
@@ -345,26 +352,4 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
     );
   }
 
-  /*
-  Padding widgetButtons(TransactionProvider transactionProvider, CurrencyProvider currencyProvider) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: Row(
-        children: [
-          const Spacer(),
-          WidgetItemEditActions(
-            onSave: () {
-              return save(transactionProvider, currencyProvider);
-            },
-            onDelete: (widget.newItem)
-                ? null
-                : () {
-              TransactionProvider.getInstance(context).delete(widget.item!);
-            },
-          ),
-
-        ],
-      ),
-    );
-  }*/
 }

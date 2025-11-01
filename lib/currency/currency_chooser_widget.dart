@@ -8,28 +8,31 @@ class CurrencyChooserWidget extends StatelessWidget {
     required this.currencies,
     required this.selected,
     required this.onChanged,
-    this.style,
   });
 
   final List<Currency> currencies;
   final Currency? selected;
   final void Function(Currency currency) onChanged;
-  final TextStyle? style;
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButton<Currency>(
-      value: selected,
-      //icon: const Icon(Icons.arrow_downward),
-      //elevation: 16,
-      underline: Container(height: 2),
-      onChanged: (currency) => onChanged(currency!),
-      items: currencies.map<DropdownMenuItem<Currency>>((Currency value) {
-        return DropdownMenuItem<Currency>(
-          value: value,
-          child: Text(value.toString(), style: style),
-        );
-      }).toList(),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 1),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey),
+      ),
+      child: DropdownButton<Currency>(
+        value: selected,
+        underline: Container(), // Remove the default underline
+        onChanged: (currency) => onChanged(currency!),
+        items: currencies.map<DropdownMenuItem<Currency>>((Currency value) {
+          return DropdownMenuItem<Currency>(
+            value: value,
+            child: Text(value.toString(), style: TextStyle(fontSize: 24)),
+          );
+        }).toList(),
+      ),
     );
   }
 }

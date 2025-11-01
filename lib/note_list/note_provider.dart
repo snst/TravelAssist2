@@ -1,13 +1,11 @@
 import 'dart:convert';
 
-import 'package:isar_community/isar.dart';
-
 import '../utils/storage.dart';
 import 'note.dart';
 
 
 class NoteProvider extends Storage<Note> {
-  NoteProvider(Isar isar) : super(isar);
+  NoteProvider(super.isar);
 
   Future<List<Note>> getWithTag(List<String> tags) async {
     final all = await getAll(); // await the Future
@@ -37,8 +35,9 @@ class NoteProvider extends Storage<Note> {
 
   void fromJson(String? jsonString, bool append) {
     if (jsonString != null) {
-      if(!append)
+      if(!append) {
         clear();
+      }
       final jsonList = jsonDecode(jsonString) as List;
       for (var json in jsonList) {
         add(Note.fromJson(json), notify: false);

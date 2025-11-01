@@ -10,7 +10,7 @@ import 'transaction.dart';
 import 'transaction_value.dart';
 
 class TransactionProvider extends Storage<Transaction> {
-  TransactionProvider(Isar isar) : super(isar);
+  TransactionProvider(super.isar);
 
   List<String> getCategoryList(List<Transaction> items) {
     Map<String, int> occurrenceMap = {};

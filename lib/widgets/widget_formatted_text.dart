@@ -5,8 +5,7 @@ class FormattedText extends StatelessWidget {
   final String title;
   final String content;
 
-  const FormattedText({Key? key, required this.title, required this.content})
-      : super(key: key);
+  const FormattedText({super.key, required this.title, required this.content});
 
   @override
   Widget build(BuildContext context) {

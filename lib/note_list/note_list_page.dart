@@ -19,8 +19,6 @@ class NoteListPage extends StatefulWidget {
 
 class _NoteListPageState extends State<NoteListPage> {
 
-
-
   void showSettingsPage(BuildContext context, NoteProvider provider) {
     Navigator.push(
       context,
@@ -42,7 +40,7 @@ class _NoteListPageState extends State<NoteListPage> {
     );
   }
 
-  void selectTags(List<dynamic> selectedItems) {
+  void selectTags(List<String> selectedItems) {
     setState(() {
       widget.selectedTags = selectedItems.cast<String>();
     });
@@ -154,7 +152,7 @@ class _NoteListPageState extends State<NoteListPage> {
                   ),
                   items: tagCards,
                   onChange: (allSelectedItems, selectedItem) {
-                    selectTags(allSelectedItems);
+                    selectTags(allSelectedItems.cast<String>());
                   },
                 );
               },
@@ -183,7 +181,7 @@ class _NoteListPageState extends State<NoteListPage> {
 class WidgetBookmark extends StatelessWidget {
   final Note bookmark;
 
-  const WidgetBookmark({Key? key, required this.bookmark}) : super(key: key);
+  const WidgetBookmark({super.key, required this.bookmark});
 
   @override
   Widget build(BuildContext context) {

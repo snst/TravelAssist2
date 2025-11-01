@@ -25,7 +25,7 @@ class Note implements StorageItem {
 
   String shortLink() {
     if (link.startsWith("/")) {
-      return ".." + link.substring(link.length - 25);
+      return "..${link.substring(link.length - 25)}";
     } else if (link.startsWith("https://")) {
       return link.substring(8);
     } else if (link.startsWith("http://")) {

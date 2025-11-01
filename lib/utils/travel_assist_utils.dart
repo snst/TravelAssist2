@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:open_app_file/open_app_file.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -34,9 +35,7 @@ openExternally(BuildContext context, String link) async {
 Future<String?> getBookmarkFolder() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   String? path = prefs.getString('bookmarks');
-  if (path == null) {
-    path = await selectBookmarkFolder();
-  }
+  path ??= await selectBookmarkFolder();
   return path;
 }
 

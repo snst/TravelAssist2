@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:path/path.dart' as p;
+// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
 import 'package:textfield_tags/textfield_tags.dart';
@@ -23,7 +23,7 @@ Future<String> moveSharedImageToDataFolder(String srcPath) async {
   if (await file.exists()) {
     String? destDir = await getBookmarkFolder();
     if (destDir != null) {
-      final fileName = p.basename(srcPath);
+      final fileName = path.basename(srcPath);
       String destPath = path.join(destDir, fileName);
       final newFile = await file.copy(destPath);
       srcPath = newFile.uri.path;
@@ -33,21 +33,21 @@ Future<String> moveSharedImageToDataFolder(String srcPath) async {
 }
 
 class NoteItemPage extends StatefulWidget {
-  NoteItemPage({super.key, required this.item, this.newItem = false, this.title="Bookmark"})
+  NoteItemPage({super.key, required this.item, this.newItem = false, this.title=Txt.bookmark})
     : modifiedItem = item.clone();
 
   final Note item;
   final Note modifiedItem;
   final bool newItem;
   final String title;
-  bool doEdit = false;
 
   @override
-  State<NoteItemPage> createState() => _PackedItemPageState();
+  State<NoteItemPage> createState() => _NoteItemPageState();
 }
 
-class _PackedItemPageState extends State<NoteItemPage> {
+class _NoteItemPageState extends State<NoteItemPage> {
   late StringTagController _stringTagController;
+  late bool _doEdit;
 
   NoteProvider getProvider(BuildContext context) {
     return Provider.of<NoteProvider>(context, listen: false);
@@ -57,6 +57,7 @@ class _PackedItemPageState extends State<NoteItemPage> {
   void initState() {
     super.initState();
     _stringTagController = StringTagController();
+    _doEdit = false;
     if (widget.newItem && widget.modifiedItem.tags.contains(Tag.gps)) {
       updatePosition(widget.modifiedItem);
     }
@@ -96,7 +97,7 @@ class _PackedItemPageState extends State<NoteItemPage> {
           if (!widget.newItem)
             IconButton(
               icon: const Icon(Icons.edit),
-              onPressed: () => setState(() {widget.doEdit = true;} )  ,
+              onPressed: () => setState(() {_doEdit = true;} )  ,
             ),
         ],
       ),
@@ -133,7 +134,7 @@ class _PackedItemPageState extends State<NoteItemPage> {
 
                 SizedBox(height: 5),
 
-                if (widget.doEdit || widget.newItem)
+                if (_doEdit || widget.newItem)
                   Row(
                     children: [
                       const Spacer(),
@@ -184,7 +185,7 @@ class _PackedItemPageState extends State<NoteItemPage> {
           }
         ),
       ),
-      floatingActionButton: (!widget.doEdit && !widget.newItem)
+      floatingActionButton: (!_doEdit && !widget.newItem)
           ? FloatingActionButton(
               onPressed: () async {
                 openExternally(context, widget.modifiedItem.link);

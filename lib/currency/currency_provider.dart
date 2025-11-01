@@ -9,7 +9,7 @@ import 'currency.dart';
 
 class CurrencyProvider extends Storage<Currency>  {
 
-  CurrencyProvider(Isar isar) : super(isar) {
+  CurrencyProvider(super.isar) {
     init();
   }
 

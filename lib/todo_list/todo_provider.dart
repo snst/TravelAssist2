@@ -1,12 +1,10 @@
 import 'dart:convert';
 
-import 'package:isar_community/isar.dart';
-
 import '../utils/storage.dart';
 import 'todo_item.dart';
 
 class TodoProvider  extends Storage<TodoItem> {
-  TodoProvider(Isar isar) : super(isar);
+  TodoProvider(super.isar);
 
   Future<List<String>> getCategories() async {
     final items = await getAll();
@@ -44,8 +42,9 @@ class TodoProvider  extends Storage<TodoItem> {
 
   void fromJson(String? jsonString, bool append) {
     if (jsonString != null) {
-      if(!append)
+      if(!append) {
         clear();
+      }
       final jsonList = jsonDecode(jsonString) as List;
       for (var json in jsonList) {
         add(TodoItem.fromJson(json), notify: false);

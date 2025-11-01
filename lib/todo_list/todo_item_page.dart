@@ -91,7 +91,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
                   child: SpinBox(
                     value: widget.modifiedItem.quantity.toDouble(),
                     decoration: const InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       constraints: BoxConstraints.tightFor(width: 150),
                       labelText: 'Quantity',
                     ),
@@ -105,7 +105,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
                   child: SpinBox(
                     value: widget.modifiedItem.used.toDouble(),
                     decoration: const InputDecoration(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       constraints: BoxConstraints.tightFor(width: 150),
                       labelText: 'Used',
                     ),

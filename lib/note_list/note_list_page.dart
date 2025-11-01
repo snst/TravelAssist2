@@ -108,7 +108,7 @@ class _NoteListPageState extends State<NoteListPage> {
                       (tag) => MultiSelectCard(
                         value: tag,
                         label: tag,
-                        selected: widget.selectedTags.contains(tag),
+                        selected: selectedTags.contains(tag),
                       ),
                     )
                     .toList();

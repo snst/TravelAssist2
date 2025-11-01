@@ -49,6 +49,9 @@ class Txt {
   static const category = "Category";
   static const transaction = "Transaction";
   static const notesStorageDir = "Notes Storage Folder";
+  static const hintLink = "Link...";
+  static const hintComment = "Comment...";
+  static const hintTag = "Tags...";
 }
 
 class AppColors {

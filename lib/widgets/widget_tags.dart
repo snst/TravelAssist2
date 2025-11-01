@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
+import '../utils/globals.dart';
+
 class WidgetTags extends StatelessWidget {
   const WidgetTags({
     super.key,
@@ -80,13 +82,13 @@ class WidgetTags extends StatelessWidget {
                     isDense: true,
                     border: const OutlineInputBorder(
                       borderSide: BorderSide(width: 3.0),
-                    ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(width: 3.0),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10.0),
+                      ),
                     ),
                     hintText: inputFieldValues.tags.isNotEmpty
                         ? ''
-                        : "Enter tag...",
+                        : Txt.hintTag,
                     errorText: inputFieldValues.error,
                     prefixIconConstraints: BoxConstraints(
                       maxWidth: MediaQuery.of(context).size.width * 0.74,

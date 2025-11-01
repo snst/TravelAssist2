@@ -121,7 +121,7 @@ class _NoteItemPageState extends State<NoteItemPage> {
                 ),
                 VSpace(),
                 WidgetMultiLineInput(
-                  hintText: Txt.comment,
+                  hintText: Txt.hintComment,
                   initalText: widget.modifiedItem.comment,
                   onChanged: (value) => widget.modifiedItem.comment = value,
                   lines: 5,
@@ -129,7 +129,7 @@ class _NoteItemPageState extends State<NoteItemPage> {
                 VSpace(),
                 WidgetTextInput(
                   text: widget.modifiedItem.link,
-                  hintText: 'Enter Link',
+                  hintText: Txt.hintLink,
                   onChanged: (value) => widget.modifiedItem.link = value,
                   //autofocus: widget.item == null, // new item
                 ),

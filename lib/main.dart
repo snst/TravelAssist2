@@ -101,6 +101,8 @@ class _MainScreenState extends State<MainScreen> {
             item: Note(link: link, tags: [tag]),
             newItem: true,
             title: tag,
+            createReplacementPage: () =>
+                const NoteListPage(selectedTags: [Tag.note]),
           ),
         ),
       );
@@ -211,13 +213,14 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icons.checklist,
               onMainPressed: () => _onShowPage(context, const TodoListPage()),
               onAddPressed: () async {
-                final result = await Navigator.push(
+                await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TodoItemPage()),
+                  MaterialPageRoute(
+                    builder: (context) => TodoItemPage(
+                      createReplacementPage: () => const TodoListPage(),
+                    ),
+                  ),
                 );
-                if (result != null && context.mounted) {
-                  _onShowPage(context, const TodoListPage());
-                }
               },
             ),
 
@@ -227,19 +230,18 @@ class _MainScreenState extends State<MainScreen> {
               onMainPressed: () =>
                   _onShowPage(context, NoteListPage(selectedTags: [])),
               onAddPressed: () async {
-                final result = await Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => NoteItemPage(
                       item: Note(tags: []),
                       newItem: true,
                       title: Txt.note,
+                      createReplacementPage: () =>
+                          const NoteListPage(selectedTags: [Tag.note]),
                     ),
                   ),
                 );
-                if (result != null && context.mounted) {
-                  _onShowPage(context, NoteListPage(selectedTags: [Tag.note]));
-                }
               },
             ),
             _buildScrollableNotes(
@@ -259,28 +261,51 @@ class _MainScreenState extends State<MainScreen> {
               onMainPressed: () =>
                   _onShowPage(context, const TransactionMainPage()),
               onAddPressed: () async {
-                final result = await Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TransactionItemPage(),
+                    builder: (context) => TransactionItemPage(
+                      createReplacementPage: () => const TransactionMainPage(),
+                    ),
                   ),
                 );
-                if (result != null && context.mounted) {
-                  _onShowPage(context, const TransactionMainPage());
-                }
               },
             ),
             _buildScrollableExpense(
               height: 60,
               subIcons: [
-                {'icon': Icons.coffee_outlined, 'name': [Tag.cafe, Tag.food]},
-                {'icon': Icons.bakery_dining, 'name': [Tag.breakfast, Tag.food]},
-                {'icon': Icons.local_dining, 'name': [Tag.restaurant, Tag.food]},
-                {'icon': Icons.shopping_cart, 'name': [Tag.shop, Tag.food]},
-                {'icon': Icons.directions_bus, 'name': [Tag.bus, Tag.transport]},
-                {'icon': Icons.local_taxi, 'name': [Tag.taxi, Tag.transport]},
-                {'icon': Icons.attractions, 'name': [Tag.entrance]},
-                {'icon': Icons.hotel, 'name': [Tag.hotel]},
+                {
+                  'icon': Icons.coffee_outlined,
+                  'name': [Tag.cafe, Tag.food],
+                },
+                {
+                  'icon': Icons.bakery_dining,
+                  'name': [Tag.breakfast, Tag.food],
+                },
+                {
+                  'icon': Icons.local_dining,
+                  'name': [Tag.restaurant, Tag.food],
+                },
+                {
+                  'icon': Icons.shopping_cart,
+                  'name': [Tag.shop, Tag.food],
+                },
+                {
+                  'icon': Icons.directions_bus,
+                  'name': [Tag.bus, Tag.transport],
+                },
+                {
+                  'icon': Icons.local_taxi,
+                  'name': [Tag.taxi, Tag.transport],
+                },
+                {
+                  'icon': Icons.attractions,
+                  'name': [Tag.entrance],
+                },
+                {
+                  'icon': Icons.hotel,
+                  'name': [Tag.hotel],
+                },
               ],
             ),
           ],
@@ -307,16 +332,15 @@ class _MainScreenState extends State<MainScreen> {
             child: IconButton(
               icon: Icon(sub['icon'], size: 28),
               onPressed: () async {
-                final result = await Navigator.push(
+                await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        TransactionItemPage(tags: sub['name']),
+                    builder: (context) => TransactionItemPage(
+                      tags: sub['name'],
+                      createReplacementPage: () => const TransactionMainPage(),
+                    ),
                   ),
                 );
-                if (result != null && context.mounted) {
-                  _onShowPage(context, const TransactionMainPage());
-                }
               },
             ),
           );
@@ -337,10 +361,9 @@ class _MainScreenState extends State<MainScreen> {
         separatorBuilder: (_, __) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
           return SizedBox(
-            width: height, // square buttons
+            width: height,
             height: height,
             child: IconButton(
-              //icon: Icon(sub['icon'], size: 28),
               icon: tagIcons[index].icon,
               onPressed: () {
                 _onShowPage(

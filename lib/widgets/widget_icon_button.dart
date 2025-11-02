@@ -15,7 +15,7 @@ class WidgetIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(14),
       ),
       onPressed: onPressed,
       child: Icon(icon, size: 32),

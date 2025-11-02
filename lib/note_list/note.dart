@@ -38,7 +38,7 @@ class Note implements StorageItem {
     if (tags.contains(Tag.map)) {
       return MyIcons.map;
     } else if (link.startsWith("geo:")) {
-      return MyIcons.gps;
+      return MyIcons.map;
     } else if (link.startsWith("http")) {
       return MyIcons.link;
     } else  {

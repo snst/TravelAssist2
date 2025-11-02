@@ -4,26 +4,26 @@ import 'package:provider/provider.dart';
 
 import '../utils/globals.dart';
 import '../widgets/widget_combobox.dart';
+import '../widgets/widget_item_edit_actions.dart';
 import '../widgets/widget_layout.dart';
 import '../widgets/widget_multi_line_input.dart';
 import '../widgets/widget_text_input.dart';
 import 'todo_item.dart';
 import 'todo_provider.dart';
-import '../widgets/widget_item_edit_actions.dart';
 
 class TodoItemPage extends StatefulWidget {
-  TodoItemPage({super.key, this.item})
+  TodoItemPage({super.key, this.item, this.createReplacementPage})
     : modifiedItem = item == null ? TodoItem(quantity: 1) : item.clone();
 
   final TodoItem? item;
   final TodoItem modifiedItem;
+  final Function? createReplacementPage;
 
   @override
   State<TodoItemPage> createState() => _PackedItemPageState();
 }
 
 class _PackedItemPageState extends State<TodoItemPage> {
-
   void saveAndClose(BuildContext context, TodoProvider provider) {
     if (save(provider)) {
       Navigator.of(context).pop(true);
@@ -45,7 +45,6 @@ class _PackedItemPageState extends State<TodoItemPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final TextEditingController controller = TextEditingController();
@@ -54,8 +53,9 @@ class _PackedItemPageState extends State<TodoItemPage> {
 
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text("Check Item")),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text("Check Item"),
+      ),
       body: Padding(
         padding: pagePadding,
         child: Column(
@@ -84,7 +84,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
                   },
                   items: asyncSnapshot.data ?? [],
                 );
-              }
+              },
             ),
             VSpace(),
             Row(
@@ -92,7 +92,10 @@ class _PackedItemPageState extends State<TodoItemPage> {
                 SpinBox(
                   value: widget.modifiedItem.quantity.toDouble(),
                   decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 10,
+                    ),
                     constraints: BoxConstraints.tightFor(width: 150),
                     labelText: 'Quantity',
                   ),
@@ -105,7 +108,10 @@ class _PackedItemPageState extends State<TodoItemPage> {
                   child: SpinBox(
                     value: widget.modifiedItem.used.toDouble(),
                     decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 11),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 11,
+                      ),
                       constraints: BoxConstraints.tightFor(width: 150),
                       labelText: 'Used',
                     ),
@@ -146,14 +152,23 @@ class _PackedItemPageState extends State<TodoItemPage> {
               },
             ),
             VSpace(),
-            WidgetMultiLineInput(hintText: Txt.comment, lines: 2, initalText: widget.modifiedItem.comment, onChanged: (value) => widget.modifiedItem.comment = value),
-            WidgetItemEditActions(
-              onSave: () { return save(provider); },
-              onDelete: (widget.item == null) ? null : () {
-                provider.delete(widget.item!);
-              }
+            WidgetMultiLineInput(
+              hintText: Txt.comment,
+              lines: 2,
+              initalText: widget.modifiedItem.comment,
+              onChanged: (value) => widget.modifiedItem.comment = value,
             ),
-
+            WidgetItemEditActions(
+              createReplacementPage: widget.createReplacementPage,
+              onSave: () {
+                return save(provider);
+              },
+              onDelete: (widget.item == null)
+                  ? null
+                  : () {
+                      provider.delete(widget.item!);
+                    },
+            ),
           ],
         ),
       ),

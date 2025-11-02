@@ -38,12 +38,14 @@ class NoteItemPage extends StatefulWidget {
     required this.item,
     this.newItem = false,
     this.title = Txt.note,
+    this.createReplacementPage,
   }) : modifiedItem = item.clone();
 
   final Note item;
   final Note modifiedItem;
   final bool newItem;
   final String title;
+  final Function? createReplacementPage;
 
   @override
   State<NoteItemPage> createState() => _NoteItemPageState();
@@ -117,18 +119,32 @@ class _NoteItemPageState extends State<NoteItemPage> {
                   lines: 5,
                 ),
                 VSpace(),
-                WidgetTextInput(
-                  text: widget.modifiedItem.link,
-                  hintText: Txt.hintLink,
-                  onChanged: (value) => widget.modifiedItem.link = value,
-                  //autofocus: widget.item == null, // new item
+
+                Row(
+                  children: [
+                    Expanded(
+                      child: WidgetTextInput(
+                        text: widget.modifiedItem.link,
+                        hintText: Txt.hintLink,
+                        onChanged: (value) => widget.modifiedItem.link = value,
+                      ),
+                    ),
+                    WidgetIconButton(
+                      icon: widget.modifiedItem.getIcon(),
+                      onPressed: () {
+                        openExternally(context, widget.modifiedItem.link);
+                      },
+                    ),
+                  ],
                 ),
+
                 VSpace(),
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(widget.modifiedItem.getDateTimeStr()),
                 ),
                 WidgetItemEditActions(
+                  createReplacementPage: widget.createReplacementPage,
                   onSave: () {
                     return save(context);
                   },
@@ -149,15 +165,6 @@ class _NoteItemPageState extends State<NoteItemPage> {
                       icon: MyIcons.gps,
                       onPressed: () {
                         updatePosition(widget.modifiedItem);
-                      },
-                    ),
-                  ],
-                  rightWidget: [
-                    HSpace(val: 2),
-                    WidgetIconButton(
-                      icon: widget.modifiedItem.getIcon(),
-                      onPressed: () {
-                        openExternally(context, widget.modifiedItem.link);
                       },
                     ),
                   ],

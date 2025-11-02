@@ -24,7 +24,7 @@ import 'transaction_provider.dart';
 import 'transaction_value.dart';
 
 class TransactionItemPage extends StatefulWidget {
-  TransactionItemPage({super.key, this.item, this.tags = const []})
+  TransactionItemPage({super.key, this.item, this.tags = const [], this.createReplacementPage})
     : newItem = item == null,
       modifiedItem = item == null ? Transaction() : item.clone();
 
@@ -32,6 +32,7 @@ class TransactionItemPage extends StatefulWidget {
   final Transaction? item;
   final Transaction modifiedItem;
   final List<String> tags;
+  final Function? createReplacementPage;
 
   @override
   State<TransactionItemPage> createState() => _TransactionItemPageState();
@@ -270,6 +271,7 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                   ),
                 ],
                 WidgetItemEditActions(
+                  createReplacementPage: widget.createReplacementPage,
                   onSave: () {
                     return save(items, tp, cp);
                   },

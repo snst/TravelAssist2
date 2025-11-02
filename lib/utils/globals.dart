@@ -22,7 +22,7 @@ class Tag {
 
 class MyIcons {
   static const gps = Icons.gps_fixed;
-  static const map = Icons.map;
+  static const map = Icons.location_on;
   static const link = Icons.link;
   static const copy = Icons.copy;
   static const star = Icons.star;

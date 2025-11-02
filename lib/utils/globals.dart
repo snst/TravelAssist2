@@ -7,6 +7,17 @@ class Tag {
   static const star = "star";
   static const note = "note";
   static const link = "link";
+
+  static const food = "food";
+  static const cafe = "cafe";
+  static const breakfast = "breakfast";
+  static const restaurant = "restaurant";
+  static const transport = "transport";
+  static const taxi = "taxi";
+  static const bus = "bus";
+  static const hotel = "hotel";
+  static const entrance = "entrance";
+  static const shop = "shop";
 }
 
 class MyIcon {
@@ -52,7 +63,10 @@ class Txt {
   static const hintLink = "Link...";
   static const hintComment = "Comment...";
   static const hintTag = "Tags...";
+  static const cash = "cash";
 }
+
+const EdgeInsets pagePadding = EdgeInsets.fromLTRB(14, 8, 14, 0);
 
 class AppColors {
   static const expense = Colors.orangeAccent;

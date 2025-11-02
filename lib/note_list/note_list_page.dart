@@ -159,43 +159,40 @@ class WidgetBookmark extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (bookmark.tags.isNotEmpty) ...[
-              Text(
-                bookmark.tags.map((tag) => '#$tag').join(' '),
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.surfaceTint,
-                ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (bookmark.tags.isNotEmpty) ...[
+            Text(
+              bookmark.tags.map((tag) => '#$tag').join(' '),
+              style: TextStyle(
+                fontSize: 16,
+                color: Theme.of(context).colorScheme.surfaceTint,
               ),
-            ],
-            if (bookmark.comment.isNotEmpty) ...[
-              const SizedBox(height: 2),
-              Text(
-                bookmark.comment,
-                style: const TextStyle(fontSize: 16),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-            if (bookmark.link.isNotEmpty) ...[
-              const SizedBox(height: 2),
-              Text(
-                bookmark.shortLink(),
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.secondaryFixed,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+            ),
           ],
-        ),
+          if (bookmark.comment.isNotEmpty) ...[
+            const SizedBox(height: 2),
+            Text(
+              bookmark.comment,
+              style: const TextStyle(fontSize: 16),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+          if (bookmark.link.isNotEmpty) ...[
+            const SizedBox(height: 2),
+            Text(
+              bookmark.shortLink(),
+              style: TextStyle(
+                fontSize: 16,
+                color: Theme.of(context).colorScheme.secondaryFixed,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ],
       ),
     );
   }

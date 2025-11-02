@@ -108,7 +108,7 @@ class _NoteItemPageState extends State<NoteItemPage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+        padding: pagePadding,
         child: FutureBuilder<List<String>>(
           future: provider.getTags(),
           builder: (context, asyncSnapshot) {

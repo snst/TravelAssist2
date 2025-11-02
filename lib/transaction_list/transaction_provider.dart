@@ -5,6 +5,7 @@ import 'package:isar_community/isar.dart';
 import '../balance/balance.dart';
 import '../currency/currency.dart';
 import '../currency/currency_provider.dart';
+import '../utils/globals.dart';
 import '../utils/json_export.dart';
 import '../utils/storage.dart';
 import 'transaction.dart';
@@ -13,23 +14,21 @@ import 'transaction_value.dart';
 class TransactionProvider extends Storage<Transaction> implements JsonExport {
   TransactionProvider(super.isar);
 
-  List<String> getCategoryList(List<Transaction> items) {
-    Map<String, int> occurrenceMap = {};
-    for (final transaction in items) {
-      final str = transaction.category;
-      occurrenceMap[str] = (occurrenceMap[str] ?? 0) + 1;
+  List<String> getTags(List<Transaction> all) {
+    final tags = <String>{};
+    for (var item in all) {
+      tags.addAll(item.tags);
     }
-    List<String> sortedUniqueStrings = occurrenceMap.keys.toList()
-      ..sort((a, b) => occurrenceMap[b]!.compareTo(occurrenceMap[a]!));
-
-    return sortedUniqueStrings;
+    final tagList = tags.toList();
+    tagList.sort();
+    return tagList;
   }
 
   List<String> getPaymentMethodList(List<Transaction> items, bool hideCash) {
     Map<String, int> occurrenceMap = {};
     for (final transaction in items) {
       final str = transaction.method;
-      if (str.isNotEmpty && !(hideCash && str == "Cash")) {
+      if (str.isNotEmpty && !(hideCash && str == Txt.cash)) {
         occurrenceMap[str] = (occurrenceMap[str] ?? 0) + 1;
       }
     }

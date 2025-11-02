@@ -4,6 +4,7 @@ import 'package:isar_community/isar.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../currency/currency.dart';
+import '../utils/globals.dart';
 import '../utils/storage_item.dart';
 
 part 'transaction.g.dart';
@@ -16,22 +17,21 @@ enum TransactionTypeEnum { expense, withdrawal, cashCorrection, deposit }
 @JsonSerializable()
 class Transaction implements StorageItem {
   Transaction({
-    this.name = "",
+    this.comment = "",
     this.value = 0.0,
     this.currency = "",
     this.type = TransactionTypeEnum.expense,
     required this.date,
-    this.category = "",
     this.averageDays = 1,
     this.method = "",
     this.latitude = 0,
     this.longitude = 0,
+    this.tags = const [],
   });
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   Id id = Isar.autoIncrement;
-  String name;
-  String category;
+  String comment;
   String method;
   double value;
   String currency;
@@ -41,14 +41,10 @@ class Transaction implements StorageItem {
   TransactionTypeEnum type;
   double latitude;
   double longitude;
-
-  @override
-  String toString() {
-    return "$date $type: $value $currency $name";
-  }
+  List<String> tags;
 
   @ignore
-  bool get isCash => method.isEmpty || method == "Cash";
+  bool get isCash => method.isEmpty || method == Txt.cash;
 
   @ignore
   bool get isWithdrawal => type == TransactionTypeEnum.withdrawal;
@@ -86,30 +82,34 @@ class Transaction implements StorageItem {
     );
   }
 
-  String getCategoryNameStr() {
+  String get tagStr {
+    return tags.map((t) => '#$t').join(' ');
+  }
+
+  String getEntryStr() {
     switch (type) {
       case TransactionTypeEnum.withdrawal:
-        return "Withdrawal $name";
+        return "Withdrawal";
       case TransactionTypeEnum.deposit:
-        return "Deposit $name";
+        return "Deposit";
       case TransactionTypeEnum.cashCorrection:
-        return "Cash Count $name";
+        return "Cash Count";
       default:
-        return "$category $name";
+        return tagStr;
     }
   }
 
   void update(Transaction other) {
-    name = other.name;
+    comment = other.comment;
     value = other.value;
     type = other.type;
     date = other.date;
-    category = other.category;
     currency = other.currency;
     averageDays = other.averageDays;
     method = other.method;
     longitude = other.longitude;
     latitude = other.latitude;
+    tags = other.tags.toList();
   }
 
   Transaction clone() {
@@ -117,7 +117,6 @@ class Transaction implements StorageItem {
     item.update(this);
     return item;
   }
-
 
   @override
   Id getId() {

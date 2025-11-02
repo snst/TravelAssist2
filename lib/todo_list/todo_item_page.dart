@@ -57,7 +57,7 @@ class _PackedItemPageState extends State<TodoItemPage> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text("Check Item")),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
+        padding: pagePadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,

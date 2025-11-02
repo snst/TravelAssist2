@@ -21,7 +21,6 @@ class _TransactionListSubpageState extends State<TransactionListSubpage> {
   Widget build(BuildContext context) {
     final provider = context.watch<TransactionProvider>();
 
-
     return FutureBuilder(
       future: provider.getAll(),
       builder: (context, asyncSnapshot) {

@@ -273,14 +273,14 @@ class _MainScreenState extends State<MainScreen> {
             _buildScrollableExpense(
               height: 60,
               subIcons: [
-                {'icon': Icons.coffee_outlined, 'name': 'Cafe Essen'},
-                {'icon': Icons.bakery_dining, 'name': 'Frühstück Essen'},
-                {'icon': Icons.local_dining, 'name': 'Restaurant Essen'},
-                {'icon': Icons.shopping_cart, 'name': 'Einkauf Essen'},
-                {'icon': Icons.directions_bus, 'name': 'Bus Transport'},
-                {'icon': Icons.local_taxi, 'name': 'Taxi Transport'},
-                {'icon': Icons.attractions, 'name': 'Einritt'},
-                {'icon': Icons.hotel, 'name': 'Hotel'},
+                {'icon': Icons.coffee_outlined, 'name': [Tag.cafe, Tag.food]},
+                {'icon': Icons.bakery_dining, 'name': [Tag.breakfast, Tag.food]},
+                {'icon': Icons.local_dining, 'name': [Tag.restaurant, Tag.food]},
+                {'icon': Icons.shopping_cart, 'name': [Tag.shop, Tag.food]},
+                {'icon': Icons.directions_bus, 'name': [Tag.bus, Tag.transport]},
+                {'icon': Icons.local_taxi, 'name': [Tag.taxi, Tag.transport]},
+                {'icon': Icons.attractions, 'name': [Tag.entrance]},
+                {'icon': Icons.hotel, 'name': [Tag.hotel]},
               ],
             ),
           ],
@@ -311,7 +311,7 @@ class _MainScreenState extends State<MainScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        TransactionItemPage(category: sub['name']),
+                        TransactionItemPage(tags: sub['name']),
                   ),
                 );
                 if (result != null && context.mounted) {

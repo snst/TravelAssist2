@@ -4,6 +4,7 @@ import 'package:flutter_spinbox/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:textfield_tags/textfield_tags.dart';
 import 'package:travelassist2/widgets/widget_multi_line_input.dart';
 
 import '../currency/currency.dart';
@@ -16,12 +17,13 @@ import '../widgets/widget_combobox.dart';
 import '../widgets/widget_date_chooser.dart';
 import '../widgets/widget_item_edit_actions.dart';
 import '../widgets/widget_layout.dart';
+import '../widgets/widget_tags.dart';
 import 'transaction.dart';
 import 'transaction_provider.dart';
 import 'transaction_value.dart';
 
 class TransactionItemPage extends StatefulWidget {
-  TransactionItemPage({super.key, this.item, this.category})
+  TransactionItemPage({super.key, this.item, this.tags = const []})
     : newItem = item == null,
       modifiedItem = item == null
           ? Transaction(date: DateTime.now(), currency: "", method: "")
@@ -30,24 +32,27 @@ class TransactionItemPage extends StatefulWidget {
   final bool newItem;
   final Transaction? item;
   final Transaction modifiedItem;
-  final String? category;
+  final List<String> tags;
 
   @override
   State<TransactionItemPage> createState() => _TransactionItemPageState();
 }
 
 class _TransactionItemPageState extends State<TransactionItemPage> {
-  final TextEditingController categoryController = TextEditingController();
   final TextEditingController paymentMethodController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
+  late StringTagController _stringTagController;
 
   @override
   void initState() {
     super.initState();
+    _stringTagController = StringTagController();
     _loadStoredValue();
     if (widget.newItem) {
       _getGpsPos();
-      widget.modifiedItem.category = widget.category ?? "";
+      if (widget.tags.isNotEmpty) {
+        widget.modifiedItem.tags = widget.tags;
+      }
     }
     _amountController.text = widget.modifiedItem.value == 0
         ? ""
@@ -56,10 +61,10 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
 
   @override
   void dispose() {
-    categoryController.dispose();
+    super.dispose();
+    _stringTagController.dispose();
     paymentMethodController.dispose();
     _amountController.dispose();
-    super.dispose();
   }
 
   String defaultCurrency = "";
@@ -101,12 +106,13 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
           currency,
         );
         double difference = widget.modifiedItem.value - cash.value;
-        widget.modifiedItem.name = widget.modifiedItem.valueCurrencyString;
+        widget.modifiedItem.comment = widget.modifiedItem.valueCurrencyString;
         widget.modifiedItem.value = difference;
         widget.modifiedItem.method = "";
         break;
       default:
-        widget.modifiedItem.category = categoryController.text;
+        var tags = _stringTagController.getTags;
+        widget.modifiedItem.tags = tags ?? [];
         widget.modifiedItem.method = paymentMethodController.text;
         break;
     }
@@ -144,160 +150,153 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
             title: Text(Txt.transaction),
           ),
           body: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-            child: SingleChildScrollView(
-              reverse: true,
-              child: Column(
-                children: <Widget>[
-                  widgetAmountInput(cp),
+            padding: pagePadding,
+            child: Column(
+              children: <Widget>[
+                widgetAmountInput(cp),
+                VSpace(),
+                if (widget.modifiedItem.type ==
+                    TransactionTypeEnum.expense) ...[
+                  WidgetTags(
+                    allTags: tp.getTags(asyncSnapshot.data ?? []), //asyncSnapshot.data ?? [],
+                    tags: widget.modifiedItem.tags,
+                    stringTagController: _stringTagController,
+                  ),
                   VSpace(),
-                  if (widget.modifiedItem.type ==
-                      TransactionTypeEnum.expense) ...[
-                    WidgetComboBox(
-                      controller: categoryController,
-                      selectedText: widget.modifiedItem.category,
-                      hintText: Txt.category,
-                      filter: true,
-                      onChanged: (p0) {
-                        setState(() {
-                          widget.modifiedItem.category = p0;
-                        });
-                      },
-                      items: tp.getCategoryList(items),
-                    ),
-                    VSpace(),
-                  ],
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 135,
-                        child: Container(
-                          decoration: BorderStyles.box,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: DropdownButton(
-                              value: widget.modifiedItem.type,
-                              isExpanded: true,
-                              underline: SizedBox(),
-                              items: const [
-                                DropdownMenuItem(
-                                  value: TransactionTypeEnum.expense,
-                                  child: Text("Expense"),
-                                ),
-                                DropdownMenuItem(
-                                  value: TransactionTypeEnum.withdrawal,
-                                  child: Text("Withdrawal"),
-                                ),
-                                DropdownMenuItem(
-                                  value: TransactionTypeEnum.cashCorrection,
-                                  child: Text("Cash Count"),
-                                ),
-                                DropdownMenuItem(
-                                  value: TransactionTypeEnum.deposit,
-                                  child: Text("Deposit"),
-                                ),
-                              ],
-                              onChanged: (value) {
-                                setState(() {
-                                  widget.modifiedItem.type = value!;
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      if (widget.modifiedItem.type ==
-                              TransactionTypeEnum.expense ||
-                          widget.modifiedItem.type ==
-                              TransactionTypeEnum.withdrawal) ...[
-                        Expanded(
-                          child: WidgetComboBox(
-                            controller: paymentMethodController,
-                            selectedText: widget.modifiedItem.method,
-                            hintText: '',
-                            filter: false,
-                            onChanged: (p0) {
+                ],
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 135,
+                      child: Container(
+                        decoration: BorderStyles.box,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: DropdownButton(
+                            value: widget.modifiedItem.type,
+                            isExpanded: true,
+                            underline: SizedBox(),
+                            items: const [
+                              DropdownMenuItem(
+                                value: TransactionTypeEnum.expense,
+                                child: Text("Expense"),
+                              ),
+                              DropdownMenuItem(
+                                value: TransactionTypeEnum.withdrawal,
+                                child: Text("Withdrawal"),
+                              ),
+                              DropdownMenuItem(
+                                value: TransactionTypeEnum.cashCorrection,
+                                child: Text("Cash Count"),
+                              ),
+                              DropdownMenuItem(
+                                value: TransactionTypeEnum.deposit,
+                                child: Text("Deposit"),
+                              ),
+                            ],
+                            onChanged: (value) {
                               setState(() {
-                                widget.modifiedItem.method = p0;
+                                widget.modifiedItem.type = value!;
                               });
                             },
-                            items: tp.getPaymentMethodList(
-                              items,
-                              widget.modifiedItem.type ==
-                                  TransactionTypeEnum.withdrawal,
-                            ),
                           ),
                         ),
-                      ],
-                    ],
-                  ),
-                  VSpace(),
-                  WidgetMultiLineInput(
-                    onChanged: (value) {
-                      setState(() {
-                        widget.modifiedItem.name = value;
-                      });
-                    },
-                    initalText: widget.modifiedItem.name,
-                    hintText: Txt.comment,
-                    lines: 2,
-                  ),
-
-                  if (widget.modifiedItem.type ==
-                      TransactionTypeEnum.expense) ...[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: Row(
-                        children: [
-                          ElevatedButton(
-                            child: const Text('Map'),
-                            onPressed: () {
-                              launchMapOnAndroid(
-                                widget.modifiedItem.latitude,
-                                widget.modifiedItem.longitude,
-                              );
-                            },
-                          ),
-                          Spacer(),
-                          WidgetDateChooser(
-                            date: widget.modifiedItem.date,
-                            onChanged: (val) => setState(() {
-                              widget.modifiedItem.date = val;
-                            }),
-                          ),
-                          const Spacer(),
-                          SpinBox(
-                            value: widget.modifiedItem.averageDays.toDouble(),
-                            decoration: const InputDecoration(
-                              constraints: BoxConstraints.tightFor(width: 170),
-                              contentPadding: EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 11,
-                              ),
-                              labelText: 'Average Days',
-                            ),
-                            onChanged: (value) =>
-                                widget.modifiedItem.averageDays = value.toInt(),
-                          ),
-                        ],
                       ),
                     ),
-                    VSpace(),
-                  ],
-                  //widgetButtons(transactionProvider, currencyProvider),
-                  WidgetItemEditActions(
-                    onSave: () {
-                      return save(items, tp, cp);
-                    },
-                    onDelete: (widget.newItem)
-                        ? null
-                        : () {
-                            tp.delete(widget.item!);
+                    SizedBox(width: 10),
+                    if (widget.modifiedItem.type ==
+                            TransactionTypeEnum.expense ||
+                        widget.modifiedItem.type ==
+                            TransactionTypeEnum.withdrawal) ...[
+                      Expanded(
+                        child: WidgetComboBox(
+                          controller: paymentMethodController,
+                          selectedText: widget.modifiedItem.method,
+                          hintText: '',
+                          filter: false,
+                          onChanged: (p0) {
+                            setState(() {
+                              widget.modifiedItem.method = p0;
+                            });
                           },
+                          items: tp.getPaymentMethodList(
+                            items,
+                            widget.modifiedItem.type ==
+                                TransactionTypeEnum.withdrawal,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                VSpace(),
+                WidgetMultiLineInput(
+                  onChanged: (value) {
+                      widget.modifiedItem.comment = value;
+                  },
+                  initalText: widget.modifiedItem.comment,
+                  hintText: Txt.comment,
+                  lines: 2,
+                ),
+
+                if (widget.modifiedItem.type ==
+                    TransactionTypeEnum.expense) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Row(
+                      children: [
+                        ElevatedButton(
+                          child: const Text('Map'),
+                          onPressed: () {
+                            launchMapOnAndroid(
+                              widget.modifiedItem.latitude,
+                              widget.modifiedItem.longitude,
+                            );
+                          },
+                        ),
+                        Spacer(),
+                        /*WidgetDateChooser(
+                          date: widget.modifiedItem.date,
+                          onChanged: (val) => setState(() {
+                            widget.modifiedItem.date = val;
+                          }),
+                        ),*/
+                        const Spacer(),
+                        SpinBox(
+                          value: widget.modifiedItem.averageDays.toDouble(),
+                          decoration: const InputDecoration(
+                            constraints: BoxConstraints.tightFor(width: 170),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 11,
+                            ),
+                            labelText: 'Average Days',
+                          ),
+                          onChanged: (value) =>
+                              widget.modifiedItem.averageDays = value.toInt(),
+                        ),
+                      ],
+                    ),
                   ),
+                  VSpace(),
                 ],
-              ),
+                WidgetItemEditActions(
+                  onSave: () {
+                    return save(items, tp, cp);
+                  },
+                  onDelete: (widget.newItem)
+                      ? null
+                      : () {
+                          tp.delete(widget.item!);
+                        },
+                    prependWidget: WidgetDateChooser(
+                      date: widget.modifiedItem.date,
+                      onChanged: (val) => setState(() {
+                        widget.modifiedItem.date = val;
+                      }),
+                    ),
+                ),
+              ],
             ),
           ),
         );

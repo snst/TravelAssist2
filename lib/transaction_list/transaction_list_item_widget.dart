@@ -57,7 +57,11 @@ class TransactionListItemWidget extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(transaction.getCategoryNameStr()),
+                Text(transaction.getEntryStr(),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(context).colorScheme.surfaceTint,
+                  ),),
                 Text(transaction.method, style: detailStyle),
               ],
             ),
@@ -70,6 +74,9 @@ class TransactionListItemWidget extends StatelessWidget {
             ),
           ],
         ),
+        subtitle: transaction.comment.isNotEmpty
+            ? Text(transaction.comment)
+            : null,
       ),
     );
   }

@@ -59,6 +59,15 @@ class Note implements StorageItem {
     tags = other.tags.toList();
   }
 
+  bool isSame(Note other) {
+    if (comment != other.comment) return false;
+    if (link != other.link) return false;
+    if (tags.toString() != other.tags.toString()) return false;
+    if (timestamp != other.timestamp) return false;
+    return true;
+  }
+
+
   @override
   Id getId() {
     return id;

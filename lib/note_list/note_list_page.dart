@@ -73,7 +73,7 @@ class _NoteListPageState extends State<NoteListPage> {
                         },
                         title: WidgetBookmark(bookmark: items[reverseIndex]),
                         trailing: IconButton(
-                          icon: items[reverseIndex].getIcon(),
+                          icon: Icon(items[reverseIndex].getIcon()),
                           // The icon on the right
                           onPressed: () {
                             openExternally(context, items[reverseIndex].link);

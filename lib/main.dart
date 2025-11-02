@@ -245,11 +245,11 @@ class _MainScreenState extends State<MainScreen> {
             _buildScrollableNotes(
               height: 60,
               tagIcons: [
-                TagIcon.star,
-                TagIcon.gps,
-                TagIcon.map,
-                TagIcon.link,
-                TagIcon.note,
+                TagIcons.star,
+                TagIcons.gps,
+                TagIcons.map,
+                TagIcons.link,
+                TagIcons.note,
               ],
             ),
 
@@ -327,7 +327,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Widget _buildScrollableNotes({
     required double height,
-    required List<TagIcon2> tagIcons,
+    required List<TagIcon> tagIcons,
   }) {
     return SizedBox(
       height: height,

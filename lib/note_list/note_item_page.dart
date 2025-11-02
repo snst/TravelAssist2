@@ -11,7 +11,8 @@ import 'package:travelassist2/widgets/widget_multi_line_input.dart';
 import '../utils/globals.dart';
 import '../utils/map.dart';
 import '../utils/travel_assist_utils.dart';
-import '../widgets/widget_confirm_dialog.dart';
+import '../widgets/widget_icon_button.dart';
+import '../widgets/widget_item_edit_actions.dart';
 import '../widgets/widget_layout.dart';
 import '../widgets/widget_tags.dart';
 import '../widgets/widget_text_input.dart';
@@ -50,7 +51,6 @@ class NoteItemPage extends StatefulWidget {
 
 class _NoteItemPageState extends State<NoteItemPage> {
   late StringTagController _stringTagController;
-  late bool _doEdit;
 
   NoteProvider getProvider(BuildContext context) {
     return Provider.of<NoteProvider>(context, listen: false);
@@ -60,7 +60,6 @@ class _NoteItemPageState extends State<NoteItemPage> {
   void initState() {
     super.initState();
     _stringTagController = StringTagController();
-    _doEdit = false;
     if (widget.newItem && widget.modifiedItem.tags.contains(Tag.gps)) {
       updatePosition(widget.modifiedItem);
     }
@@ -97,15 +96,6 @@ class _NoteItemPageState extends State<NoteItemPage> {
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        actions: [
-          if (!widget.newItem)
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () => setState(() {
-                _doEdit = true;
-              }),
-            ),
-        ],
       ),
       body: Padding(
         padding: pagePadding,
@@ -138,67 +128,45 @@ class _NoteItemPageState extends State<NoteItemPage> {
                   alignment: Alignment.centerLeft,
                   child: Text(widget.modifiedItem.getDateTimeStr()),
                 ),
-                VSpace(),
-                if (_doEdit || widget.newItem)
-                  Row(
-                    children: [
-                      const Spacer(),
-                      ElevatedButton(
-                        child: const Text('GPS'),
-                        onPressed: () {
-                          updatePosition(widget.modifiedItem);
-                          //Navigator.of(context).pop();
+                WidgetItemEditActions(
+                  onSave: () {
+                    return save(context);
+                  },
+                  onDelete: (widget.newItem)
+                      ? null
+                      : () {
+                          getProvider(context).delete(widget.item);
                         },
-                      ),
-                      ElevatedButton(
-                        child: const Text('Cancel'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-
-                      if (!widget.newItem)
-                        ElevatedButton(
-                          child: const Text('Delete'),
-                          onPressed: () {
-                            showConfirmationDialog(
-                              context: context,
-                              title: 'Confirm Delete',
-                              text:
-                                  'Are you sure you want to delete this item?',
-                              onConfirm: () {
-                                getProvider(context).delete(widget.item);
-                                //getPackingList(context).delete(widget.item!);
-                                Navigator.of(context).pop();
-                                //Navigator.of(context).popUntil((route) => route.isFirst);
-                              },
-                            );
-                          },
-                        ),
-
-                      ElevatedButton(
-                        child: const Text('Save'),
-                        onPressed: () {
-                          if (save(context)) {
-                            Navigator.of(context).pop();
-                          }
-                        },
-                      ),
-                    ],
-                  ),
+                  leftWidget: [
+                    WidgetIconButton(
+                      icon: MyIcons.copy,
+                      onPressed: () {
+                        copyToClipboard(context, widget.modifiedItem.link);
+                      },
+                    ),
+                    HSpace(),
+                    WidgetIconButton(
+                      icon: MyIcons.gps,
+                      onPressed: () {
+                        updatePosition(widget.modifiedItem);
+                      },
+                    ),
+                  ],
+                  rightWidget: [
+                    HSpace(val: 2),
+                    WidgetIconButton(
+                      icon: widget.modifiedItem.getIcon(),
+                      onPressed: () {
+                        openExternally(context, widget.modifiedItem.link);
+                      },
+                    ),
+                  ],
+                ),
               ],
             );
           },
         ),
       ),
-      floatingActionButton: (!_doEdit && !widget.newItem)
-          ? FloatingActionButton(
-              onPressed: () async {
-                openExternally(context, widget.modifiedItem.link);
-              },
-              child: const Icon(Icons.open_in_new),
-            )
-          : null,
     );
   }
 }

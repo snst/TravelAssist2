@@ -16,32 +16,21 @@ enum TransactionTypeEnum { expense, withdrawal, cashCorrection, deposit }
 @collection
 @JsonSerializable()
 class Transaction implements StorageItem {
-  Transaction({
-    this.comment = "",
-    this.value = 0.0,
-    this.currency = "",
-    this.type = TransactionTypeEnum.expense,
-    required this.date,
-    this.averageDays = 1,
-    this.method = "",
-    this.latitude = 0,
-    this.longitude = 0,
-    this.tags = const [],
-  });
+  Transaction();
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   Id id = Isar.autoIncrement;
-  String comment;
-  String method;
-  double value;
-  String currency;
-  DateTime date;
-  int averageDays;
+  String comment = "";
+  String method = "";
+  double value = 0.0;
+  String currency = "";
+  DateTime date = DateTime.now();
+  int averageDays = 1;
   @enumerated
-  TransactionTypeEnum type;
-  double latitude;
-  double longitude;
-  List<String> tags;
+  TransactionTypeEnum type = TransactionTypeEnum.expense;
+  double latitude = 0;
+  double longitude = 0;
+  List<String> tags = [];
 
   @ignore
   bool get isCash => method.isEmpty || method == Txt.cash;
@@ -82,6 +71,8 @@ class Transaction implements StorageItem {
     );
   }
 
+  String getDateTimeStr() => DateFormat.yMd().add_Hm().format(date);
+
   String get tagStr {
     return tags.map((t) => '#$t').join(' ');
   }
@@ -113,7 +104,7 @@ class Transaction implements StorageItem {
   }
 
   Transaction clone() {
-    var item = Transaction(date: date);
+    var item = Transaction();
     item.update(this);
     return item;
   }

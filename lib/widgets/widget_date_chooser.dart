@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-//import 'formatter.dart';
+
+import 'widget_icon_button.dart';
 
 class WidgetDateChooser extends StatefulWidget {
   const WidgetDateChooser({
@@ -22,23 +23,12 @@ class _WidgetDateChooserState extends State<WidgetDateChooser> {
   Widget build(BuildContext context) {
     date ??= widget.date;
 
-    return ElevatedButton(
-      child: const Text('Date'),
+    return WidgetIconButton(
+      icon: Icons.calendar_month,
       onPressed: () {
         selectDate(context);
       },
     );
-
-    /*
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: OutlinedButton(
-        onPressed: () {
-          selectDate(context);
-        },
-        child: Text(Formatter.dateToString(date)),
-      ),
-    );*/
   }
 
   Future<void> selectDate(BuildContext context) async {

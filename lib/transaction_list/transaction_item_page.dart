@@ -15,6 +15,7 @@ import '../utils/map.dart';
 import '../utils/travel_assist_utils.dart';
 import '../widgets/widget_combobox.dart';
 import '../widgets/widget_date_chooser.dart';
+import '../widgets/widget_icon_button.dart';
 import '../widgets/widget_item_edit_actions.dart';
 import '../widgets/widget_layout.dart';
 import '../widgets/widget_tags.dart';
@@ -25,9 +26,7 @@ import 'transaction_value.dart';
 class TransactionItemPage extends StatefulWidget {
   TransactionItemPage({super.key, this.item, this.tags = const []})
     : newItem = item == null,
-      modifiedItem = item == null
-          ? Transaction(date: DateTime.now(), currency: "", method: "")
-          : item.clone();
+      modifiedItem = item == null ? Transaction() : item.clone();
 
   final bool newItem;
   final Transaction? item;
@@ -158,7 +157,7 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                 if (widget.modifiedItem.type ==
                     TransactionTypeEnum.expense) ...[
                   WidgetTags(
-                    allTags: tp.getTags(asyncSnapshot.data ?? []), //asyncSnapshot.data ?? [],
+                    allTags: tp.getTags(asyncSnapshot.data ?? []),
                     tags: widget.modifiedItem.tags,
                     stringTagController: _stringTagController,
                   ),
@@ -232,7 +231,7 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                 VSpace(),
                 WidgetMultiLineInput(
                   onChanged: (value) {
-                      widget.modifiedItem.comment = value;
+                    widget.modifiedItem.comment = value;
                   },
                   initalText: widget.modifiedItem.comment,
                   hintText: Txt.comment,
@@ -242,25 +241,10 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                 if (widget.modifiedItem.type ==
                     TransactionTypeEnum.expense) ...[
                   Padding(
-                    padding: const EdgeInsets.only(top: 12),
+                    padding: const EdgeInsets.only(top: 10),
                     child: Row(
                       children: [
-                        ElevatedButton(
-                          child: const Text('Map'),
-                          onPressed: () {
-                            launchMapOnAndroid(
-                              widget.modifiedItem.latitude,
-                              widget.modifiedItem.longitude,
-                            );
-                          },
-                        ),
-                        Spacer(),
-                        /*WidgetDateChooser(
-                          date: widget.modifiedItem.date,
-                          onChanged: (val) => setState(() {
-                            widget.modifiedItem.date = val;
-                          }),
-                        ),*/
+                        Text(widget.modifiedItem.getDateTimeStr()),
                         const Spacer(),
                         SpinBox(
                           value: widget.modifiedItem.averageDays.toDouble(),
@@ -278,7 +262,12 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                       ],
                     ),
                   ),
+                ] else ...[
                   VSpace(),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(widget.modifiedItem.getDateTimeStr()),
+                  ),
                 ],
                 WidgetItemEditActions(
                   onSave: () {
@@ -289,12 +278,24 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
                       : () {
                           tp.delete(widget.item!);
                         },
-                    prependWidget: WidgetDateChooser(
+                  leftWidget: [
+                    WidgetIconButton(
+                      icon: Icons.location_on,
+                      onPressed: () {
+                        launchMapOnAndroid(
+                          widget.modifiedItem.latitude,
+                          widget.modifiedItem.longitude,
+                        );
+                      },
+                    ),
+                    HSpace(),
+                    WidgetDateChooser(
                       date: widget.modifiedItem.date,
                       onChanged: (val) => setState(() {
                         widget.modifiedItem.date = val;
                       }),
                     ),
+                  ],
                 ),
               ],
             ),
@@ -331,7 +332,7 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
             ],
           ),
         ),
-        const SizedBox(width: 8,),
+        const SizedBox(width: 8),
         CurrencyChooserWidget(
           currencies: currencyProvider.getVisibleItemsWith(
             currencyProvider.getCurrencyFromTransaction(widget.modifiedItem),
@@ -348,5 +349,4 @@ class _TransactionItemPageState extends State<TransactionItemPage> {
       ],
     );
   }
-
 }

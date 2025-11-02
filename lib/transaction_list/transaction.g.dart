@@ -111,21 +111,20 @@ Transaction _transactionDeserialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = Transaction(
-    averageDays: reader.readLongOrNull(offsets[0]) ?? 1,
-    comment: reader.readStringOrNull(offsets[1]) ?? "",
-    currency: reader.readStringOrNull(offsets[2]) ?? "",
-    date: reader.readDateTime(offsets[3]),
-    latitude: reader.readDoubleOrNull(offsets[4]) ?? 0,
-    longitude: reader.readDoubleOrNull(offsets[5]) ?? 0,
-    method: reader.readStringOrNull(offsets[6]) ?? "",
-    tags: reader.readStringList(offsets[8]) ?? const [],
-    type:
-        _TransactiontypeValueEnumMap[reader.readByteOrNull(offsets[9])] ??
-        TransactionTypeEnum.expense,
-    value: reader.readDoubleOrNull(offsets[10]) ?? 0.0,
-  );
+  final object = Transaction();
+  object.averageDays = reader.readLong(offsets[0]);
+  object.comment = reader.readString(offsets[1]);
+  object.currency = reader.readString(offsets[2]);
+  object.date = reader.readDateTime(offsets[3]);
   object.id = id;
+  object.latitude = reader.readDouble(offsets[4]);
+  object.longitude = reader.readDouble(offsets[5]);
+  object.method = reader.readString(offsets[6]);
+  object.tags = reader.readStringList(offsets[8]) ?? [];
+  object.type =
+      _TransactiontypeValueEnumMap[reader.readByteOrNull(offsets[9])] ??
+      TransactionTypeEnum.expense;
+  object.value = reader.readDouble(offsets[10]);
   return object;
 }
 
@@ -137,29 +136,29 @@ P _transactionDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLongOrNull(offset) ?? 1) as P;
+      return (reader.readLong(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset) ?? "") as P;
+      return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readStringOrNull(offset) ?? "") as P;
+      return (reader.readString(offset)) as P;
     case 3:
       return (reader.readDateTime(offset)) as P;
     case 4:
-      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+      return (reader.readDouble(offset)) as P;
     case 5:
-      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+      return (reader.readDouble(offset)) as P;
     case 6:
-      return (reader.readStringOrNull(offset) ?? "") as P;
+      return (reader.readString(offset)) as P;
     case 7:
       return (reader.readString(offset)) as P;
     case 8:
-      return (reader.readStringList(offset) ?? const []) as P;
+      return (reader.readStringList(offset) ?? []) as P;
     case 9:
       return (_TransactiontypeValueEnumMap[reader.readByteOrNull(offset)] ??
               TransactionTypeEnum.expense)
           as P;
     case 10:
-      return (reader.readDoubleOrNull(offset) ?? 0.0) as P;
+      return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -1936,22 +1935,17 @@ extension TransactionQueryProperty
 // JsonSerializableGenerator
 // **************************************************************************
 
-Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction(
-  comment: json['comment'] as String? ?? "",
-  value: (json['value'] as num?)?.toDouble() ?? 0.0,
-  currency: json['currency'] as String? ?? "",
-  type:
-      $enumDecodeNullable(_$TransactionTypeEnumEnumMap, json['type']) ??
-      TransactionTypeEnum.expense,
-  date: DateTime.parse(json['date'] as String),
-  averageDays: (json['averageDays'] as num?)?.toInt() ?? 1,
-  method: json['method'] as String? ?? "",
-  latitude: (json['latitude'] as num?)?.toDouble() ?? 0,
-  longitude: (json['longitude'] as num?)?.toDouble() ?? 0,
-  tags:
-      (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
-      const [],
-);
+Transaction _$TransactionFromJson(Map<String, dynamic> json) => Transaction()
+  ..comment = json['comment'] as String
+  ..method = json['method'] as String
+  ..value = (json['value'] as num).toDouble()
+  ..currency = json['currency'] as String
+  ..date = DateTime.parse(json['date'] as String)
+  ..averageDays = (json['averageDays'] as num).toInt()
+  ..type = $enumDecode(_$TransactionTypeEnumEnumMap, json['type'])
+  ..latitude = (json['latitude'] as num).toDouble()
+  ..longitude = (json['longitude'] as num).toDouble()
+  ..tags = (json['tags'] as List<dynamic>).map((e) => e as String).toList();
 
 Map<String, dynamic> _$TransactionToJson(Transaction instance) =>
     <String, dynamic>{

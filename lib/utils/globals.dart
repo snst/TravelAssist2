@@ -20,27 +20,31 @@ class Tag {
   static const shop = "shop";
 }
 
-class MyIcon {
-  static const gps = Icon(Icons.gps_fixed);
-  static const map = Icon(Icons.map);
-  static const link = Icon(Icons.link);
-  static const copy = Icon(Icons.copy);
-  static const star = Icon(Icons.star);
-  static const note = Icon(Icons.note);
-}
-
-class TagIcon2 {
-  final String tag;
-  final Icon icon;
-  const TagIcon2({required this.tag, required this.icon});
+class MyIcons {
+  static const gps = Icons.gps_fixed;
+  static const map = Icons.map;
+  static const link = Icons.link;
+  static const copy = Icons.copy;
+  static const star = Icons.star;
+  static const note = Icons.note;
+  static const save = Icons.save;
+  static const delete = Icons.delete;
+  static const cancel = Icons.arrow_back;
 }
 
 class TagIcon {
-  static const gps = TagIcon2(tag: Tag.gps, icon: MyIcon.gps);
-  static const map = TagIcon2(tag: Tag.map, icon: MyIcon.map);
-  static const link = TagIcon2(tag: Tag.link, icon: MyIcon.link);
-  static const star = TagIcon2(tag: Tag.star, icon: MyIcon.star);
-  static const note = TagIcon2(tag: Tag.note, icon: MyIcon.note);
+  final String tag;
+  final Icon icon;
+
+  const TagIcon({required this.tag, required this.icon});
+}
+
+class TagIcons {
+  static const gps = TagIcon(tag: Tag.gps, icon: Icon(MyIcons.gps));
+  static const map = TagIcon(tag: Tag.map, icon: Icon(MyIcons.map));
+  static const link = TagIcon(tag: Tag.link, icon: Icon(MyIcons.link));
+  static const star = TagIcon(tag: Tag.star, icon: Icon(MyIcons.star));
+  static const note = TagIcon(tag: Tag.note, icon: Icon(MyIcons.note));
 }
 
 class Txt {
@@ -95,7 +99,7 @@ class AppIcons {
   );
 }
 
-class AppFonstSize {
+class AppFontSize {
   static const double balanceMainHeader = 18;
   static const double balanceHeader = 16;
   static const double balanceEntry = 16;

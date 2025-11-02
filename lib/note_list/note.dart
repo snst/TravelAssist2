@@ -34,15 +34,15 @@ class Note implements StorageItem {
     return link;
   }
 
-  Icon getIcon() {
+  IconData getIcon() {
     if (tags.contains(Tag.map)) {
-      return MyIcon.map;
+      return MyIcons.map;
     } else if (link.startsWith("geo:")) {
-      return MyIcon.gps;
+      return MyIcons.gps;
     } else if (link.startsWith("http")) {
-      return MyIcon.link;
+      return MyIcons.link;
     } else  {
-      return MyIcon.copy;
+      return MyIcons.copy;
     }
   }
 

@@ -10,6 +10,15 @@ import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+void copyToClipboard(BuildContext context, String link) {
+  Clipboard.setData(
+    ClipboardData(text: link),
+  );
+  ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(SnackBar(content: Text('Copied to Clipboard')));
+}
+
 openExternally(BuildContext context, String link) async {
   if (link.startsWith('http')) {
     await launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication);
@@ -23,12 +32,7 @@ openExternally(BuildContext context, String link) async {
   else if (File(link).existsSync()) {
     OpenAppFile.open(link);
   } else {
-    Clipboard.setData(
-      ClipboardData(text: link),
-    );
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Copied to Clipboard')));
+    copyToClipboard(context, link);
   }
 }
 

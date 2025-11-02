@@ -64,7 +64,7 @@ class BalanceRowHeader extends StatelessWidget {
   BalanceRowHeader(this.icon, this.title, this.tv, this.color, {super.key})
       : style = TextStyle(
           fontWeight: FontWeight.bold,
-          fontSize: AppFonstSize.balanceMainHeader,
+          fontSize: AppFontSize.balanceMainHeader,
           color: color,
         );
 

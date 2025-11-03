@@ -30,6 +30,7 @@ class MyIcons {
   static const save = Icons.save;
   static const delete = Icons.delete;
   static const cancel = Icons.arrow_back;
+  static const show = Icons.zoom_in;
 }
 
 class TagIcon {

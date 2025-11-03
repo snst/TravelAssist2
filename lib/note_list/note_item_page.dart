@@ -17,6 +17,7 @@ import '../widgets/widget_layout.dart';
 import '../widgets/widget_tags.dart';
 import '../widgets/widget_text_input.dart';
 import 'note_provider.dart';
+import 'note_show.dart';
 
 Future<String> moveSharedImageToDataFolder(String srcPath) async {
   final file = File(srcPath);
@@ -132,7 +133,7 @@ class _NoteItemPageState extends State<NoteItemPage> {
                     WidgetIconButton(
                       icon: widget.modifiedItem.getIcon(),
                       onPressed: () {
-                        openExternally(context, widget.modifiedItem.link);
+                        openExternally(context, widget.modifiedItem);
                       },
                     ),
                   ],
@@ -155,9 +156,9 @@ class _NoteItemPageState extends State<NoteItemPage> {
                         },
                   leftWidget: [
                     WidgetIconButton(
-                      icon: MyIcons.copy,
+                      icon: MyIcons.show,
                       onPressed: () {
-                        copyToClipboard(context, widget.modifiedItem.link);
+                        showShowDialog(context: context, note: widget.modifiedItem);
                       },
                     ),
                     HSpace(),

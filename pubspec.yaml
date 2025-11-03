@@ -113,8 +113,8 @@ flutter:
   # see https://flutter.dev/to/font-from-package
 
   assets:
-    - assets/icon/icon3.png
+    - assets/icon/icon2.png
 
 flutter_launcher_icons:
   android: true
-  image_path: "assets/icon/icon3.png"
+  image_path: "assets/icon/icon2.png"

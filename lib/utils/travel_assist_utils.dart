@@ -8,31 +8,30 @@ import 'package:open_app_file/open_app_file.dart';
 // ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:travelassist2/note_list/note_show.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../note_list/note.dart';
 
 void copyToClipboard(BuildContext context, String link) {
   Clipboard.setData(
     ClipboardData(text: link),
   );
-  ScaffoldMessenger.of(
+  /*ScaffoldMessenger.of(
     context,
-  ).showSnackBar(SnackBar(content: Text('Copied to Clipboard')));
+  ).showSnackBar(SnackBar(content: Text('Copied to Clipboard')));*/
 }
 
-openExternally(BuildContext context, String link) async {
-  if (link.startsWith('http')) {
-    await launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication);
-  } else if (link.startsWith("geo:")) {
-    String pos = link.substring(4);
-    final url = Uri.parse(
-      'geo:$pos?q=$pos(Here)',
-    );
-    await launchUrl(url);
+openExternally(BuildContext context, Note note) async {
+  if (note.isLink()) {
+    await launchUrl(Uri.parse(note.link), mode: LaunchMode.externalApplication);
+  } else if (note.isGeo()) {
+    await launchUrl(note.getGeo());
   }
-  else if (File(link).existsSync()) {
-    OpenAppFile.open(link);
+  else if (note.isFile()) {
+    OpenAppFile.open(note.link);
   } else {
-    copyToClipboard(context, link);
+    showShowDialog(context: context, note: note);
   }
 }
 

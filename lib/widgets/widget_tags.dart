@@ -76,6 +76,8 @@ class WidgetTags extends StatelessWidget {
               inputFieldBuilder: (context, inputFieldValues) {
                 return TextField(
                   autofocus: true,
+                  autocorrect: false,
+                  keyboardType: TextInputType.multiline,
                   controller: inputFieldValues.textEditingController,
                   focusNode: inputFieldValues.focusNode,
                   decoration: InputDecoration(

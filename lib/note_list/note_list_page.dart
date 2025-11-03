@@ -76,7 +76,7 @@ class _NoteListPageState extends State<NoteListPage> {
                           icon: Icon(items[reverseIndex].getIcon()),
                           // The icon on the right
                           onPressed: () {
-                            openExternally(context, items[reverseIndex].link);
+                            openExternally(context, items[reverseIndex]);
                           },
                         ),
                       ),
@@ -162,15 +162,6 @@ class WidgetBookmark extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (bookmark.tags.isNotEmpty) ...[
-            Text(
-              bookmark.tags.map((tag) => '#$tag').join(' '),
-              style: TextStyle(
-                fontSize: 16,
-                color: Theme.of(context).colorScheme.surfaceTint,
-              ),
-            ),
-          ],
           if (bookmark.comment.isNotEmpty) ...[
             const SizedBox(height: 2),
             Text(
@@ -185,11 +176,22 @@ class WidgetBookmark extends StatelessWidget {
             Text(
               bookmark.shortLink(),
               style: TextStyle(
-                fontSize: 16,
-                color: Theme.of(context).colorScheme.secondaryFixed,
+                fontSize: 15,
+                //color: Theme.of(context).colorScheme.outline,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
+            ),
+          ],
+          if (bookmark.tags.isNotEmpty) ...[
+            Text(
+              bookmark.tags.map((tag) => '#$tag').join(' '),
+              style: TextStyle(
+                fontSize: 15,
+                //color: Theme.of(context).colorScheme.surfaceTint,
+                color: Theme.of(context).colorScheme.outline,
+
+              ),
             ),
           ],
         ],

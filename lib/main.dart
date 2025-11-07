@@ -34,7 +34,6 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        //Provider<IsarService>.value(value: isarService),
         ChangeNotifierProvider(create: (context) => Calculator()),
         ChangeNotifierProvider(
           create: (context) => TodoProvider(isarService.isar),

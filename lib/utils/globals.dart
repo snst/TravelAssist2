@@ -48,12 +48,21 @@ class TagIcons {
   static const note = TagIcon(tag: Tag.note, icon: Icon(MyIcons.note));
 }
 
+class PlaceIcons {
+  static const dynamic = Icons.compare_arrows;
+  static const fixed = Icons.lock;
+  static const booked = Icons.hotel;
+  static const placeholder = Icons.question_mark;
+}
+
+
 class Txt {
   static const links = "Links";
   static const note = "Note";
   static const allNotes = "Notes";
   static const locations = "Locations";
   static const expenses = "Expenses";
+  static const places = "Places";
   static const checklist = "Check List";
   static const calculator = "Calculator";
   static const appTitle = "Travel Assist";
@@ -69,6 +78,7 @@ class Txt {
   static const hintComment = "Comment...";
   static const hintTag = "Tags...";
   static const cash = "cash";
+  static const place = "Place";
 }
 
 const EdgeInsets pagePadding = EdgeInsets.fromLTRB(14, 8, 14, 0);

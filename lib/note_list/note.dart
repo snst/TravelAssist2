@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:isar_community/isar.dart';
@@ -8,6 +6,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import '../utils/globals.dart';
 import '../utils/storage_item.dart';
+import '../utils/travel_assist_utils.dart';
 
 part 'note.g.dart';
 
@@ -37,7 +36,7 @@ class Note implements StorageItem {
   }
 
   IconData getIcon() {
-    if ((isLink() && tags.contains(Tag.map)) || isGeo())  {
+    if ((isLink() && tags.contains(Tag.map)) || isGeo()) {
       return MyIcons.map;
     } else if (isLink() || link.startsWith('/')) {
       return MyIcons.link;
@@ -68,27 +67,15 @@ class Note implements StorageItem {
   }
 
   @override
-  Id getId() {
-    return id;
-  }
+  Id getId() => id;
 
-  bool isLink() {
-    return link.startsWith('http');
-  }
+  bool isLink() => isTextLink(link);
 
-  bool isFile() {
-    return File(link).existsSync();
-  }
+  bool isFile() => isTextFile(link);
 
-  bool isGeo() {
-    return link.startsWith("geo:");
-  }
+  bool isGeo() => isTextGeo(link);
 
-  Uri getGeo() {
-    String pos = link.substring(4);
-    final url = Uri.parse('geo:$pos?q=$pos(Here)');
-    return url;
-  }
+  Uri getGeo() => getUriFromGeoString(link);
 
   factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);
 

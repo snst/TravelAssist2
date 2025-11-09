@@ -3,13 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:travelassist2/todo_list/todo_item_page.dart';
-import 'package:travelassist2/todo_list/todo_list_page.dart';
-import 'package:travelassist2/utils/globals.dart';
-import 'package:travelassist2/utils/json_export.dart';
-import 'package:travelassist2/utils/travel_assist_utils.dart';
-import 'package:travelassist2/widgets/widget_export.dart';
 
+import '../place_list/place.dart';
+import '../place_list/place_item_page.dart';
+import '../place_list/place_list_page.dart';
+import '../todo_list/todo_item_page.dart';
+import '../todo_list/todo_list_page.dart';
+import '../utils/globals.dart';
+import '../utils/json_export.dart';
+import '../utils/travel_assist_utils.dart';
+import '../widgets/widget_export.dart';
 import 'calculator/calculator.dart';
 import 'calculator/calculator_page.dart';
 import 'currency/currency_list_page.dart';
@@ -18,6 +21,7 @@ import 'note_list/note.dart';
 import 'note_list/note_item_page.dart';
 import 'note_list/note_list_page.dart';
 import 'note_list/note_provider.dart';
+import 'place_list/place_provider.dart';
 import 'providers/isar_service.dart';
 import 'todo_list/todo_provider.dart';
 import 'transaction_list/transaction_item_page.dart';
@@ -46,6 +50,9 @@ void main() async {
         ),
         ChangeNotifierProvider(
           create: (context) => NoteProvider(isarService.isar),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => PlaceProvider(isarService.isar),
         ),
       ],
       child: const MyApp(),
@@ -153,6 +160,7 @@ class _MainScreenState extends State<MainScreen> {
             itemBuilder: (context) => [
               const PopupMenuItem(value: 1, child: Text(Txt.currencyRates)),
               const PopupMenuItem(value: 5, child: Text(Txt.notesStorageDir)),
+              const PopupMenuItem(value: 6, child: Text(Txt.places)),
               const PopupMenuItem(value: 2, child: Text(Txt.checklist)),
               const PopupMenuItem(value: 3, child: Text(Txt.allNotes)),
               const PopupMenuItem(value: 4, child: Text(Txt.expenses)),
@@ -192,6 +200,13 @@ class _MainScreenState extends State<MainScreen> {
                 case 5:
                   selectBookmarkFolder();
                   break;
+                case 6:
+                  showImportExportPage(
+                    context,
+                    Txt.places,
+                    Provider.of<PlaceProvider>(context, listen: false),
+                  );
+                  break;
               }
             },
           ),
@@ -205,6 +220,24 @@ class _MainScreenState extends State<MainScreen> {
               label: Txt.calculator,
               icon: Icons.calculate,
               onMainPressed: () => _onShowPage(context, const CalculatorPage()),
+            ),
+
+            WidgetDualActionButton(
+              label: Txt.places,
+              icon: Icons.timeline,
+              onMainPressed: () => _onShowPage(context, const PlaceListPage()),
+              onAddPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PlaceItemPage(
+                      item: Place(title: ''),
+                      newItem: true,
+                      createReplacementPage: () => const PlaceListPage(),
+                    ),
+                  ),
+                );
+              },
             ),
 
             WidgetDualActionButton(

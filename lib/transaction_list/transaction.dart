@@ -71,7 +71,7 @@ class Transaction implements StorageItem {
     );
   }
 
-  String getDateTimeStr() => DateFormat.yMd().add_Hm().format(date);
+  String getDateTimeStr() => DateFormat('dd.MM.yyyy HH:mm').format(date);
 
   String get tagStr {
     return tags.map((t) => '#$t').join(' ');

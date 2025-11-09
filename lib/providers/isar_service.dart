@@ -6,6 +6,7 @@ import '../note_list/note.dart';
 import '../currency/currency.dart';
 import '../todo_list/todo_item.dart';
 import '../transaction_list/transaction.dart';
+import '../place_list/place.dart';
 
 class IsarService extends ChangeNotifier {
   Isar? _isar;
@@ -25,6 +26,7 @@ class IsarService extends ChangeNotifier {
         TodoItemSchema,
         TransactionSchema,
         NoteSchema,
+        PlaceSchema,
       ],
       directory: dir.path,
       //      inspector: true,

@@ -22,6 +22,19 @@ void copyToClipboard(BuildContext context, String link) {
   ).showSnackBar(SnackBar(content: Text('Copied to Clipboard')));*/
 }
 
+bool isTextLink(String text) => text.startsWith('http');
+
+bool isTextFile(String text) => text.startsWith('/') && File(text).existsSync();
+
+bool isTextGeo(String text) => text.startsWith("geo:");
+
+Uri getUriFromGeoString(String text) {
+  String pos = text.substring(4);
+  final url = Uri.parse('geo:$pos?q=$pos(Here)');
+  return url;
+
+}
+
 openExternally(BuildContext context, Note note) async {
   if (note.isLink()) {
     await launchUrl(Uri.parse(note.link), mode: LaunchMode.externalApplication);
@@ -34,6 +47,18 @@ openExternally(BuildContext context, Note note) async {
     showShowDialog(context: context, note: note);
   }
 }
+
+openLinkExternally(BuildContext context, String text) async {
+  if (isTextLink(text)) {
+    await launchUrl(Uri.parse(text), mode: LaunchMode.externalApplication);
+  } else if (isTextGeo(text)) {
+    await launchUrl(getUriFromGeoString(text));
+  }
+  else if (isTextLink(text)) {
+    OpenAppFile.open(text);
+  }
+}
+
 
 Future<String?> getBookmarkFolder() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -69,6 +94,9 @@ double safeConvertToDouble(String input) {
     return 0.0;
   }
 }
+
+String formatDate(DateTime timestamp) => DateFormat('EEE dd.MM.yyyy').format(timestamp);
+String formatDateDayMonth(DateTime timestamp) => DateFormat('EEE, dd.MM').format(timestamp);
 
 String removeTrailingZeros(String inputString) {
   if (inputString.endsWith('.00')) {

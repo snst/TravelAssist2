@@ -23,7 +23,7 @@ class PlaceProvider extends Storage<Place> implements JsonExport {
   }
 
   String getTitle(List<Place> places) {
-    if (places.isEmpty) return Txt.places;
+    if (places.isEmpty) return Txt.journey;
     final firstDate = places.first.getStartDate();
     final lastDate = places.last.getEndDate();
     var now = DateTime.now();

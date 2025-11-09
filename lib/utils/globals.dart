@@ -18,6 +18,8 @@ class Tag {
   static const hotel = "hotel";
   static const entrance = "entrance";
   static const shop = "shop";
+  static const guide = "guide";
+  static const attraction = "attraction";
 }
 
 class MyIcons {
@@ -31,22 +33,24 @@ class MyIcons {
   static const delete = Icons.delete;
   static const cancel = Icons.arrow_back;
   static const show = Icons.zoom_in;
+  static const bus = Icons.directions_bus;
+  static const taxi = Icons.local_taxi;
+  static const hotel = Icons.hotel;
+  static const guide = Icons.directions;
+  static const shop = Icons.shopping_cart;
+  static const cafe = Icons.coffee_outlined;
+  static const breakfast = Icons.bakery_dining;
+  static const restaurant = Icons.local_dining;
+  static const attraction = Icons.attractions;
 }
 
 class TagIcon {
-  final String tag;
-  final Icon icon;
+  final List<String> tags;
+  final IconData icon;
 
-  const TagIcon({required this.tag, required this.icon});
+  const TagIcon({required this.tags, required this.icon});
 }
 
-class TagIcons {
-  static const gps = TagIcon(tag: Tag.gps, icon: Icon(MyIcons.gps));
-  static const map = TagIcon(tag: Tag.map, icon: Icon(MyIcons.map));
-  static const link = TagIcon(tag: Tag.link, icon: Icon(MyIcons.link));
-  static const star = TagIcon(tag: Tag.star, icon: Icon(MyIcons.star));
-  static const note = TagIcon(tag: Tag.note, icon: Icon(MyIcons.note));
-}
 
 class PlaceIcons {
   static const dynamic = Icons.compare_arrows;
@@ -62,7 +66,7 @@ class Txt {
   static const allNotes = "Notes";
   static const locations = "Locations";
   static const expenses = "Expenses";
-  static const places = "Places";
+  static const journey = "Journey";
   static const checklist = "Check List";
   static const calculator = "Calculator";
   static const appTitle = "Travel Assist";

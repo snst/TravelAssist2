@@ -17,6 +17,7 @@ class PlaceListPage extends StatefulWidget {
 
 class _PlaceListPageState extends State<PlaceListPage> {
   bool _listEditable = false;
+  final ScrollController _scrollController = ScrollController();
 
   void toggleEdit() {
     _listEditable = !_listEditable;
@@ -48,12 +49,15 @@ class _PlaceListPageState extends State<PlaceListPage> {
                 child: items.isEmpty
                     ? const Center(child: Text('No items found.'))
                     : ListView.builder(
-                        itemCount: items.length,
+                  key: const PageStorageKey<String>('myList'),
+                  controller: _scrollController,
+                  itemCount: items.length,
                         itemBuilder: (context, index) {
                           final item = items[index];
                           return Card(
                             color: item.getCardColor(),
                             child: ListTile(
+                              key: ValueKey(item),
                               contentPadding: EdgeInsets.only(left: 4.0, right: 4.0),
                               //minTileHeight: 60,
                               onTap: () {

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:travelassist2/widgets/widget_icon_button.dart';
 
 import '../place_list/place.dart';
 import '../place_list/place_item_page.dart';
@@ -39,21 +40,11 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => Calculator()),
-        ChangeNotifierProvider(
-          create: (context) => TodoProvider(isarService.isar),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => CurrencyProvider(isarService.isar),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => TransactionProvider(isarService.isar),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => NoteProvider(isarService.isar),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => PlaceProvider(isarService.isar),
-        ),
+        ChangeNotifierProvider(create: (context) => TodoProvider(isarService.isar)),
+        ChangeNotifierProvider(create: (context) => CurrencyProvider(isarService.isar)),
+        ChangeNotifierProvider(create: (context) => TransactionProvider(isarService.isar)),
+        ChangeNotifierProvider(create: (context) => NoteProvider(isarService.isar)),
+        ChangeNotifierProvider(create: (context) => PlaceProvider(isarService.isar)),
       ],
       child: const MyApp(),
     ),
@@ -67,16 +58,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: Txt.appTitle,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        useMaterial3: true,
-      ),
+      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue), useMaterial3: true),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.cyan,
-          brightness: Brightness.dark,
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.cyan, brightness: Brightness.dark),
         useMaterial3: true,
       ),
       themeMode: ThemeMode.dark,
@@ -97,18 +82,16 @@ class _MainScreenState extends State<MainScreen> {
 
   void handleSharedFile(SharedMediaFile file) async {
     final link = await moveSharedImageToDataFolder(file.path);
-    String tag = Tag.link;
-    if (link.startsWith("https://maps.app.goo.gl")) tag = Tag.map;
+    List<String> tags = link.startsWith("https://maps.app.goo.gl") ? [Tag.map] : [];
     if (mounted) {
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => NoteItemPage(
-            item: Note(link: link, tags: [tag]),
+            item: Note(link: link, tags: tags),
             newItem: true,
-            title: tag,
-            createReplacementPage: () =>
-                const NoteListPage(selectedTags: [Tag.note]),
+            title: Txt.note,
+            createReplacementPage: () => const NoteListPage(selectedTags: [Tag.note]),
           ),
         ),
       );
@@ -160,7 +143,7 @@ class _MainScreenState extends State<MainScreen> {
             itemBuilder: (context) => [
               const PopupMenuItem(value: 1, child: Text(Txt.currencyRates)),
               const PopupMenuItem(value: 5, child: Text(Txt.notesStorageDir)),
-              const PopupMenuItem(value: 6, child: Text(Txt.places)),
+              const PopupMenuItem(value: 6, child: Text(Txt.journey)),
               const PopupMenuItem(value: 2, child: Text(Txt.checklist)),
               const PopupMenuItem(value: 3, child: Text(Txt.allNotes)),
               const PopupMenuItem(value: 4, child: Text(Txt.expenses)),
@@ -169,43 +152,22 @@ class _MainScreenState extends State<MainScreen> {
             onSelected: (value) {
               switch (value) {
                 case 1:
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const CurrencyListPage(),
-                    ),
-                  );
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const CurrencyListPage()));
                   break;
                 case 2:
-                  showImportExportPage(
-                    context,
-                    Txt.checklist,
-                    Provider.of<TodoProvider>(context, listen: false),
-                  );
+                  showImportExportPage(context, Txt.checklist, Provider.of<TodoProvider>(context, listen: false));
                   break;
                 case 3:
-                  showImportExportPage(
-                    context,
-                    Txt.allNotes,
-                    Provider.of<NoteProvider>(context, listen: false),
-                  );
+                  showImportExportPage(context, Txt.allNotes, Provider.of<NoteProvider>(context, listen: false));
                   break;
                 case 4:
-                  showImportExportPage(
-                    context,
-                    Txt.expenses,
-                    Provider.of<TransactionProvider>(context, listen: false),
-                  );
+                  showImportExportPage(context, Txt.expenses, Provider.of<TransactionProvider>(context, listen: false));
                   break;
                 case 5:
                   selectBookmarkFolder();
                   break;
                 case 6:
-                  showImportExportPage(
-                    context,
-                    Txt.places,
-                    Provider.of<PlaceProvider>(context, listen: false),
-                  );
+                  showImportExportPage(context, Txt.journey, Provider.of<PlaceProvider>(context, listen: false));
                   break;
               }
             },
@@ -223,7 +185,7 @@ class _MainScreenState extends State<MainScreen> {
             ),
 
             WidgetDualActionButton(
-              label: Txt.places,
+              label: Txt.journey,
               icon: Icons.timeline,
               onMainPressed: () => _onShowPage(context, const PlaceListPage()),
               onAddPressed: () async {
@@ -248,9 +210,7 @@ class _MainScreenState extends State<MainScreen> {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TodoItemPage(
-                      createReplacementPage: () => const TodoListPage(),
-                    ),
+                    builder: (context) => TodoItemPage(createReplacementPage: () => const TodoListPage()),
                   ),
                 );
               },
@@ -259,8 +219,7 @@ class _MainScreenState extends State<MainScreen> {
             WidgetDualActionButton(
               label: Txt.allNotes,
               icon: Icons.notes,
-              onMainPressed: () =>
-                  _onShowPage(context, NoteListPage(selectedTags: [])),
+              onMainPressed: () => _onShowPage(context, NoteListPage(selectedTags: [])),
               onAddPressed: () async {
                 await Navigator.push(
                   context,
@@ -269,75 +228,50 @@ class _MainScreenState extends State<MainScreen> {
                       item: Note(tags: []),
                       newItem: true,
                       title: Txt.note,
-                      createReplacementPage: () =>
-                          const NoteListPage(selectedTags: [Tag.note]),
+                      createReplacementPage: () => const NoteListPage(selectedTags: [Tag.note]),
                     ),
                   ),
                 );
               },
             ),
             _buildScrollableNotes(
-              height: 60,
-              tagIcons: [
-                TagIcons.star,
-                TagIcons.gps,
-                TagIcons.map,
-                TagIcons.link,
-                TagIcons.note,
+              tagIcons: const [
+                TagIcon(tags: [Tag.star], icon: MyIcons.star),
+                TagIcon(tags: [Tag.note], icon: MyIcons.note),
+                TagIcon(tags: [Tag.hotel], icon: MyIcons.hotel),
+                TagIcon(tags: [Tag.shop], icon: MyIcons.shop),
+                TagIcon(tags: [Tag.restaurant], icon: MyIcons.restaurant),
+                TagIcon(tags: [Tag.guide], icon: MyIcons.guide),
+                TagIcon(tags: [Tag.gps], icon: MyIcons.gps),
+                TagIcon(tags: [Tag.map], icon: MyIcons.map),
+                TagIcon(tags: [Tag.bus], icon: MyIcons.bus),
+                TagIcon(tags: [Tag.attraction], icon: MyIcons.attraction),
               ],
             ),
 
             WidgetDualActionButton(
               label: Txt.expenses,
               icon: Icons.euro,
-              onMainPressed: () =>
-                  _onShowPage(context, const TransactionMainPage()),
+              onMainPressed: () => _onShowPage(context, const TransactionMainPage()),
               onAddPressed: () async {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => TransactionItemPage(
-                      createReplacementPage: () => const TransactionMainPage(),
-                    ),
+                    builder: (context) => TransactionItemPage(createReplacementPage: () => const TransactionMainPage()),
                   ),
                 );
               },
             ),
             _buildScrollableExpense(
-              height: 60,
-              subIcons: [
-                {
-                  'icon': Icons.coffee_outlined,
-                  'name': [Tag.cafe, Tag.food],
-                },
-                {
-                  'icon': Icons.bakery_dining,
-                  'name': [Tag.breakfast, Tag.food],
-                },
-                {
-                  'icon': Icons.local_dining,
-                  'name': [Tag.restaurant, Tag.food],
-                },
-                {
-                  'icon': Icons.shopping_cart,
-                  'name': [Tag.shop, Tag.food],
-                },
-                {
-                  'icon': Icons.directions_bus,
-                  'name': [Tag.bus, Tag.transport],
-                },
-                {
-                  'icon': Icons.local_taxi,
-                  'name': [Tag.taxi, Tag.transport],
-                },
-                {
-                  'icon': Icons.attractions,
-                  'name': [Tag.entrance],
-                },
-                {
-                  'icon': Icons.hotel,
-                  'name': [Tag.hotel],
-                },
+              tagIcons: const [
+                TagIcon(tags: [Tag.cafe, Tag.food], icon: MyIcons.cafe),
+                TagIcon(tags: [Tag.breakfast, Tag.food], icon: MyIcons.breakfast),
+                TagIcon(tags: [Tag.restaurant, Tag.food], icon: MyIcons.restaurant),
+                TagIcon(tags: [Tag.shop, Tag.food], icon: MyIcons.shop),
+                TagIcon(tags: [Tag.bus, Tag.transport], icon: MyIcons.bus),
+                TagIcon(tags: [Tag.taxi, Tag.transport], icon: MyIcons.taxi),
+                TagIcon(tags: [Tag.attraction], icon: MyIcons.attraction),
+                TagIcon(tags: [Tag.hotel], icon: MyIcons.hotel),
               ],
             ),
           ],
@@ -346,64 +280,46 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  Widget _buildScrollableExpense({
-    required double height,
-    required List<Map<String, dynamic>> subIcons,
-  }) {
+  Widget _buildScrollableExpense({required List<TagIcon> tagIcons}) {
     return SizedBox(
-      height: height,
+      height: 60,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        itemCount: subIcons.length,
+        itemCount: tagIcons.length,
         separatorBuilder: (_, __) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
-          final sub = subIcons[index];
-          return SizedBox(
-            width: height, // square buttons
-            height: height,
-            child: IconButton(
-              icon: Icon(sub['icon'], size: 28),
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => TransactionItemPage(
-                      tags: sub['name'],
-                      createReplacementPage: () => const TransactionMainPage(),
-                    ),
-                  ),
-                );
-              },
-            ),
+          final item = tagIcons[index];
+          return WidgetIconButton(
+            icon: item.icon,
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      TransactionItemPage(tags: item.tags, createReplacementPage: () => const TransactionMainPage()),
+                ),
+              );
+            },
           );
         },
       ),
     );
   }
 
-  Widget _buildScrollableNotes({
-    required double height,
-    required List<TagIcon> tagIcons,
-  }) {
+  Widget _buildScrollableNotes({required List<TagIcon> tagIcons}) {
     return SizedBox(
-      height: height,
+      height: 60,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: tagIcons.length,
         separatorBuilder: (_, __) => const SizedBox(width: 10),
         itemBuilder: (context, index) {
-          return SizedBox(
-            width: height,
-            height: height,
-            child: IconButton(
-              icon: tagIcons[index].icon,
-              onPressed: () {
-                _onShowPage(
-                  context,
-                  NoteListPage(selectedTags: [tagIcons[index].tag]),
-                );
-              },
-            ),
+          final item = tagIcons[index];
+          return WidgetIconButton(
+            icon: item.icon,
+            onPressed: () {
+              _onShowPage(context, NoteListPage(selectedTags: item.tags));
+            },
           );
         },
       ),
@@ -417,16 +333,8 @@ void showImportExportPage(BuildContext context, String title, JsonExport je) {
     MaterialPageRoute(
       builder: (context) {
         return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-            title: Text(title),
-          ),
-          body: WidgetExport(
-            fileName: title,
-            toJson: je.toJson,
-            fromJson: je.fromJson,
-            clearJson: je.clear,
-          ),
+          appBar: AppBar(backgroundColor: Theme.of(context).colorScheme.inversePrimary, title: Text(title)),
+          body: WidgetExport(fileName: title, toJson: je.toJson, fromJson: je.fromJson, clearJson: je.clear),
         );
       },
     ),

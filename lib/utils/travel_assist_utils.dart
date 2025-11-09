@@ -148,6 +148,7 @@ void saveJson(BuildContext context, String filename, String jsonString) async {
 
   if (selectedDirectory != null) {
     if (context.mounted) {
+      filename += DateFormat('_yyyy_MM_dd_Hm').format(DateTime.now());
       showInputDialog(context, filename, (name) {
         String filePath = path.join(selectedDirectory, "$name.json");
         File(filePath).writeAsStringSync(jsonString);

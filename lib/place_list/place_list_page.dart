@@ -50,23 +50,24 @@ class _PlaceListPageState extends State<PlaceListPage> {
                     : ListView.builder(
                         itemCount: items.length,
                         itemBuilder: (context, index) {
+                          final item = items[index];
                           return Card(
-                            color: items[index].getCardColor(),
+                            color: item.getCardColor(),
                             child: ListTile(
                               contentPadding: EdgeInsets.only(left: 4.0, right: 4.0),
                               //minTileHeight: 60,
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (context) => PlaceItemPage(item: items[index])),
+                                  MaterialPageRoute(builder: (context) => PlaceItemPage(item: item)),
                                 );
                               },
-                              leading: WidgetPlaceDate(place: items[index]),
+                              leading: WidgetPlaceDate(place: item),
                               title: Column(
                                 children: [
                                   Align(
                                     alignment: Alignment.centerLeft,
-                                    child: Text(items[index].title, style: Theme.of(context).textTheme.titleMedium),
+                                    child: Text(item.title, style: Theme.of(context).textTheme.titleMedium),
                                   ),
                                   if (_listEditable) ...[
                                     Padding(
@@ -75,12 +76,12 @@ class _PlaceListPageState extends State<PlaceListPage> {
                                         children: [
                                           IconButton(
                                             icon: const Icon(Icons.arrow_upward),
-                                            onPressed: index > 0 || items[index].isLocked()
+                                            onPressed: index > 0 || item.isLocked()
                                                 ? () {
-                                                    if (items[index].isLocked()) {
-                                                      items[index].decDate(1);
+                                                    if (item.isLocked()) {
+                                                      item.addDate(-1);
                                                     } else if (index > 0) {
-                                                      items[index].moveUp(items[index - 1]);
+                                                      item.moveUp(items[index - 1]);
                                                     }
                                                     provider.saveDirty(items);
                                                   }
@@ -89,12 +90,12 @@ class _PlaceListPageState extends State<PlaceListPage> {
 
                                           IconButton(
                                             icon: const Icon(Icons.arrow_downward),
-                                            onPressed: index < items.length - 1 || items[index].isLocked()
+                                            onPressed: index < items.length - 1 || item.isLocked()
                                                 ? () {
-                                                    if (items[index].isLocked()) {
-                                                      items[index].incDate(1);
+                                                    if (item.isLocked()) {
+                                                      item.addDate(1);
                                                     } else if (index < items.length - 1) {
-                                                      items[index].moveUp(items[index + 1]);
+                                                      item.moveDown(items[index + 1]);
                                                     }
                                                     provider.saveDirty(items);
                                                   }
@@ -102,18 +103,18 @@ class _PlaceListPageState extends State<PlaceListPage> {
                                           ),
                                           IconButton(
                                             icon: const Icon(Icons.add_circle_outline),
-                                            onPressed: items[index].nights < 99 && !items[index].isBooked()
+                                            onPressed: item.nights < 99 && !item.isBooked()
                                                 ? () {
-                                                    items[index].setNights(items[index].nights + 1);
+                                                    item.addNights(1);
                                                     provider.saveDirty(items);
                                                   }
                                                 : null,
                                           ),
                                           IconButton(
                                             icon: const Icon(Icons.remove_circle_outline),
-                                            onPressed: items[index].nights > 0 && !items[index].isBooked()
+                                            onPressed: item.nights > 0 && !item.isBooked()
                                                 ? () {
-                                                    items[index].setNights(items[index].nights - 1);
+                                                    item.addNights(-1);
                                                     provider.saveDirty(items);
                                                   }
                                                 : null,

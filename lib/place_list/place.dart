@@ -14,8 +14,7 @@ enum PlaceStateEnum { dynamic, locked, booked, placeholder }
 @collection
 @JsonSerializable()
 class Place implements StorageItem {
-  Place({this.title = "", DateTime? timestamp, this.nights = 0})
-    : date = timestamp ?? DateTime.now();
+  Place({this.title = "", DateTime? timestamp, this.nights = 0}) : date = timestamp ?? DateTime.now();
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   Id id = Isar.autoIncrement;
@@ -74,12 +73,19 @@ class Place implements StorageItem {
     }
   }
 
-  void decDate(int days) {
-    setDate(date.subtract(Duration(days: days)));
+  void addDate(int days) {
+    if (days > 0) {
+      setDate(date.add(Duration(days: days)));
+    } else if (days < 0) {
+      setDate(date.subtract(Duration(days: -days)));
+    }
   }
 
-  void incDate(int days) {
-    setDate(date.add(Duration(days: days)));
+  void addNights(int nights) {
+    final val = this.nights + nights;
+    if (val >= 0) {
+      setNights(val);
+    }
   }
 
   void setNights(int nights) {
@@ -112,7 +118,7 @@ class Place implements StorageItem {
 
   void moveUp(Place other) {
     if (isLocked()) {
-      decDate(1);
+      addDate(-1);
     } else if (other.isDynamic()) {
       switchDate(other);
     } else if (!other.isPlaceholder()) {
@@ -122,7 +128,7 @@ class Place implements StorageItem {
 
   void moveDown(Place other) {
     if (isLocked()) {
-      incDate(1);
+      addDate(1);
     } else if (other.isDynamic()) {
       switchDate(other);
     } else if (!other.isPlaceholder()) {

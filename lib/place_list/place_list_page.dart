@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:travelassist2/widgets/widget_icon_button.dart';
 import 'package:travelassist2/widgets/widget_layout.dart';
 
 import '../utils/globals.dart';
@@ -54,7 +53,8 @@ class _PlaceListPageState extends State<PlaceListPage> {
                           return Card(
                             color: items[index].getCardColor(),
                             child: ListTile(
-                              minTileHeight: 80,
+                              contentPadding: EdgeInsets.only(left: 4.0, right: 4.0),
+                              //minTileHeight: 60,
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -62,56 +62,68 @@ class _PlaceListPageState extends State<PlaceListPage> {
                                 );
                               },
                               leading: WidgetPlaceDate(place: items[index]),
-                              title: WidgetPlace(place: items[index]),
-                              trailing: (items[index].isPlaceholder() || !_listEditable)
-                                  ? null
-                                  : SizedBox(
-                                      width: 240,
+                              title: Column(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(items[index].title, style: Theme.of(context).textTheme.titleMedium),
+                                  ),
+                                  if (_listEditable) ...[
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4.0),
                                       child: Row(
                                         children: [
-                                          WidgetIconButton(
-                                            icon: Icons.arrow_upward,
-                                            enabled: index > 0 || items[index].isLocked(),
-                                            onPressed: () {
-                                              if (items[index].isLocked()) {
-                                                items[index].decDate(1);
-                                              } else if (index > 0) {
-                                                items[index].moveUp(items[index - 1]);
-                                              }
-                                              provider.saveDirty(items);
-                                            },
+                                          IconButton(
+                                            icon: const Icon(Icons.arrow_upward),
+                                            onPressed: index > 0 || items[index].isLocked()
+                                                ? () {
+                                                    if (items[index].isLocked()) {
+                                                      items[index].decDate(1);
+                                                    } else if (index > 0) {
+                                                      items[index].moveUp(items[index - 1]);
+                                                    }
+                                                    provider.saveDirty(items);
+                                                  }
+                                                : null,
                                           ),
-                                          WidgetIconButton(
-                                            icon: Icons.arrow_downward,
-                                            enabled: index < items.length - 1 || items[index].isLocked(),
-                                            onPressed: () {
-                                              if (items[index].isLocked()) {
-                                                items[index].incDate(1);
-                                              } else if (index < items.length - 1) {
-                                                items[index].moveUp(items[index + 1]);
-                                              }
-                                              provider.saveDirty(items);
-                                            },
+
+                                          IconButton(
+                                            icon: const Icon(Icons.arrow_downward),
+                                            onPressed: index < items.length - 1 || items[index].isLocked()
+                                                ? () {
+                                                    if (items[index].isLocked()) {
+                                                      items[index].incDate(1);
+                                                    } else if (index < items.length - 1) {
+                                                      items[index].moveUp(items[index + 1]);
+                                                    }
+                                                    provider.saveDirty(items);
+                                                  }
+                                                : null,
                                           ),
-                                          WidgetIconButton(
-                                            icon: Icons.add_circle_outline,
-                                            enabled: items[index].nights < 99 && !items[index].isBooked(),
-                                            onPressed: () => {
-                                              items[index].setNights(items[index].nights + 1),
-                                              provider.saveDirty(items),
-                                            },
+                                          IconButton(
+                                            icon: const Icon(Icons.add_circle_outline),
+                                            onPressed: items[index].nights < 99 && !items[index].isBooked()
+                                                ? () {
+                                                    items[index].setNights(items[index].nights + 1);
+                                                    provider.saveDirty(items);
+                                                  }
+                                                : null,
                                           ),
-                                          WidgetIconButton(
-                                            icon: Icons.remove_circle_outline,
-                                            enabled: items[index].nights > 0 && !items[index].isBooked(),
-                                            onPressed: () => {
-                                              items[index].setNights(items[index].nights - 1),
-                                              provider.saveDirty(items),
-                                            },
+                                          IconButton(
+                                            icon: const Icon(Icons.remove_circle_outline),
+                                            onPressed: items[index].nights > 0 && !items[index].isBooked()
+                                                ? () {
+                                                    items[index].setNights(items[index].nights - 1);
+                                                    provider.saveDirty(items);
+                                                  }
+                                                : null,
                                           ),
                                         ],
                                       ),
                                     ),
+                                  ],
+                                ],
+                              ),
                             ),
                           );
                         },
@@ -139,25 +151,6 @@ class _PlaceListPageState extends State<PlaceListPage> {
   }
 }
 
-class WidgetPlace extends StatelessWidget {
-  final Place place;
-
-  const WidgetPlace({super.key, required this.place});
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Row(
-        children: [
-          Row(children: []),
-          Text(place.title, style: Theme.of(context).textTheme.titleLarge),
-        ],
-      ),
-    );
-  }
-}
-
 class WidgetPlaceDate extends StatelessWidget {
   final Place place;
 
@@ -174,7 +167,7 @@ class WidgetPlaceDate extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: 80,
+                width: 90,
                 child: Text(
                   formatDateDayMonth(place.getStartDate()),
                   style: Theme.of(context).textTheme.labelLarge,
@@ -188,7 +181,7 @@ class WidgetPlaceDate extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: 80,
+                width: 90,
                 child: Text(
                   formatDateDayMonth(place.getEndDate()),
                   style: Theme.of(context).textTheme.labelLarge,
@@ -196,7 +189,7 @@ class WidgetPlaceDate extends StatelessWidget {
                 ),
               ),
               HSpace(val: 1.5),
-              if (place.nights > 0) ...[Text("( ${place.nights} )", style: Theme.of(context).textTheme.labelLarge)],
+              if (place.nights > 0) ...[Text("(${place.nights})", style: Theme.of(context).textTheme.labelLarge)],
             ],
           ),
         ],

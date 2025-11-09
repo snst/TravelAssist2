@@ -135,6 +135,9 @@ class _NoteItemPageState extends State<NoteItemPage> {
                       onPressed: () {
                         openExternally(context, widget.modifiedItem);
                       },
+                      onLongPressed: () {
+                        copyToClipboard(context, widget.modifiedItem.link);
+                      },
                     ),
                   ],
                 ),

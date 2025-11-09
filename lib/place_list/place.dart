@@ -9,7 +9,7 @@ import '../utils/travel_assist_utils.dart';
 
 part 'place.g.dart';
 
-enum PlaceStateEnum { dynamic, fixed, booked, placeholder }
+enum PlaceStateEnum { dynamic, locked, booked, placeholder }
 
 @collection
 @JsonSerializable()
@@ -37,7 +37,7 @@ class Place implements StorageItem {
   @ignore
   bool hasError = false;
 
-  bool isLocked() => state == PlaceStateEnum.fixed;
+  bool isLocked() => state == PlaceStateEnum.locked;
 
   bool isBooked() => state == PlaceStateEnum.booked;
 
@@ -58,7 +58,7 @@ class Place implements StorageItem {
     switch (state) {
       case PlaceStateEnum.dynamic:
         return PlaceIcons.dynamic;
-      case PlaceStateEnum.fixed:
+      case PlaceStateEnum.locked:
         return PlaceIcons.fixed;
       case PlaceStateEnum.booked:
         return PlaceIcons.booked;

@@ -54,7 +54,7 @@ openLinkExternally(BuildContext context, String text) async {
   } else if (isTextGeo(text)) {
     await launchUrl(getUriFromGeoString(text));
   }
-  else if (isTextLink(text)) {
+  else if (isTextFile(text)) {
     OpenAppFile.open(text);
   }
 }

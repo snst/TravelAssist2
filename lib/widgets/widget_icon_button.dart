@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 class WidgetIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onPressed;
+  final VoidCallback? onLongPressed;
   final bool enabled;
 
   const WidgetIconButton({
     super.key,
     required this.icon,
     required this.onPressed,
+    this.onLongPressed,
     this.enabled=true,
   });
 
@@ -21,10 +23,11 @@ class WidgetIconButton extends StatelessWidget {
         padding:  EdgeInsets.zero,
       ),
       onPressed: enabled ? onPressed : null,
+      onLongPress: enabled ? onLongPressed : null,
       child: Container(
-        width: 50, // fixed width
-        height: 50, // fixed height
-        alignment: Alignment.center, // center the icon
+        width: 50,
+        height: 50,
+        alignment: Alignment.center,
         child: Icon(
           icon,
           size: 30,

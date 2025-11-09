@@ -32,11 +32,11 @@ class PlaceProvider extends Storage<Place> implements JsonExport {
     var days2 = nowDay.difference(lastDate).inDays.abs();
     var nights = lastDate.difference(firstDate).inDays;
     if (nowDay.isBefore(firstDate)) {
-      return "$days1 nights till vacation ($nights nights)";
+      return "$days1 waiting ($nights nights)";
     } else if (nowDay.isAfter(lastDate)) {
-      return "${days2+1} nights after vacation ($nights nights)";
+      return "${days2} after ($nights nights)";
     } else {
-      return "${days1+1} past, $days2 remaining ($nights nights)";
+      return "${days1} + $days2 = $nights nights";
     }
   }
 

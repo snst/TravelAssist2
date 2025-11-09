@@ -42,6 +42,7 @@ class MyIcons {
   static const breakfast = Icons.bakery_dining;
   static const restaurant = Icons.local_dining;
   static const attraction = Icons.attractions;
+  static const clear = Icons.clear;
 }
 
 class TagIcon {

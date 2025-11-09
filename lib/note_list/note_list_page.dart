@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_select_items/flutter_multi_select_items.dart';
 import 'package:provider/provider.dart';
+import 'package:travelassist2/widgets/widget_icon_button.dart';
 
 import '../utils/globals.dart';
 import '../utils/travel_assist_utils.dart';
@@ -18,116 +19,68 @@ class NoteListPage extends StatefulWidget {
 }
 
 class _NoteListPageState extends State<NoteListPage> {
-  late List<String> selectedTags;
+  late List<String> _selectedTags;
+  late Future<NotesResult> _notesFuture;
+  late NoteProvider _provider;
 
   @override
   void initState() {
     super.initState();
-    selectedTags = widget.selectedTags;
+    _provider = context.read<NoteProvider>();
+    _selectedTags = widget.selectedTags;
+    _notesFuture = _provider.filterNotesWithTag(_selectedTags);
   }
 
   void selectTags(List<String> selectedItems) {
     setState(() {
-      selectedTags = selectedItems.cast<String>();
+      _selectedTags = selectedItems;
+      _notesFuture = _provider.filterNotesWithTag(_selectedTags);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<NoteProvider>();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(selectedTags.isEmpty ? "All" : selectedTags.join(' ')),
+        title: Text(_selectedTags.isEmpty ? "All" : _selectedTags.join(' ')),
       ),
       body: Column(
         children: [
           Expanded(
-            child: FutureBuilder<List<Note>>(
-              future: provider.getWithTag(selectedTags),
+            child: FutureBuilder<NotesResult>(
+              future: _notesFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
+                } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
-                final items = snapshot.data ?? [];
-                if (items.isEmpty) {
+
+                final result = snapshot.data!;
+                if (!snapshot.hasData || result.notes.isEmpty) {
                   return const Center(child: Text('No items found.'));
                 }
-                return ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    final reverseIndex = items.length - 1 - index;
-                    return Card(
-                      child: ListTile(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  NoteItemPage(item: items[reverseIndex]),
-                            ),
-                          );
-                        },
-                        title: WidgetBookmark(bookmark: items[reverseIndex]),
-                        trailing: IconButton(
-                          icon: Icon(items[reverseIndex].getIcon()),
-                          // The icon on the right
-                          onPressed: () {
-                            openExternally(context, items[reverseIndex]);
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                );
+                return _buildNoteList(result.notes);
               },
             ),
           ),
-          SizedBox(
-            height: 60,
-            width: double.infinity,
-            // Take the full width of the parent (within padding)
-            child: FutureBuilder<List<String>>(
-              future: provider.getTags(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const SizedBox.shrink();
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                final tags = snapshot.data ?? [];
-                if (tags.isEmpty) {
-                  return const SizedBox.shrink();
-                }
-                final tagCards = tags
-                    .map(
-                      (tag) => MultiSelectCard(
-                        value: tag,
-                        label: tag,
-                        selected: selectedTags.contains(tag),
-                      ),
-                    )
-                    .toList();
-                return MultiSelectContainer(
-                  showInListView: true,
-                  listViewSettings: ListViewSettings(
-                    scrollDirection: Axis.horizontal,
-                    separatorBuilder: (_, __) => const SizedBox(width: 10),
-                  ),
-                  items: tagCards,
-                  onChange: (allSelectedItems, selectedItem) {
-                    selectTags(allSelectedItems.cast<String>());
-                  },
+          FutureBuilder<NotesResult>(
+            future: _notesFuture,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return WidgetTagFooter(
+                  tags: snapshot.data!.tags,
+                  selectedTags: _selectedTags,
+                  onSelectTags: selectTags,
                 );
-              },
-            ),
+              }
+              return const SizedBox.shrink();
+            },
           ),
         ],
       ),
+
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 56.0),
         child: FloatingActionButton(
@@ -136,15 +89,86 @@ class _NoteListPageState extends State<NoteListPage> {
               context,
               MaterialPageRoute(
                 builder: (context) => NoteItemPage(
-                  item: Note(tags: selectedTags),
+                  item: Note(tags: _selectedTags),
                   newItem: true,
-                  title: Txt.note, //selectedTags.join(' '),
+                  title: Txt.note,
                 ),
               ),
             );
           },
           child: const Icon(Icons.add),
         ),
+      ),
+    );
+  }
+
+  Widget _buildNoteList(List<Note> items) {
+    return ListView.builder(
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        // Show newest items first
+        final reverseIndex = items.length - 1 - index;
+        return Card(
+          child: ListTile(
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => NoteItemPage(item: items[reverseIndex])));
+            },
+            // on tap
+            title: WidgetBookmark(bookmark: items[reverseIndex]),
+            trailing: IconButton(
+              icon: Icon(items[reverseIndex].getIcon()), // The icon on the right
+              onPressed: () {
+                openExternally(context, items[reverseIndex]);
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class WidgetTagFooter extends StatelessWidget {
+  final List<String> tags;
+  final List<String> selectedTags;
+  final Function(List<String>) onSelectTags;
+
+  const WidgetTagFooter({super.key, required this.tags, required this.selectedTags, required this.onSelectTags});
+
+  @override
+  Widget build(BuildContext context) {
+    var tagCards = tags
+        .map((tag) => MultiSelectCard(value: tag, label: tag, selected: selectedTags.contains(tag)))
+        .toList();
+
+    return SizedBox(
+      height: 60,
+      child: Row(
+        children: [
+          Expanded(
+            child: MultiSelectContainer(
+              // By providing a key that changes when selectedTags changes, we force Flutter
+              // to recreate this widget and its state, reflecting the new selections.
+              key: ValueKey(tagCards),
+              showInListView: true,
+              listViewSettings: ListViewSettings(
+                scrollDirection: Axis.horizontal,
+                separatorBuilder: (_, __) => const SizedBox(width: 10),
+              ),
+              items: tagCards,
+              onChange: (allSelectedItems, selectedItem) {
+                onSelectTags(allSelectedItems.cast<String>());
+              },
+            ),
+          ),
+          WidgetIconButton(
+            icon: MyIcons.clear,
+            scale: 0.8,
+            onPressed: () {
+              onSelectTags([]);
+            },
+          ),
+        ],
       ),
     );
   }
@@ -164,12 +188,7 @@ class WidgetBookmark extends StatelessWidget {
         children: [
           if (bookmark.comment.isNotEmpty) ...[
             const SizedBox(height: 2),
-            Text(
-              bookmark.comment,
-              style: const TextStyle(fontSize: 16),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
+            Text(bookmark.comment, style: const TextStyle(fontSize: 16), maxLines: 3, overflow: TextOverflow.ellipsis),
           ],
           if (bookmark.link.isNotEmpty) ...[
             const SizedBox(height: 2),
@@ -187,10 +206,8 @@ class WidgetBookmark extends StatelessWidget {
             Text(
               bookmark.tags.map((tag) => '#$tag').join(' '),
               style: TextStyle(
-                fontSize: 15,
-                //color: Theme.of(context).colorScheme.surfaceTint,
+                fontSize: 15, //color: Theme.of(context).colorScheme.surfaceTint,
                 color: Theme.of(context).colorScheme.outline,
-
               ),
             ),
           ],

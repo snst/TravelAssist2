@@ -6,6 +6,7 @@ class WidgetIconButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final VoidCallback? onLongPressed;
   final bool enabled;
+  final double scale;
 
   const WidgetIconButton({
     super.key,
@@ -13,6 +14,7 @@ class WidgetIconButton extends StatelessWidget {
     required this.onPressed,
     this.onLongPressed,
     this.enabled=true,
+    this.scale = 1.0
   });
 
   @override
@@ -25,12 +27,12 @@ class WidgetIconButton extends StatelessWidget {
       onPressed: enabled ? onPressed : null,
       onLongPress: enabled ? onLongPressed : null,
       child: Container(
-        width: 50,
-        height: 50,
+        width: 50*scale,
+        height: 50*scale,
         alignment: Alignment.center,
         child: Icon(
           icon,
-          size: 30,
+          size: 30*scale,
           //color: Colors.white,
         ),
       ),

@@ -176,18 +176,21 @@ class _CalculatorPageState extends State<CalculatorPage> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
-                child: ElevatedButton(
-                  onLongPress: () {
-                    calculator?.clear();
-                    clearAllInputs();
-                  },
-                  onPressed: () {
-                    _onCalculatorUpdate();
-                    calculator?.back();
-                    clearAllInputs();
-                  },
-                  child: const Icon(Icons.backspace,
-                      size: 30),
+                child: SizedBox(
+                  height: 42,
+                  child: ElevatedButton(
+                    onLongPress: () {
+                      calculator?.clear();
+                      clearAllInputs();
+                    },
+                    onPressed: () {
+                      _onCalculatorUpdate();
+                      calculator?.back();
+                      clearAllInputs();
+                    },
+                    child: const Icon(Icons.backspace,
+                        size: 30),
+                  ),
                 ),
               ),
               Padding(

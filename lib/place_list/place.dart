@@ -74,6 +74,14 @@ class Place implements StorageItem {
     }
   }
 
+  void decDate(int days) {
+    setDate(date.subtract(Duration(days: days)));
+  }
+
+  void incDate(int days) {
+    setDate(date.add(Duration(days: days)));
+  }
+
   void setNights(int nights) {
     if (this.nights != nights) {
       this.nights = nights;
@@ -104,7 +112,7 @@ class Place implements StorageItem {
 
   void moveUp(Place other) {
     if (isLocked()) {
-      setDate(date.subtract(Duration(days: 1)));
+      decDate(1);
     } else if (other.isDynamic()) {
       switchDate(other);
     } else if (!other.isPlaceholder()) {
@@ -114,7 +122,7 @@ class Place implements StorageItem {
 
   void moveDown(Place other) {
     if (isLocked()) {
-      setDate(date.add(Duration(days: 1)));
+      incDate(1);
     } else if (other.isDynamic()) {
       switchDate(other);
     } else if (!other.isPlaceholder()) {

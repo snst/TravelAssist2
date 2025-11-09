@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../utils/globals.dart';
 import '../utils/json_export.dart';
 import '../utils/storage.dart';
 import 'place.dart';
@@ -18,6 +19,24 @@ class PlaceProvider extends Storage<Place> implements JsonExport {
         add(place);
         place.isDirty = false;
       }
+    }
+  }
+
+  String getTitle(List<Place> places) {
+    if (places.isEmpty) return Txt.places;
+    final firstDate = places.first.getStartDate();
+    final lastDate = places.last.getEndDate();
+    var now = DateTime.now();
+    var nowDay = DateTime(now.year, now.month, now.day);
+    var days1 = nowDay.difference(firstDate).inDays.abs();
+    var days2 = nowDay.difference(lastDate).inDays.abs();
+    var nights = lastDate.difference(firstDate).inDays;
+    if (nowDay.isBefore(firstDate)) {
+      return "$days1 nights till vacation ($nights nights)";
+    } else if (nowDay.isAfter(lastDate)) {
+      return "${days2+1} nights after vacation ($nights nights)";
+    } else {
+      return "${days1+1} past, $days2 remaining ($nights nights)";
     }
   }
 
@@ -43,9 +62,7 @@ class PlaceProvider extends Storage<Place> implements JsonExport {
           nights: next.getStartDate().difference(current.getEndDate()).inDays,
         );
         p.state = PlaceStateEnum.placeholder;
-        p.title = p.nights == 1
-            ? "${p.nights} night to plan"
-            : "${p.nights} nights to plan";
+        p.title = p.nights == 1 ? "${p.nights} night to plan" : "${p.nights} nights to plan";
         result.add(p); // Add a placeholder for the gap
       }
       result.add(next);
@@ -70,9 +87,7 @@ class PlaceProvider extends Storage<Place> implements JsonExport {
   @override
   Future<String> toJson() async {
     final all = await getAll();
-    List<Map<String, dynamic>> jsonList = all
-        .map((item) => item.toJson())
-        .toList();
+    List<Map<String, dynamic>> jsonList = all.map((item) => item.toJson()).toList();
     return jsonEncode(jsonList);
   }
 

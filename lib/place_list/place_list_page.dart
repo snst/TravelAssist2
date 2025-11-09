@@ -27,117 +27,114 @@ class _PlaceListPageState extends State<PlaceListPage> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<PlaceProvider>();
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("Places"),
-        actions: [
-          IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () => toggleEdit()
+    return FutureBuilder(
+      future: provider.getAll(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        final items = provider.getPlaces(snapshot.data ?? []);
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            title: Text(provider.getTitle(items)),
+            actions: [IconButton(icon: const Icon(Icons.edit), onPressed: () => toggleEdit())],
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: FutureBuilder<List<Place>>(
-              future: provider.getAll(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
-                final items = provider.getPlaces(snapshot.data ?? []);
-                if (items.isEmpty) {
-                  return const Center(child: Text('No items found.'));
-                }
-                return ListView.builder(
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      color: items[index].getCardColor(),
-                      child: ListTile(
-                        minTileHeight: 80,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  PlaceItemPage(item: items[index]),
+          body: Column(
+            children: [
+              Expanded(
+                child: items.isEmpty
+                    ? const Center(child: Text('No items found.'))
+                    : ListView.builder(
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            color: items[index].getCardColor(),
+                            child: ListTile(
+                              minTileHeight: 80,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => PlaceItemPage(item: items[index])),
+                                );
+                              },
+                              leading: WidgetPlaceDate(place: items[index]),
+                              title: WidgetPlace(place: items[index]),
+                              trailing: (items[index].isPlaceholder() || !_listEditable)
+                                  ? null
+                                  : SizedBox(
+                                      width: 240,
+                                      child: Row(
+                                        children: [
+                                          WidgetIconButton(
+                                            icon: Icons.arrow_upward,
+                                            enabled: index > 0 || items[index].isLocked(),
+                                            onPressed: () {
+                                              if (items[index].isLocked()) {
+                                                items[index].decDate(1);
+                                              } else if (index > 0) {
+                                                items[index].moveUp(items[index - 1]);
+                                              }
+                                              provider.saveDirty(items);
+                                            },
+                                          ),
+                                          WidgetIconButton(
+                                            icon: Icons.arrow_downward,
+                                            enabled: index < items.length - 1 || items[index].isLocked(),
+                                            onPressed: () {
+                                              if (items[index].isLocked()) {
+                                                items[index].incDate(1);
+                                              } else if (index < items.length - 1) {
+                                                items[index].moveUp(items[index + 1]);
+                                              }
+                                              provider.saveDirty(items);
+                                            },
+                                          ),
+                                          WidgetIconButton(
+                                            icon: Icons.add_circle_outline,
+                                            enabled: items[index].nights < 99 && !items[index].isBooked(),
+                                            onPressed: () => {
+                                              items[index].setNights(items[index].nights + 1),
+                                              provider.saveDirty(items),
+                                            },
+                                          ),
+                                          WidgetIconButton(
+                                            icon: Icons.remove_circle_outline,
+                                            enabled: items[index].nights > 0 && !items[index].isBooked(),
+                                            onPressed: () => {
+                                              items[index].setNights(items[index].nights - 1),
+                                              provider.saveDirty(items),
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                             ),
                           );
                         },
-                        leading: WidgetPlaceDate(place: items[index]),
-                        title: WidgetPlace(place: items[index]),
-                        trailing: (items[index].isPlaceholder() || !_listEditable) ? null : SizedBox(
-                          width: 240,
-                          child: Row(
-                            children: [
-                              WidgetIconButton(
-                                icon: Icons.arrow_upward,
-                                enabled: index > 0 && !items[index].isBooked(),
-                                onPressed: () => {
-                                  items[index].moveUp(items[index-1]),
-                                  provider.saveDirty(items),
-                                }
-                              ),
-                              WidgetIconButton(
-                                  icon: Icons.arrow_downward,
-                                  enabled: index < items.length - 1 && !items[index].isBooked(),
-                                  onPressed: () => {
-                                    items[index].moveDown(items[index+1]),
-                                    provider.saveDirty(items),
-                                  }
-                              ),
-                              WidgetIconButton(
-                                  icon: Icons.add_circle_outline,
-                                  enabled: items[index].nights < 99 && !items[index].isBooked(),
-                                  onPressed: () => {
-                                    items[index].setNights(items[index].nights+1),
-                                    provider.saveDirty(items),
-                                  }
-                              ),
-                              WidgetIconButton(
-                                  icon: Icons.remove_circle_outline,
-                                  enabled: items[index].nights > 0&& !items[index].isBooked(),
-                                  onPressed: () => {
-                                    items[index].setNights(items[index].nights-1),
-                                    provider.saveDirty(items),
-                                  }
-                              ),
-                            ],
-                          ),
-                        ),
                       ),
-                    );
-                  },
+              ),
+            ],
+          ),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 56.0),
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PlaceItemPage(item: Place(), newItem: true, title: Txt.note),
+                  ),
                 );
               },
+              child: const Icon(Icons.add),
             ),
           ),
-        ],
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 56.0),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PlaceItemPage(
-                  item: Place(),
-                  newItem: true,
-                  title: Txt.note,
-                ),
-              ),
-            );
-          },
-          child: const Icon(Icons.add),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -199,12 +196,7 @@ class WidgetPlaceDate extends StatelessWidget {
                 ),
               ),
               HSpace(val: 1.5),
-              if (place.nights > 0) ...[
-                Text(
-                  "( ${place.nights} )",
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-              ],
+              if (place.nights > 0) ...[Text("( ${place.nights} )", style: Theme.of(context).textTheme.labelLarge)],
             ],
           ),
         ],
@@ -212,4 +204,3 @@ class WidgetPlaceDate extends StatelessWidget {
     );
   }
 }
-

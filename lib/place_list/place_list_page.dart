@@ -49,9 +49,9 @@ class _PlaceListPageState extends State<PlaceListPage> {
                 child: items.isEmpty
                     ? const Center(child: Text('No items found.'))
                     : ListView.builder(
-                  key: const PageStorageKey<String>('myList'),
-                  controller: _scrollController,
-                  itemCount: items.length,
+                        key: const PageStorageKey<String>('myList'),
+                        controller: _scrollController,
+                        itemCount: items.length,
                         itemBuilder: (context, index) {
                           final item = items[index];
                           return Card(

@@ -20,85 +20,73 @@ class NoteListPage extends StatefulWidget {
 
 class _NoteListPageState extends State<NoteListPage> {
   late List<String> _selectedTags;
-  late Future<NotesResult> _notesFuture;
-  late NoteProvider _provider;
 
   @override
   void initState() {
     super.initState();
-    _provider = context.read<NoteProvider>();
     _selectedTags = widget.selectedTags;
-    _notesFuture = _provider.filterNotesWithTag(_selectedTags);
+  }
+
+  NoteProvider getProvider(BuildContext context) {
+    return Provider.of<NoteProvider>(context, listen: false);
   }
 
   void selectTags(List<String> selectedItems) {
     setState(() {
       _selectedTags = selectedItems;
-      _notesFuture = _provider.filterNotesWithTag(_selectedTags);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(_selectedTags.isEmpty ? "All" : _selectedTags.join(' ')),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: FutureBuilder<NotesResult>(
-              future: _notesFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
+    final provider = context.watch<NoteProvider>();
+    return FutureBuilder<NotesResult>(
+      future: provider.filterNotesWithTag(_selectedTags),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError || !snapshot.hasData) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        final result = snapshot.data!;
 
-                final result = snapshot.data!;
-                if (!snapshot.hasData || result.notes.isEmpty) {
-                  return const Center(child: Text('No items found.'));
-                }
-                return _buildNoteList(result.notes);
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+            title: Text(_selectedTags.isEmpty ? "All" : _selectedTags.join(' ')),
+          ),
+          body: Column(
+            children: [
+              Expanded(
+                child: result.notes.isEmpty
+                    ? const Center(child: Text('No items found.'))
+                    : _buildNoteList(result.notes),
+              ),
+
+              WidgetTagFooter(tags: snapshot.data!.tags, selectedTags: _selectedTags, onSelectTags: selectTags),
+            ],
+          ),
+
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 56.0),
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NoteItemPage(
+                      item: Note(tags: _selectedTags),
+                      newItem: true,
+                      title: Txt.note,
+                    ),
+                  ),
+                );
               },
+              child: const Icon(Icons.add),
             ),
           ),
-          FutureBuilder<NotesResult>(
-            future: _notesFuture,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return WidgetTagFooter(
-                  tags: snapshot.data!.tags,
-                  selectedTags: _selectedTags,
-                  onSelectTags: selectTags,
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
-        ],
-      ),
-
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 56.0),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => NoteItemPage(
-                  item: Note(tags: _selectedTags),
-                  newItem: true,
-                  title: Txt.note,
-                ),
-              ),
-            );
-          },
-          child: const Icon(Icons.add),
-        ),
-      ),
+        );
+      },
     );
   }
 

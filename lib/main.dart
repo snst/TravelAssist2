@@ -90,8 +90,8 @@ class _MainScreenState extends State<MainScreen> {
           builder: (context) => NoteItemPage(
             item: Note(link: link, tags: tags),
             newItem: true,
-            title: Txt.note,
-            createReplacementPage: () => const NoteListPage(selectedTags: [Tag.note]),
+            title: Txt.shared,
+            createReplacementPage: () => const NoteListPage(selectedTags: []),
           ),
         ),
       );

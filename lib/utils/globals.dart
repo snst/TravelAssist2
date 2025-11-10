@@ -84,6 +84,7 @@ class Txt {
   static const hintTag = "Tags...";
   static const cash = "cash";
   static const place = "Place";
+  static const shared = "Shared";
 }
 
 const EdgeInsets pagePadding = EdgeInsets.fromLTRB(14, 8, 14, 0);

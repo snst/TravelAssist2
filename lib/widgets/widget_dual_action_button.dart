@@ -18,23 +18,22 @@ class WidgetDualActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8, bottom: 4),
+      padding: const EdgeInsets.only(top: 16, bottom: 4),
       child: SizedBox(
-        height: 48,
+        height: 64,
         child: ElevatedButton(
-          onPressed: onMainPressed, // Main press handled here
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-          ),
+          onPressed: onMainPressed,
+          // Main press handled here
+          style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12)),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Expanded(
                 child: Row(
                   children: [
-                    Icon(icon, size: 28),
-                    const HSpace(val:2),
-                    Text(label, style: const TextStyle(fontSize: 18)),
+                    Icon(icon, size: 28, color: Colors.white),
+                    const HSpace(val: 2),
+                    Text(label, style: const TextStyle(fontSize: 18, color: Colors.white)),
                   ],
                 ),
               ),
@@ -54,7 +53,7 @@ class WidgetDualActionButton extends StatelessWidget {
                   onTap: onAddPressed,
                   child: const Padding(
                     padding: EdgeInsets.all(4.0),
-                    child: Icon(Icons.add, size: 28),
+                    child: Icon(Icons.add, size: 28, color: Colors.white),
                   ),
                 ),
               ],

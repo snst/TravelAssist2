@@ -111,6 +111,7 @@ class _NoteItemPageState extends State<NoteItemPage> {
                   allTags: asyncSnapshot.data ?? [],
                   tags: widget.modifiedItem.tags,
                   stringTagController: _stringTagController,
+                  autoFocus: widget.newItem,
                 ),
                 VSpace(),
                 WidgetMultiLineInput(

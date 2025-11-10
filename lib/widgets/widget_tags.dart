@@ -9,11 +9,14 @@ class WidgetTags extends StatelessWidget {
     required this.allTags,
     required this.tags,
     required this.stringTagController,
+    this.autoFocus = false,
   });
 
   final List<String> allTags;
   final List<String> tags;
   final StringTagController stringTagController;
+  final bool autoFocus;
+
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +78,7 @@ class WidgetTags extends StatelessWidget {
               },
               inputFieldBuilder: (context, inputFieldValues) {
                 return TextField(
-                  autofocus: true,
+                  autofocus: autoFocus,
                   autocorrect: false,
                   keyboardType: TextInputType.multiline,
                   controller: inputFieldValues.textEditingController,

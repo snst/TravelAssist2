@@ -291,6 +291,7 @@ class _MainScreenState extends State<MainScreen> {
           final item = tagIcons[index];
           return WidgetIconButton(
             icon: item.icon,
+            color: Colors.grey,
             onPressed: () async {
               await Navigator.push(
                 context,
@@ -317,6 +318,7 @@ class _MainScreenState extends State<MainScreen> {
           final item = tagIcons[index];
           return WidgetIconButton(
             icon: item.icon,
+            color: Colors.grey,
             onPressed: () {
               _onShowPage(context, NoteListPage(selectedTags: item.tags));
             },

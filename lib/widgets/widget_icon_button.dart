@@ -7,6 +7,7 @@ class WidgetIconButton extends StatelessWidget {
   final VoidCallback? onLongPressed;
   final bool enabled;
   final double scale;
+  final Color? color;
 
   const WidgetIconButton({
     super.key,
@@ -14,7 +15,8 @@ class WidgetIconButton extends StatelessWidget {
     required this.onPressed,
     this.onLongPressed,
     this.enabled=true,
-    this.scale = 1.0
+    this.scale = 1.0,
+    this.color,
   });
 
   @override
@@ -33,7 +35,7 @@ class WidgetIconButton extends StatelessWidget {
         child: Icon(
           icon,
           size: 30*scale,
-          //color: Colors.white,
+          color: color
         ),
       ),
     );

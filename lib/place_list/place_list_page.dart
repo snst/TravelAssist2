@@ -51,8 +51,13 @@ class _PlaceListPageState extends State<PlaceListPage> {
                     : ListView.builder(
                         key: const PageStorageKey<String>('myList'),
                         controller: _scrollController,
-                        itemCount: items.length,
+                        itemCount: items.length+1,
                         itemBuilder: (context, index) {
+                          // If it's the last item, return an empty container for spacing.
+                          if (index == items.length) {
+                            return const SizedBox(height: 70); // Adjust height as needed
+                          }
+
                           final item = items[index];
                           return Card(
                             color: item.getCardColor(),
@@ -136,19 +141,16 @@ class _PlaceListPageState extends State<PlaceListPage> {
               ),
             ],
           ),
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 56.0),
-            child: FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PlaceItemPage(item: Place(), newItem: true, title: Txt.note),
-                  ),
-                );
-              },
-              child: const Icon(Icons.add),
-            ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PlaceItemPage(item: Place(), newItem: true, title: Txt.note),
+                ),
+              );
+            },
+            child: const Icon(Icons.add),
           ),
         );
       },

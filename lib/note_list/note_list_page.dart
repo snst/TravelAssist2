@@ -92,23 +92,28 @@ class _NoteListPageState extends State<NoteListPage> {
 
   Widget _buildNoteList(List<Note> items) {
     return ListView.builder(
-      itemCount: items.length,
+      itemCount: items.length + 1, // Add one for the empty space
       itemBuilder: (context, index) {
-        // Show newest items first
+        // If it's the last item, return an empty container for spacing.
+        if (index == items.length) {
+          return const SizedBox(height: 70); // Adjust height as needed
+        }
+
         final reverseIndex = items.length - 1 - index;
+        final item = items[reverseIndex];
+
         return Card(
           child: ListTile(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => NoteItemPage(item: items[reverseIndex])));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => NoteItemPage(item: item)));
             },
-            // on tap
-            title: WidgetBookmark(bookmark: items[reverseIndex]),
-            trailing: IconButton(
-              icon: Icon(items[reverseIndex].getIcon()), // The icon on the right
-              onPressed: () {
-                openExternally(context, items[reverseIndex]);
-              },
-            ),
+            title: WidgetBookmark(bookmark: item),
+             trailing: IconButton(
+               icon: Icon(item.getIcon()),
+               onPressed: () {
+                 openExternally(context, item);
+               },
+             ),
           ),
         );
       },
